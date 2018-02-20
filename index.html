@@ -7,11 +7,31 @@
     <link rel="stylesheet" type="text/css" href="css/lib/Draft.css" />
     <link rel="stylesheet" type="text/css" href="css/lib/basicContext.min.css" />
     <link rel="stylesheet" type="text/css" href="css/lib/default.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/lib/codemirror.css" />
+    <link rel="stylesheet" type="text/css" href="css/lib/codemirror-show-hint.css" />
+
+    <link rel="stylesheet" type="text/css" href="css/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <link rel="stylesheet" type="text/css" href="css/interaction.css" />
+    <link rel="stylesheet" type="text/css" href="css/boardmenu.css" />
+    <link rel="stylesheet" type="text/css" href="css/newboard.css" />
+    <link rel="stylesheet" type="text/css" href="css/screenshot.css" />
+    <link rel="stylesheet" type="text/css" href="css/header.css" />
+    <link rel="stylesheet" type="text/css" href="css/texteditor.css" />
+    <link rel="stylesheet" type="text/css" href="css/toolwindow.css" />
+    <link rel="stylesheet" type="text/css" href="css/toolbar.css" />
+    <link rel="stylesheet" type="text/css" href="css/properties.css" />
+    <link rel="stylesheet" type="text/css" href="css/details.css" />
+    <link rel="stylesheet" type="text/css" href="css/settings.css" />
+    <link rel="stylesheet" type="text/css" href="css/about.css" />
+    <link rel="stylesheet" type="text/css" href="css/models.css" />
+    <link rel="stylesheet" type="text/css" href="css/events.css" />
+    <link rel="stylesheet" type="text/css" href="css/createevent.css" />
+    <link rel="stylesheet" type="text/css" href="css/strings.css" />
+    <link rel="stylesheet" type="text/css" href="css/patches.css" />
 
 
-    <link rel="stylesheet" type="text/css" href="css/app.min.css" />
-
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="css/font.css" />
 
     <meta name="description" content="Mario Party N64 board editor. Allows creating custom boards for the classic Nintendo title.">
 
@@ -44,28 +64,118 @@
   <body>
     <div id="body" class="body"></div>
 
-    <script type="text/javascript" src="https://unpkg.com/es6-shim@^0.35.1/es6-shim.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/react@^16.0.0/umd/react.production.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/react-dom@^16.0.0/umd/react-dom.production.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/immutable@^3.8.1/dist/immutable.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/draft-js@^0.10.0/dist/Draft.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/jszip@^3.1.3/dist/jszip.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/basiccontext@^3.5.1/dist/basicContext.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/filesaver.js@^0.2.0/FileSaver.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/cookies-js@^1.2.2/dist/cookies.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/three@^0.86.0/build/three.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/gltf-js-utils@^1.0.0/dist/gltfutils.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/mips-inst@1.2.1/dist/bundle.js"></script>
+    <script type="text/javascript" src="js/lib/es6-shim.min.js"></script>
+    <script type="text/javascript" src="js/lib/react.min.js"></script>
+    <script type="text/javascript" src="js/lib/react-dom.min.js"></script>
+    <script type="text/javascript" src="js/lib/immutable.min.js"></script>
+    <script type="text/javascript" src="js/lib/Draft.min.js"></script>
+    <script type="text/javascript" src="js/lib/jszip.min.js"></script>
+    <script type="text/javascript" src="js/lib/basicContext.min.js"></script>
+    <script type="text/javascript" src="js/lib/FileSaver.min.js"></script>
+    <script type="text/javascript" src="js/lib/cookies.min.js"></script>
+    <script type="text/javascript" src="js/lib/three.min.js"></script>
+    <script type="text/javascript" src="js/lib/codemirror.js"></script>
+    <script type="text/javascript" src="js/lib/codemirror-show-hint.js"></script>
+    <script type="text/javascript" src="js/lib/gltfjsutils.min.js"></script>
+    <script type="text/javascript" src="js/lib/mips-inst.min.js"></script>
+    <script type="text/javascript" src="js/lib/mips-assembler.min.js"></script>
+
+    <script type="text/javascript" src="js/lib/js-spark-md5/spark-md5.js"></script>
+    <script type="text/javascript" src="js/lib/ThreeJS-export-OBJ/three-js-export-obj.js"></script>
+    <script type="text/javascript" src="js/lib/ThreeOrbitControls.js"></script>
+    <script type="text/javascript" src="js/boot.js"></script>
+    <script type="text/javascript" src="js/utils/utils.js"></script>
+    <script type="text/javascript" src="js/utils/localstorage.js"></script>
+    <script type="text/javascript" src="js/utils/compression.js"></script>
+    <script type="text/javascript" src="js/utils/MIPS.js"></script>
+    <script type="text/javascript" src="js/utils/CIC.js"></script>
+    <script type="text/javascript" src="js/utils/lib/mp-mips-codemirror.js"></script>
+    <script type="text/javascript" src="js/utils/lib/mp-mips-autocomplete.js"></script>
+    <script type="text/javascript" src="js/types.js"></script>
+    <script type="text/javascript" src="js/settings.js"></script>
+    <script type="text/javascript" src="js/images.js"></script>
+    <script type="text/javascript" src="js/controls.js"></script>
+    <script type="text/javascript" src="js/boards.js"></script>
+    <script type="text/javascript" src="js/boardmenu.js"></script>
+    <script type="text/javascript" src="js/newboard.js"></script>
+    <script type="text/javascript" src="js/screenshot.js"></script>
+    <script type="text/javascript" src="js/header.js"></script>
+    <script type="text/javascript" src="js/texteditor.js"></script>
+    <script type="text/javascript" src="js/toolwindow.js"></script>
+    <script type="text/javascript" src="js/toolbar.js"></script>
+    <script type="text/javascript" src="js/boardproperties.js"></script>
+    <script type="text/javascript" src="js/spaceproperties.js"></script>
+    <script type="text/javascript" src="js/details.js"></script>
+    <script type="text/javascript" src="js/about.js"></script>
+    <script type="text/javascript" src="js/models.js"></script>
+    <script type="text/javascript" src="js/eventsview.js"></script>
+    <script type="text/javascript" src="js/createevent.js"></script>
+    <script type="text/javascript" src="js/strings.js"></script>
+    <script type="text/javascript" src="js/spaces.js"></script>
+    <script type="text/javascript" src="js/renderer.js"></script>
+    <script type="text/javascript" src="js/rightclick.js"></script>
+    <script type="text/javascript" src="js/interaction.js"></script>
+    <script type="text/javascript" src="js/romhandler.js"></script>
+    <script type="text/javascript" src="js/components/codemirrorwrapper.js"></script>
+    <script type="text/javascript" src="js/patches.js"></script>
+    <script type="text/javascript" src="js/gameshark.js"></script>
+    <script type="text/javascript" src="js/patches/gameshark/parser.js"></script>
+    <script type="text/javascript" src="js/patches/gameshark/compiler.js"></script>
+    <script type="text/javascript" src="js/patches/gameshark/hook.js"></script>
+    <script type="text/javascript" src="js/patches/gameshark/hook.MP1.U.js"></script>
+    <script type="text/javascript" src="js/patches/gameshark/hook.MP2.U.js"></script>
+    <script type="text/javascript" src="js/patches/gameshark/hook.MP3.U.js"></script>
+    <script type="text/javascript" src="js/patches/PatchBase.js"></script>
+    <script type="text/javascript" src="js/patches/Antialias.js"></script>
+    <script type="text/javascript" src="js/patches/SkipIntro.js"></script>
+    <script type="text/javascript" src="js/patches/DebugMenu.js"></script>
+    <script type="text/javascript" src="js/patches/NoGame.js"></script>
+    <script type="text/javascript" src="js/symbols/symbols.js"></script>
+    <script type="text/javascript" src="js/symbols/MarioParty1U.sym.js"></script>
+    <script type="text/javascript" src="js/symbols/MarioParty2U.sym.js"></script>
+    <script type="text/javascript" src="js/symbols/MarioParty3U.sym.js"></script>
+    <script type="text/javascript" src="js/validation/validation.js"></script>
+    <script type="text/javascript" src="js/validation/validation.MP1.js"></script>
+    <script type="text/javascript" src="js/validation/validation.MP2.js"></script>
+    <script type="text/javascript" src="js/validation/validation.MP3.js"></script>
+    <script type="text/javascript" src="js/fs/scenes.js"></script>
+    <script type="text/javascript" src="js/fs/mainfs.js"></script>
+    <script type="text/javascript" src="js/fs/strings.js"></script>
+    <script type="text/javascript" src="js/fs/strings3.js"></script>
+    <script type="text/javascript" src="js/fs/hvqfs.js"></script>
+    <script type="text/javascript" src="js/fs/audio.js"></script>
+    <script type="text/javascript" src="js/fs/animationfs.js"></script>
+    <script type="text/javascript" src="js/adapter/adapters.js"></script>
+    <script type="text/javascript" src="js/adapter/boarddef.js"></script>
+    <script type="text/javascript" src="js/adapter/boardinfo.js"></script>
+    <script type="text/javascript" src="js/adapter/eventtable.js"></script>
+    <script type="text/javascript" src="js/adapter/eventlist.js"></script>
+    <script type="text/javascript" src="js/adapter/MP1.js"></script>
+    <script type="text/javascript" src="js/adapter/boardinfo.MP1.js"></script>
+    <script type="text/javascript" src="js/adapter/MP2.js"></script>
+    <script type="text/javascript" src="js/adapter/boardinfo.MP2.js"></script>
+    <script type="text/javascript" src="js/adapter/MP3.js"></script>
+    <script type="text/javascript" src="js/adapter/boardinfo.MP3.js"></script>
+    <script type="text/javascript" src="js/events/events.js"></script>
+    <script type="text/javascript" src="js/events/events.common.js"></script>
+    <script type="text/javascript" src="js/events/events.MP1.js"></script>
+    <script type="text/javascript" src="js/events/events.MP2.js"></script>
+    <script type="text/javascript" src="js/events/events.MP3.js"></script>
+    <script type="text/javascript" src="js/events/customevents.js"></script>
+    <script type="text/javascript" src="js/models/FORM.js"></script>
+    <script type="text/javascript" src="js/models/MTNX.js"></script>
+    <script type="text/javascript" src="js/models/FormToThreeJs.js"></script>
+    <script type="text/javascript" src="js/models/MtnxToThreeJs.js"></script>
+    <script type="text/javascript" src="js/utils/dump.js"></script>
+    <script type="text/javascript" src="js/utils/img/tiler.js"></script>
+    <script type="text/javascript" src="js/utils/img/RGBA5551.js"></script>
+    <script type="text/javascript" src="js/utils/img/RGBA32.js"></script>
+    <script type="text/javascript" src="js/utils/img/HVQ.js"></script>
+    <script type="text/javascript" src="js/utils/img/Grayscale.js"></script>
+    <script type="text/javascript" src="js/utils/img/BMP.js"></script>
+    <script type="text/javascript" src="js/utils/img/ImgPack.js"></script>
+    <script type="text/javascript" src="js/app.js"></script>
 
 
-    <script type="text/javascript" src="js/app.min.js"></script>
-
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111788770-1"></script>
-    <script>
-      window.dataLayer = [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag("js", new Date());
-      gtag("config", "UA-111788770-1");
-    </script>
   </body>
 </html>
