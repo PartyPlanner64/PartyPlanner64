@@ -46,7 +46,7 @@ To host a local copy of PartyPlanner64 clone the repository and do the following
 * Retrieve the dependencies for the editor and development.
     * `npm install --dev`
     
-    or
+      or
     * `yarn install`
 * `gulp` to copy the site in `dist/`.
     * `gulp prod` will build a minified production copy. The production build uses CDN assets when possible.
