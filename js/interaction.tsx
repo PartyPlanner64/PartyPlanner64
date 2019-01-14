@@ -1,4 +1,4 @@
-import { renderSpaces, drawSelectionBox, renderConnections, renderSelectedSpaces, rightClickOpen, updateRightClickMenu, render, drawConnection } from "./renderer";
+import { renderSpaces, drawSelectionBox, renderConnections, renderSelectedSpaces, rightClickOpen, updateRightClickMenu, render, drawConnection, getClicked2DPlaneCoord } from "./renderer";
 import { pointFallsWithin, lineDistance, determineAngle, radiansToDegrees } from "./utils/number";
 import { getCurrentBoard, ISpace, addSpace, getSpacesOfType, IBoard, currentBoardIsROM, removeSpace, getSpaceIndex, addConnection, setSpaceRotation, setCurrentBoard, copyCurrentBoard } from "./boards";
 import { Action, Space, SpaceSubtype } from "./types";
@@ -783,7 +783,8 @@ function _addSpace(action: Action, x: number, y: number, clickedSpace?: ISpace |
   }
   else {
     const curBoard = getCurrentBoard();
-    const newSpaceIdx = addSpace(x, y, spaceType, spaceSubType);
+    const coords = getClicked2DPlaneCoord(x, y);
+    const newSpaceIdx = addSpace(coords.x, coords.y, spaceType, spaceSubType);
     const newSpace = curBoard.spaces[newSpaceIdx];
 
     if (ctrlKey) {

@@ -10,6 +10,28 @@ import { romhandler } from "../romhandler";
 import { scenes } from "./scenes";
 import { getRegSetAddress, getRegSetUpperAndLower } from "../utils/MIPS";
 
+interface IHVQMetadata {
+  tileWidth: number;
+  tileHeight: number;
+  tileCountX: number;
+  tileCountY: number;
+
+  fov: number;
+  unk: number;
+
+  cameraEyePosX: number;
+  cameraEyePosY: number;
+  cameraEyePosZ: number;
+
+  lookatPointX: number;
+  lookatPointY: number;
+  lookatPointZ: number;
+
+  cameraUpVecX: number;
+  cameraUpVecY: number;
+  cameraUpVecZ: number;
+}
+
 interface IOffsetInfo {
   upper: number;
   lower: number;
@@ -273,9 +295,11 @@ export namespace hvqfs {
   }
 
   let _hvqCache: ArrayBuffer[][] | null;
+  let _hvqMetadata: IHVQMetadata[] | null;
 
   export function clearCache() {
     _hvqCache = null;
+    _hvqMetadata = null;
   }
 
   export function extract() {
@@ -285,12 +309,15 @@ export namespace hvqfs {
 
     let bgCount = getDirectoryCount();
     _hvqCache = new Array(bgCount);
+    _hvqMetadata = new Array(bgCount);
     for (let b = 0; b < bgCount; b++) {
       let fileCount = getHVQFileCount(b);
       _hvqCache[b] = new Array(fileCount);
       for (let f = 0; f < fileCount; f++) {
         _hvqCache[b][f] = read(b, f);
       }
+
+      _readMetadata(b);
     }
 
     if ($$debug && t0) {
@@ -371,16 +398,43 @@ export namespace hvqfs {
     return offset + fileBytes.byteLength;
   }
 
-  function _getBgDimensions(dir: number) {
+  function _readMetadata(dir: number): void {
     let infoView = new DataView(_hvqCache![dir][0], 0);
-    let tile_width = infoView.getUint32(0);
-    let tile_height = infoView.getUint32(4);
-    let tile_x_count = infoView.getUint32(8);
-    let tile_y_count = infoView.getUint32(12);
+    const metadata: IHVQMetadata = {
+      tileWidth: infoView.getUint32(0),
+      tileHeight: infoView.getUint32(4),
+      tileCountX: infoView.getUint32(8),
+      tileCountY: infoView.getUint32(12),
 
-    let width = tile_width * tile_x_count;
-    let height = tile_height * tile_y_count;
+      fov: infoView.getFloat32(16),
+      unk: infoView.getFloat32(20),
+
+      cameraEyePosX: infoView.getFloat32(24),
+      cameraEyePosZ: infoView.getFloat32(28),
+      cameraEyePosY: infoView.getFloat32(32),
+
+      lookatPointX: infoView.getFloat32(36),
+      lookatPointZ: infoView.getFloat32(40),
+      lookatPointY: infoView.getFloat32(44),
+
+      cameraUpVecX: infoView.getFloat32(48),
+      cameraUpVecZ: infoView.getFloat32(52),
+      cameraUpVecY: infoView.getFloat32(56),
+    }
+
+    _hvqMetadata![dir] = metadata;
+  }
+
+  function _getBgDimensions(dir: number) {
+    const metadata = _hvqMetadata![dir];
+
+    let width = metadata.tileWidth * metadata.tileCountX;
+    let height = metadata.tileHeight * metadata.tileCountY;
     return [width, height];
+  }
+
+  export function getMetadata(dir: number): IHVQMetadata {
+    return _hvqMetadata![dir];
   }
 
   export function readBackgroundImgData(dir: number) {
@@ -435,15 +489,16 @@ export namespace hvqfs {
   }
 
   export function readBackground(dir: number) {
+    const metadata = getMetadata(dir);
     let [width, height] = _getBgDimensions(dir);
     let canvasCtx = createContext(width, height);
     let bgImageData = readBackgroundImgData(dir);
     canvasCtx.putImageData(bgImageData, 0, 0);
-    return {
+    return Object.assign({}, metadata, {
       width,
       height,
-      src: canvasCtx.canvas.toDataURL()
-    };
+      src: canvasCtx.canvas.toDataURL(),
+    });
   }
 
   export function writeBackground(dir: number, imgData: ImageData, width: number, height: number) {

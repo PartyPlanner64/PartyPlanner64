@@ -14,12 +14,27 @@ export interface IBoard {
   spaces: ISpace[];
   links: { [startingSpaceIndex: number]: (number | number[]) };
   game: 1 | 2 | 3;
-  bg: any;
+  bg: IBoardBgDetails;
   otherbg: any;
   animbg?: any;
   audioIndex: number;
   _rom?: boolean;
   _deadSpace?: number;
+}
+
+interface IBoardBgDetails {
+  width: number;
+  height: number;
+  src: string; // sometimes boolean inside this file.
+
+  fov: number;
+  unk: number;
+  cameraEyePosX: number;
+  cameraEyePosY: number;
+  cameraEyePosZ: number;
+  lookatPointX: number;
+  lookatPointY: number;
+  lookatPointZ: number;
 }
 
 export interface ISpace {
@@ -52,6 +67,7 @@ function _makeDefaultBoard(gameVersion: 1 | 2 | 3 = 1, type: BoardType = BoardTy
         "width": 960,
         "height": 720,
         "src": true, // Replaced with theme url later.
+        fov: 17,
       };
       board.otherbg = {
         boardselect: true, // Replaced with theme url later.
@@ -66,7 +82,8 @@ function _makeDefaultBoard(gameVersion: 1 | 2 | 3 = 1, type: BoardType = BoardTy
       board.bg = {
         width: 1152,
         height: 864,
-        src: true
+        src: true,
+        fov: 17,
       };
       board.animbg = [];
       board.otherbg = {
@@ -82,14 +99,16 @@ function _makeDefaultBoard(gameVersion: 1 | 2 | 3 = 1, type: BoardType = BoardTy
           board.bg = {
             width: 1152,
             height: 864,
-            src: true
+            src: true,
+            fov: 17,
           };
           break;
         case BoardType.DUEL:
           board.bg = {
             width: 896,
             height: 672,
-            src: true
+            src: true,
+            fov: 17,
           };
           break;
       }

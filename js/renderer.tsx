@@ -8,6 +8,8 @@ import { $$hex } from "./utils/debug";
 import * as React from "react";
 import { RightClickMenu } from "./rightclick";
 import { attachToCanvas, detachFromCanvas } from "./interaction";
+import THREE = require("three");
+import { getTexture } from "./textures";
 
 type Canvas = HTMLCanvasElement;
 type CanvasContext = CanvasRenderingContext2D;
@@ -347,6 +349,97 @@ function drawCharacters(spaceCtx: CanvasContext, x: number, y: number, subtype: 
   }
 }
 
+let _camera: THREE.Camera;
+
+// opts:
+//   skipHiddenSpaces: true to not render start, invisible spaces
+//   skipBadges: false to skip event and star badges
+function _renderSpaces3d(spaceCanvas: Canvas, board: IBoard, clear: boolean = true, opts: ISpaceRenderOpts = {}) {
+  // const spaceCtx = spaceCanvas.getContext("2d")!;
+  // if (clear)
+  //   spaceCtx.clearRect(0, 0, spaceCanvas.width, spaceCanvas.height);
+
+  const game = board.game || 1;
+  const boardType = board.type || BoardType.NORMAL;
+  const bg = board.bg;
+  const [width, height] = [bg.width, bg.height];
+
+  const scene = new THREE.Scene();
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, canvas: spaceCanvas });
+  renderer.setSize(bg.width, bg.height);
+
+  _camera = new THREE.PerspectiveCamera(bg.fov, width / height, 1, 10000);
+  if (game === 1) {
+    _camera.position.set(bg.cameraEyePosX, bg.cameraEyePosY, bg.cameraEyePosZ);
+  }
+  else {
+    // gamemasterplc says don't divide anything by 1.2 if bg.cameraEyePosY === 1000,
+    // according to game logic.
+    // Observation: 18 / 15 == 1.2, this relates to tile count
+    _camera.position.set(bg.cameraEyePosX / 1.2, bg.cameraEyePosY / 1.2, bg.cameraEyePosZ / 1.2);
+  }
+
+  _camera.lookAt(new THREE.Vector3(bg.lookatPointX, bg.lookatPointY, bg.lookatPointZ));
+  scene.add(_camera);
+
+  // Draw spaces
+  for (let index = 0; index < board.spaces.length; index++) {
+    let space = board.spaces[index];
+    if (space === null)
+      continue;
+    space.z = space.z || 0;
+
+    const spriteMap = getTexture(space.type, game, boardType);
+    spriteMap.needsUpdate = true;
+    // spriteMap.minFilter = THREE.NearestFilter;
+    // spriteMap.magFilter = THREE.NearestFilter;
+    const spaceMaterial = new THREE.MeshBasicMaterial({
+      map: spriteMap, transparent: true, alphaTest: 0.5,
+    });
+    const spaceGeometry = new THREE.PlaneGeometry(3, 3);
+    const sprite = new THREE.Mesh(spaceGeometry, spaceMaterial);
+    sprite.scale.y = -1;
+
+    // const sprite = new THREE.Sprite(spriteMaterial);
+    sprite.position.x = space.x;
+    sprite.position.y = space.y;
+    sprite.position.z = space.z;
+
+    if (game === 2 || game === 3) {
+      sprite.position.x *= (bg.unk / 1.2);
+      sprite.position.y *= (bg.unk / 1.2);
+      sprite.position.z *= (bg.unk / 1.2);
+    }
+
+    scene.add(sprite);
+  }
+
+  // Because opengl differs from the N64 rendering engine.
+  scene.scale.y = -1;
+  _camera.scale.y = -1;
+
+  renderer.render(scene, _camera);
+}
+
+export function getClicked2DPlaneCoord(mouseX: number, mouseY: number): { x: number, y: number, z: number } {
+  const curBoard = getCurrentBoard();
+  const vec = new THREE.Vector3();
+  const pos = new THREE.Vector3();
+  vec.set(
+      (mouseX / curBoard.bg.width) * 2 - 1,
+      - (mouseY / curBoard.bg.height) * 2 + 1,
+      0.5);
+  vec.unproject(_camera);
+  vec.sub(_camera.position).normalize();
+  const distance = -_camera.position.z / vec.z;
+  pos.copy(_camera.position).add(vec.multiplyScalar(distance));
+  return {
+    x: pos.x,
+    y: pos.y,
+    z: pos.z
+  };
+}
+
 const _PIOver1 = (Math.PI / 1);
 function _drawConnection(lineCtx: CanvasContext, x1: number, y1: number, x2: number, y2: number, bidirectional?: boolean) {
   lineCtx.save();
@@ -502,7 +595,7 @@ class BoardBG extends React.Component<BoardBGProps> {
     if ((bgImg as any)._src !== board.bg.src || bgImg.width !== board.bg.width || bgImg.height !== board.bg.height) {
       bgImg.width = board.bg.width;
       bgImg.height = board.bg.height;
-      this.setSource(board.bg.src, bgImg);
+      this.setSource(board.bg.src as string, bgImg);
     }
   }
 
@@ -559,7 +652,7 @@ function _animationStep() {
   }
 
   if (_currentFrame === -1) {
-    _boardBG.setSource(board.bg.src);
+    _boardBG.setSource(board.bg.src as string);
     _currentFrame++;
   }
 }
@@ -668,14 +761,14 @@ class BoardSpaces extends React.Component<BoardSpacesProps> {
   private __canvas: HTMLCanvasElement | null = null;
 
   componentDidMount() {
-    attachToCanvas(this.__canvas!);
+    //attachToCanvas(this.__canvas!);
 
     this.renderContent();
     _boardSpaces = this;
   }
 
   componentWillUnmount() {
-    detachFromCanvas(this.__canvas!);
+    //detachFromCanvas(this.__canvas!);
     _boardSpaces = null;
   }
 
@@ -694,7 +787,7 @@ class BoardSpaces extends React.Component<BoardSpacesProps> {
       spaceCanvas.width = board.bg.width;
       spaceCanvas.height = board.bg.height;
     }
-    _renderSpaces(spaceCanvas, spaceCanvas.getContext("2d")!, board);
+    //_renderSpaces(spaceCanvas, spaceCanvas.getContext("2d")!, board);
   }
 
   render() {
@@ -716,6 +809,56 @@ class BoardSpaces extends React.Component<BoardSpacesProps> {
     ctx.fillRect(Math.min(xs, xf), Math.min(ys, yf), Math.abs(xs - xf), Math.abs(ys - yf));
     ctx.strokeRect(Math.min(xs, xf), Math.min(ys, yf), Math.abs(xs - xf), Math.abs(ys - yf));
     ctx.restore();
+  }
+};
+
+let _boardSpaces3d: BoardSpaces3D | null;
+
+interface BoardSpaces3DProps {
+  board: IBoard;
+}
+
+class BoardSpaces3D extends React.Component<BoardSpaces3DProps> {
+  state = {}
+
+  private __canvas: HTMLCanvasElement | null = null;
+
+  componentDidMount() {
+    attachToCanvas(this.__canvas!);
+
+    this.renderContent();
+    _boardSpaces3d = this;
+  }
+
+  componentWillUnmount() {
+    detachFromCanvas(this.__canvas!);
+    _boardSpaces3d = null;
+  }
+
+  componentDidUpdate() {
+    this.renderContent();
+  }
+
+  renderContent() {
+    // Update spaces
+    const spaceCanvas = ReactDOM.findDOMNode(this) as Canvas;
+    const editor = spaceCanvas.parentElement!;
+    const board = this.props.board;
+    const transformStyle = getEditorContentTransform(board, editor);
+    spaceCanvas.style.transform = transformStyle;
+    if (spaceCanvas.width !== board.bg.width || spaceCanvas.height !== board.bg.height) {
+      spaceCanvas.width = board.bg.width;
+      spaceCanvas.height = board.bg.height;
+    }
+    _renderSpaces3d(spaceCanvas, board);
+  }
+
+  render() {
+    return (
+      <canvas className="editor_space3d_canvas" tabIndex={-1}
+        ref={(el => this.__canvas = el)}
+        onDragOver={undefined}></canvas>
+    );
   }
 };
 
@@ -801,6 +944,7 @@ export const Editor = class Editor extends React.Component<IEditorProps> {
         <BoardSelectedSpaces board={this.props.board}
           selectedSpaces={this.props.selectedSpaces} />
         <BoardSpaces board={this.props.board} />
+        <BoardSpaces3D board={this.props.board} />
         <BoardOverlay board={this.props.board} />
       </div>
     );
@@ -816,6 +960,8 @@ export function render() {
     _boardSelectedSpaces.renderContent();
   if (_boardSpaces)
     _boardSpaces.renderContent();
+  if (_boardSpaces3d)
+    _boardSpaces3d.renderContent();
 }
 export function renderBG() {
   if (_boardBG)
@@ -832,6 +978,8 @@ export function renderSelectedSpaces() {
 export function renderSpaces() {
   if (_boardSpaces)
     _boardSpaces.renderContent();
+  if (_boardSpaces3d)
+    _boardSpaces3d.renderContent();
 }
 export function updateRightClickMenu(space: ISpace | null) {
   if (_boardOverlay)
@@ -856,7 +1004,7 @@ export function highlightSpaces(spaces: number[]) {
 
 export function drawSelectionBox(xs: number, ys: number, xf: number, yf: number) {
   if (_boardSpaces)
-  _boardSpaces.drawSelectionBox(xs, ys, xf, yf);
+    _boardSpaces.drawSelectionBox(xs, ys, xf, yf);
 }
 
 export function animationPlaying() {
@@ -871,5 +1019,5 @@ export const external = {
     _boardBG!.setSource(src);
   },
   renderConnections: _renderConnections,
-  renderSpaces: _renderSpaces
+  renderSpaces: _renderSpaces3d
 };

@@ -81,7 +81,6 @@ export abstract class AdapterBase {
       $$log(`Board ${i} chains: `, chains);
 
       this.onChangeBoardSpaceTypesFromGameSpaceTypes(newBoard, chains);
-      this._applyPerspective(newBoard, i);
       this._cleanLoadedBoard(newBoard);
 
       this.onParseStrings(newBoard, boardInfo);
@@ -135,7 +134,6 @@ export abstract class AdapterBase {
     boardCopy._deadSpace = deadSpace;
 
     this.onChangeGameSpaceTypesFromBoardSpaceTypes(boardCopy);
-    this._reversePerspective(boardCopy, boardIndex);
 
     let boarddef = createBoardDef(boardCopy, chains);
     mainfs.write(this.boardDefDirectory, boardInfo.boardDefFile, boarddef);
@@ -199,56 +197,6 @@ export abstract class AdapterBase {
   onWriteStrings(board: IBoard, boardInfo: IBoardInfo) {
     $$log("Adapter does not implement onWriteStrings");
   }
-
-  _applyPerspective(board: IBoard, boardIndex: number) {
-    let width = board.bg.width;
-    let height = board.bg.height;
-
-    for (let spaceIdx = 0; spaceIdx < board.spaces.length; spaceIdx++) {
-      let space = board.spaces[spaceIdx];
-      [space.x, space.y, space.z] = this.onGetBoardCoordsFromGameCoords(space.x, space.y, space.z, width, height, boardIndex);
-    }
-  }
-
-  onGetBoardCoordsFromGameCoords(x: number, y: number, z: number, width: number, height: number, boardIndex: number) {
-    $$log("Adapter does not implement onGetBoardCoordsFromGameCoords");
-    let newX = (width / 2) + x;
-    let newY = (height / 2) + y;
-    let newZ = 0;
-    return [Math.round(newX), Math.round(newY), Math.round(newZ)];
-  }
-
-  _reversePerspective(board: IBoard, boardIndex: number) {
-    let width = board.bg.width;
-    let height = board.bg.height;
-
-    for (let spaceIdx = 0; spaceIdx < board.spaces.length; spaceIdx++) {
-      let space = board.spaces[spaceIdx];
-      [space.x, space.y, space.z] = this.onGetGameCoordsFromBoardCoords(space.x, space.y, space.z, width, height, boardIndex);
-    }
-  }
-
-  onGetGameCoordsFromBoardCoords(x: number, y: number, z: number, width: number, height: number, boardIndex: number) {
-    $$log("Adapter does not implement onGetGameCoordsFromBoardCoords");
-    let gameX = x - (width / 2);
-    let gameY = y - (height / 2);
-    let gameZ = 0.048;
-    return [gameX, gameY, gameZ];
-  }
-
-  // if ($$debug) { // These need to be proper inverses
-  //   try {
-  //     for (let boardIndex = 0; boardIndex < 9; boardIndex++) {
-  //       let [beforeX, beforeY, beforeZ] = [-200, -200, 0];
-  //       let [boardX, boardY, boardZ] = this.onGetBoardCoordsFromGameCoords(beforeX, beforeY, beforeZ, 960, 720, boardIndex);
-  //       let [afterX, afterY, afterZ] = this.onGetGameCoordsFromBoardCoords(boardX, boardY, boardZ, 960, 720, boardIndex);
-  //       if (beforeX !== afterX)
-  //         $$log(`Bad X inverse, boardIndex: ${boardIndex}, beforeX: ${beforeX}, afterX: ${afterX}`);
-  //       if (beforeY !== afterY)
-  //         $$log(`Bad Y inverse, boardIndex: ${boardIndex}, beforeY: ${beforeY}, afterY: ${afterY}`);
-  //     }
-  //   } catch(e) {}
-  // }
 
   onChangeBoardSpaceTypesFromGameSpaceTypes(board: IBoard, chains: number[][]) {
     $$log("Adapter does not implement onChangeBoardSpaceTypesFromGameSpaceTypes");
@@ -1551,13 +1499,5 @@ export abstract class AdapterBase {
   getCharacterMap(): { [num: number]: string } {
     $$log("Adapter does not implement getCharacterMap");
     return {};
-  }
-
-  // For debug
-  _debugBoardGameCoordsCycle(boardIndex: number) {
-    let board = getCurrentBoard();
-    this._applyPerspective(board, boardIndex);
-    this._reversePerspective(board, boardIndex);
-    render();
   }
 };

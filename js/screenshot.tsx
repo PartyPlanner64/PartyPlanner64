@@ -29,7 +29,7 @@ function takeScreeny(opts: ITakeScreenyOpts = {}) {
   if (opts.renderConnections)
     external.renderConnections(screenCtx.canvas, screenCtx, curBoard, false);
 
-  external.renderSpaces(screenCtx.canvas, screenCtx, curBoard, false, {
+  external.renderSpaces(screenCtx.canvas, curBoard, false, {
     skipCharacters: !opts.renderCharacters,
     skipHiddenSpaces: !opts.renderHiddenSpaces,
     skipBadges: !opts.renderBadges,
