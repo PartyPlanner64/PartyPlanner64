@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "f6bbdcb4a627d6a1346576b5bac35731",
+    "revision": "9216ec4d604e941521498420ce7d75be",
     "url": "/PartyPlanner64/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/PartyPlanner64/static/css/2.f34c7ea4.chunk.css"
   },
   {
-    "revision": "039a9e3af5b0821331b0",
+    "revision": "7862b79826c9a320e41c",
     "url": "/PartyPlanner64/static/css/main.35100e7f.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/PartyPlanner64/static/js/2.b93e58c0.chunk.js"
   },
   {
-    "revision": "039a9e3af5b0821331b0",
-    "url": "/PartyPlanner64/static/js/main.a24fae95.chunk.js"
+    "revision": "7862b79826c9a320e41c",
+    "url": "/PartyPlanner64/static/js/main.1236766f.chunk.js"
   },
   {
     "revision": "40fd1f8147b3030a232c",
