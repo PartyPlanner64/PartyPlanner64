@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/PartyPlanner64/static/css/main.35100e7f.chunk.css",
+    "main.js": "/PartyPlanner64/static/js/main.a24fae95.chunk.js",
+    "runtime~main.js": "/PartyPlanner64/static/js/runtime~main.a49f914f.js",
+    "static/css/2.f34c7ea4.chunk.css": "/PartyPlanner64/static/css/2.f34c7ea4.chunk.css",
+    "static/js/2.b93e58c0.chunk.js": "/PartyPlanner64/static/js/2.b93e58c0.chunk.js",
+    "index.html": "/PartyPlanner64/index.html",
+    "precache-manifest.52f3ac22dd0c43f45c8cce7a24547e56.js": "/PartyPlanner64/precache-manifest.52f3ac22dd0c43f45c8cce7a24547e56.js",
+    "service-worker.js": "/PartyPlanner64/service-worker.js",
+    "static/media/index.scss": "/PartyPlanner64/static/media/eraser.30df9799.cur",
+    "static/media/gameguyduel.png": "/PartyPlanner64/static/media/gameguyduel.cc054f8f.png",
+    "static/media/happeningduel3.png": "/PartyPlanner64/static/media/happeningduel3.ef6ecdf8.png",
+    "static/media/logo.png": "/PartyPlanner64/static/media/logo.b49afd48.png",
+    "static/media/logoloading.png": "/PartyPlanner64/static/media/logoloading.523c5544.png",
+    "static/media/mpllogo.png": "/PartyPlanner64/static/media/mpllogo.8fbfc590.png",
+    "static/media/font.css": "/PartyPlanner64/static/media/source-sans-pro-v9-latin-regular.fdc03546.woff"
+  }
+}
