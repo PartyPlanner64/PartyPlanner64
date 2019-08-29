@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/PartyPlanner64/static/css/main.35100e7f.chunk.css",
-    "main.js": "/PartyPlanner64/static/js/main.ee590b7c.chunk.js",
-    "runtime~main.js": "/PartyPlanner64/static/js/runtime~main.a49f914f.js",
-    "static/css/2.f34c7ea4.chunk.css": "/PartyPlanner64/static/css/2.f34c7ea4.chunk.css",
-    "static/js/2.b93e58c0.chunk.js": "/PartyPlanner64/static/js/2.b93e58c0.chunk.js",
-    "index.html": "/PartyPlanner64/index.html",
-    "precache-manifest.08111693baa4d178f2a58a1ba8a1b28d.js": "/PartyPlanner64/precache-manifest.08111693baa4d178f2a58a1ba8a1b28d.js",
-    "service-worker.js": "/PartyPlanner64/service-worker.js",
-    "static/media/index.scss": "/PartyPlanner64/static/media/eraser.30df9799.cur",
-    "static/media/gameguyduel.png": "/PartyPlanner64/static/media/gameguyduel.cc054f8f.png",
-    "static/media/happeningduel3.png": "/PartyPlanner64/static/media/happeningduel3.ef6ecdf8.png",
-    "static/media/logo.png": "/PartyPlanner64/static/media/logo.b49afd48.png",
-    "static/media/logoloading.png": "/PartyPlanner64/static/media/logoloading.523c5544.png",
-    "static/media/mpllogo.png": "/PartyPlanner64/static/media/mpllogo.8fbfc590.png",
-    "static/media/font.css": "/PartyPlanner64/static/media/source-sans-pro-v9-latin-regular.fdc03546.woff"
+    "main.css": "./static/css/main.1d1bd607.chunk.css",
+    "main.js": "./static/js/main.2558ab36.chunk.js",
+    "runtime~main.js": "./static/js/runtime~main.52240fb9.js",
+    "static/css/2.f34c7ea4.chunk.css": "./static/css/2.f34c7ea4.chunk.css",
+    "static/js/2.73a96b70.chunk.js": "./static/js/2.73a96b70.chunk.js",
+    "index.html": "./index.html",
+    "precache-manifest.470932109c426c3038a37cd6dcf9e4a7.js": "./precache-manifest.470932109c426c3038a37cd6dcf9e4a7.js",
+    "service-worker.js": "./service-worker.js",
+    "static/media/index.scss": "./static/media/eraser.30df9799.cur",
+    "static/media/gameguyduel.png": "./static/media/gameguyduel.cc054f8f.png",
+    "static/media/happeningduel3.png": "./static/media/happeningduel3.ef6ecdf8.png",
+    "static/media/logo.png": "./static/media/logo.b49afd48.png",
+    "static/media/logoloading.png": "./static/media/logoloading.523c5544.png",
+    "static/media/mpllogo.png": "./static/media/mpllogo.8fbfc590.png",
+    "static/media/font.css": "./static/media/source-sans-pro-v9-latin-regular.fdc03546.woff"
   }
 }
