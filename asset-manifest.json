@@ -1,12 +1,12 @@
 {
   "files": {
-    "main.css": "./static/css/main.b4463aaf.chunk.css",
-    "main.js": "./static/js/main.d4017d3e.chunk.js",
-    "runtime~main.js": "./static/js/runtime~main.52240fb9.js",
-    "static/css/2.971b825f.chunk.css": "./static/css/2.971b825f.chunk.css",
-    "static/js/2.0518b06b.chunk.js": "./static/js/2.0518b06b.chunk.js",
+    "main.css": "./static/css/main.3f1563b0.chunk.css",
+    "main.js": "./static/js/main.ff0007b3.chunk.js",
+    "runtime-main.js": "./static/js/runtime-main.92a706bc.js",
+    "static/css/2.fe3e69a8.chunk.css": "./static/css/2.fe3e69a8.chunk.css",
+    "static/js/2.c249e548.chunk.js": "./static/js/2.c249e548.chunk.js",
     "index.html": "./index.html",
-    "precache-manifest.2e314565742c938a992e366299ede81b.js": "./precache-manifest.2e314565742c938a992e366299ede81b.js",
+    "precache-manifest.f770b5e2c74af9a49902cca756b3c79b.js": "./precache-manifest.f770b5e2c74af9a49902cca756b3c79b.js",
     "service-worker.js": "./service-worker.js",
     "static/media/index.scss": "./static/media/eraser.30df9799.cur",
     "static/media/gameguyduel.png": "./static/media/gameguyduel.cc054f8f.png",
@@ -15,5 +15,12 @@
     "static/media/logoloading.png": "./static/media/logoloading.523c5544.png",
     "static/media/mpllogo.png": "./static/media/mpllogo.8fbfc590.png",
     "static/media/font.css": "./static/media/source-sans-pro-v9-latin-regular.fdc03546.woff"
-  }
+  },
+  "entrypoints": [
+    "static/js/runtime-main.92a706bc.js",
+    "static/css/2.fe3e69a8.chunk.css",
+    "static/js/2.c249e548.chunk.js",
+    "static/css/main.3f1563b0.chunk.css",
+    "static/js/main.ff0007b3.chunk.js"
+  ]
 }
