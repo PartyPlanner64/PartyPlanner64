@@ -1,12 +1,12 @@
 {
   "files": {
     "main.css": "./static/css/main.3f1563b0.chunk.css",
-    "main.js": "./static/js/main.c995cc70.chunk.js",
+    "main.js": "./static/js/main.2351f789.chunk.js",
     "runtime-main.js": "./static/js/runtime-main.92a706bc.js",
     "static/css/2.fe3e69a8.chunk.css": "./static/css/2.fe3e69a8.chunk.css",
     "static/js/2.c249e548.chunk.js": "./static/js/2.c249e548.chunk.js",
     "index.html": "./index.html",
-    "precache-manifest.2aeedfe2064e052c5b78892a9289be92.js": "./precache-manifest.2aeedfe2064e052c5b78892a9289be92.js",
+    "precache-manifest.c9516c9039334356ead478fe33e6ee66.js": "./precache-manifest.c9516c9039334356ead478fe33e6ee66.js",
     "service-worker.js": "./service-worker.js",
     "static/media/index.scss": "./static/media/eraser.30df9799.cur",
     "static/media/gameguyduel.png": "./static/media/gameguyduel.cc054f8f.png",
@@ -21,6 +21,6 @@
     "static/css/2.fe3e69a8.chunk.css",
     "static/js/2.c249e548.chunk.js",
     "static/css/main.3f1563b0.chunk.css",
-    "static/js/main.c995cc70.chunk.js"
+    "static/js/main.2351f789.chunk.js"
   ]
 }
