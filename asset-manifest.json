@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "./static/css/main.26b3fa14.chunk.css",
-    "main.js": "./static/js/main.9c5f3b24.chunk.js",
+    "main.js": "./static/js/main.275d77a6.chunk.js",
     "runtime-main.js": "./static/js/runtime-main.80da752c.js",
     "static/css/2.06301143.chunk.css": "./static/css/2.06301143.chunk.css",
-    "static/js/2.3a6533f7.chunk.js": "./static/js/2.3a6533f7.chunk.js",
+    "static/js/2.36782349.chunk.js": "./static/js/2.36782349.chunk.js",
     "index.html": "./index.html",
-    "precache-manifest.4fa51fb57768060a380d14ab10e7d1bf.js": "./precache-manifest.4fa51fb57768060a380d14ab10e7d1bf.js",
+    "precache-manifest.539adb9b94792e3d755e6f0c1aa3756a.js": "./precache-manifest.539adb9b94792e3d755e6f0c1aa3756a.js",
     "service-worker.js": "./service-worker.js",
-    "static/js/2.3a6533f7.chunk.js.LICENSE": "./static/js/2.3a6533f7.chunk.js.LICENSE",
+    "static/js/2.36782349.chunk.js.LICENSE": "./static/js/2.36782349.chunk.js.LICENSE",
     "static/media/index.scss": "./static/media/eraser.30df9799.cur",
     "static/media/gameguyduel.png": "./static/media/gameguyduel.cc054f8f.png",
     "static/media/happeningduel3.png": "./static/media/happeningduel3.ef6ecdf8.png",
@@ -20,8 +20,8 @@
   "entrypoints": [
     "static/js/runtime-main.80da752c.js",
     "static/css/2.06301143.chunk.css",
-    "static/js/2.3a6533f7.chunk.js",
+    "static/js/2.36782349.chunk.js",
     "static/css/main.26b3fa14.chunk.css",
-    "static/js/main.9c5f3b24.chunk.js"
+    "static/js/main.275d77a6.chunk.js"
   ]
 }
