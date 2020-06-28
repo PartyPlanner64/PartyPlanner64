@@ -20,17 +20,19 @@ object-assign
  * Licensed under MIT License
  */
 
+/*! exports provided: Animation */
+
 /*! exports provided: AssemblerPhase */
 
 /*! exports provided: Buffer, BufferView */
 
-/*! exports provided: BufferOutputType, ImageOutputType, ComponentType, DataType, MeshMode, WrappingMode, AlphaMode, RGBColor, RGBAColor, VertexColorMode */
+/*! exports provided: BufferOutputType, ImageOutputType, ComponentType, DataType, MeshMode, WrappingMode, AlphaMode, RGBColor, RGBAColor, VertexColorMode, InterpolationMode, Transformation */
 
 /*! exports provided: EXPR_CHARS, parseExpressionsOnCurrentLine, evaluateExpressionsOnCurrentLine */
 
 /*! exports provided: GLTFAsset */
 
-/*! exports provided: GLTFAsset, Scene, Node, Mesh, Material, Texture, Vertex, XYZPair, Quaternion, glTFAssetFromTHREE, AlphaMode, ComponentType, DataType, MeshMode, RGBColor, RGBAColor, VertexColorMode, WrappingMode, ImageOutputType, BufferOutputType, exportGLTF, exportGLTFZip, exportGLB */
+/*! exports provided: GLTFAsset, Scene, Node, Mesh, Material, Texture, Vertex, Skin, Animation, Vector3, Quaternion, Matrix, Matrix3x3, Matrix4x4, glTFAssetFromTHREE, AlphaMode, ComponentType, DataType, MeshMode, RGBColor, RGBAColor, VertexColorMode, WrappingMode, InterpolationMode, Transformation, ImageOutputType, BufferOutputType, Buffer, BufferView, exportGLTF, exportGLTFZip, exportGLB */
 
 /*! exports provided: IfElseStateFlags, IfElseBlockStateMask, setIfElseBlockState */
 
@@ -44,15 +46,15 @@ object-assign
 
 /*! exports provided: Scene */
 
+/*! exports provided: Skin */
+
 /*! exports provided: Texture */
+
+/*! exports provided: Vector3, Quaternion, toQuaternion, degreesToRadians, Matrix, Matrix3x3, Matrix4x4 */
 
 /*! exports provided: Vertex */
 
-/*! exports provided: XYZPair, Quaternion, toQuaternion, degreesToRadians */
-
 /*! exports provided: abs */
-
-/*! exports provided: addScenes */
 
 /*! exports provided: addSymbol, addGlobalSymbol, addLocalSymbol, addStaticLabel, pushStaticLabelStateLevel, popStaticLabelStateLevel, getSymbolValue, getSymbolByValue */
 
@@ -63,6 +65,8 @@ object-assign
 /*! exports provided: basicDirectiveMatcher, makeBasicDirectiveRegExp, makeNumericExprListRegExp */
 
 /*! exports provided: basicMacroMatcher, makeMacroRegExp */
+
+/*! exports provided: createEmptyGLTF, addScenes, addSkin, addAnimations, addBuffer, addAccessor */
 
 /*! exports provided: createGLBBuffer */
 
@@ -132,6 +136,10 @@ object-assign
 
 /*!*********************!*\
         !*** ./src/regs.js ***!
+        \*********************/
+
+/*!*********************!*\
+        !*** ./src/skin.ts ***!
         \*********************/
 
 /*!**********************!*\
@@ -209,6 +217,10 @@ object-assign
 /*!*************************!*\
         !*** ./src/material.ts ***!
         \*************************/
+
+/*!**************************!*\
+        !*** ./src/animation.ts ***!
+        \**************************/
 
 /*!**************************!*\
         !*** ./src/assembler.ts ***!
