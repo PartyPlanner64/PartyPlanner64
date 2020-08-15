@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "1f0cc42be98a98dcdfe05ec3d15945dc",
+    "revision": "79ce2426b69dad73b69f58740f004f56",
     "url": "./index.html"
   },
   {
@@ -8,8 +8,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "./static/css/2.09dbbab5.chunk.css"
   },
   {
-    "revision": "525bafacaadeb7bb6e85",
-    "url": "./static/css/main.c7078824.chunk.css"
+    "revision": "dd7531c8ecdfd1d79fda",
+    "url": "./static/css/main.e0a6cf18.chunk.css"
   },
   {
     "revision": "1144bef24497456eeed7",
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "./static/js/2.334ea54a.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "525bafacaadeb7bb6e85",
-    "url": "./static/js/main.52ffc43c.chunk.js"
+    "revision": "dd7531c8ecdfd1d79fda",
+    "url": "./static/js/main.dae8019c.chunk.js"
   },
   {
     "revision": "81520df43759c6657272",
@@ -58,6 +58,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "8fbfc590c1bd069e5f041c2aea8265ee",
     "url": "./static/media/mpllogo.8fbfc590.png"
+  },
+  {
+    "revision": "6c1cfd296803da0cdc3405c0ec89ca68",
+    "url": "./static/media/shirt.6c1cfd29.png"
   },
   {
     "revision": "58dd2a1c6d7861ea261912ba153ac8e3",

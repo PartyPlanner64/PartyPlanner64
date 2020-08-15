@@ -1,12 +1,12 @@
 {
   "files": {
-    "main.css": "./static/css/main.c7078824.chunk.css",
-    "main.js": "./static/js/main.52ffc43c.chunk.js",
+    "main.css": "./static/css/main.e0a6cf18.chunk.css",
+    "main.js": "./static/js/main.dae8019c.chunk.js",
     "runtime-main.js": "./static/js/runtime-main.8d0671ff.js",
     "static/css/2.09dbbab5.chunk.css": "./static/css/2.09dbbab5.chunk.css",
     "static/js/2.334ea54a.chunk.js": "./static/js/2.334ea54a.chunk.js",
     "index.html": "./index.html",
-    "precache-manifest.5c8d23d65d3ef6dced6902b5076471d7.js": "./precache-manifest.5c8d23d65d3ef6dced6902b5076471d7.js",
+    "precache-manifest.4f7a6a9bf9ae76572ddb1cc6e2bb8bfb.js": "./precache-manifest.4f7a6a9bf9ae76572ddb1cc6e2bb8bfb.js",
     "service-worker.js": "./service-worker.js",
     "static/js/2.334ea54a.chunk.js.LICENSE.txt": "./static/js/2.334ea54a.chunk.js.LICENSE.txt",
     "static/media/index.scss": "./static/media/eraser.30df9799.cur",
@@ -15,6 +15,7 @@
     "static/media/logo.png": "./static/media/logo.b49afd48.png",
     "static/media/logoloading.png": "./static/media/logoloading.523c5544.png",
     "static/media/mpllogo.png": "./static/media/mpllogo.8fbfc590.png",
+    "static/media/shirt.png": "./static/media/shirt.6c1cfd29.png",
     "static/media/font.css": "./static/media/source-sans-pro-v9-latin-regular.fdc03546.woff",
     "static/media/telescope.png": "./static/media/telescope.35c32eaa.png"
   },
@@ -22,7 +23,7 @@
     "static/js/runtime-main.8d0671ff.js",
     "static/css/2.09dbbab5.chunk.css",
     "static/js/2.334ea54a.chunk.js",
-    "static/css/main.c7078824.chunk.css",
-    "static/js/main.52ffc43c.chunk.js"
+    "static/css/main.e0a6cf18.chunk.css",
+    "static/js/main.dae8019c.chunk.js"
   ]
 }
