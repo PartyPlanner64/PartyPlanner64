@@ -60,7 +60,7 @@
   "devDependencies": {
     "dotenv": "^8.2.0",
     "electron-builder": "^22.8.0",
-    "electron": "10.1.1"
+    "electron": "10.1.2"
   },
   "eslintConfig": {
     "extends": "react-app"
