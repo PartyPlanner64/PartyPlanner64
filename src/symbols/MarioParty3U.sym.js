@@ -2454,6 +2454,11 @@ export default [{
       name: "GetPlayerPlacement",
       desc: "A0=player_index" },
 {
+      addr: 2148461144, // 0x800EEA58
+      type: "code",
+      name: "GetPlayerPlacementAtEndOfGame",
+      desc: "A0=player_index" },
+{
       addr: 2148475184, // 0x800F2130
       type: "code",
       name: "GetCurrentPlayerIndex" },
