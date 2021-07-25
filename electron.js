@@ -13,6 +13,7 @@ function createWindow() {
     height: 864,
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
     }
   });
   win.setMenu(null);
