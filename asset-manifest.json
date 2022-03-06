@@ -1,30 +1,21 @@
 {
   "files": {
-    "main.css": "./static/css/main.df061ee3.chunk.css",
-    "main.js": "./static/js/main.305faab4.chunk.js",
-    "runtime-main.js": "./static/js/runtime-main.75b63562.js",
-    "static/css/2.67c0b718.chunk.css": "./static/css/2.67c0b718.chunk.css",
-    "static/js/2.509d7eb2.chunk.js": "./static/js/2.509d7eb2.chunk.js",
-    "index.html": "./index.html",
-    "static/js/2.509d7eb2.chunk.js.LICENSE.txt": "./static/js/2.509d7eb2.chunk.js.LICENSE.txt",
-    "static/js/main.305faab4.chunk.js.LICENSE.txt": "./static/js/main.305faab4.chunk.js.LICENSE.txt",
-    "static/media/index.scss": "./static/media/eraser.0a91d55b.cur",
-    "static/media/gameguyduel.1eaeb3fb.png": "./static/media/gameguyduel.1eaeb3fb.png",
-    "static/media/gameguyduel.35e0293b.png": "./static/media/gameguyduel.35e0293b.png",
-    "static/media/happeningduel3.0e665ae6.png": "./static/media/happeningduel3.0e665ae6.png",
-    "static/media/happeningduel3.b9195225.png": "./static/media/happeningduel3.b9195225.png",
-    "static/media/logo.02458669.png": "./static/media/logo.02458669.png",
-    "static/media/logoloading.3c9fff86.png": "./static/media/logoloading.3c9fff86.png",
-    "static/media/mpllogo.542a6e97.png": "./static/media/mpllogo.542a6e97.png",
-    "static/media/shirt.8b6c300e.png": "./static/media/shirt.8b6c300e.png",
-    "static/media/font.css": "./static/media/source-sans-pro-v9-latin-regular.f8eb0fd7.woff",
-    "static/media/telescope.d1be63bf.png": "./static/media/telescope.d1be63bf.png"
+    "main.css": "./static/css/main.bd96463a.css",
+    "main.js": "./static/js/main.d0b3aa76.js",
+    "static/media/shirt.png": "./static/media/shirt.8b6c300e1ad387105998.png",
+    "static/media/mpllogo.png": "./static/media/mpllogo.542a6e972be2112a50c6.png",
+    "static/media/source-sans-pro-v9-latin-regular.woff": "./static/media/source-sans-pro-v9-latin-regular.f8eb0fd7380512a226cd.woff",
+    "static/media/gameguyduel.png": "./static/media/gameguyduel.35e0293bbf816ce77135.png",
+    "static/media/logoloading.png": "./static/media/logoloading.3c9fff86d6b27f56be0d.png",
+    "static/media/source-sans-pro-v9-latin-regular.woff2": "./static/media/source-sans-pro-v9-latin-regular.c60b44947671d757833d.woff2",
+    "static/media/logo.png": "./static/media/logo.0245866975b50c094cc4.png",
+    "static/media/happeningduel3.png": "./static/media/happeningduel3.b9195225e2a1bb8dd4ad.png",
+    "static/media/telescope.png": "./static/media/telescope.d1be63bffb88e1b06a78.png",
+    "static/media/eraser.cur": "./static/media/eraser.0a91d55b8b85bca4a1c9.cur",
+    "index.html": "./index.html"
   },
   "entrypoints": [
-    "static/js/runtime-main.75b63562.js",
-    "static/css/2.67c0b718.chunk.css",
-    "static/js/2.509d7eb2.chunk.js",
-    "static/css/main.df061ee3.chunk.css",
-    "static/js/main.305faab4.chunk.js"
+    "static/css/main.bd96463a.css",
+    "static/js/main.d0b3aa76.js"
   ]
 }
