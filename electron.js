@@ -14,7 +14,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-    }
+    },
   });
   win.setMenu(null);
   win.removeMenu();
@@ -33,14 +33,13 @@ app.on("ready", () => {
   createWindow();
 });
 
-app.on('browser-window-created', (e, win) => {
+app.on("browser-window-created", (e, win) => {
   win.setMenu(null);
   win.removeMenu();
 });
 
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin")
-    app.quit();
+  if (process.platform !== "darwin") app.quit();
 });
 
 app.on("activate", () => {
@@ -58,22 +57,20 @@ ipcMain.on("update-check-doupdate", (event, arg) => {
   autoUpdater.downloadUpdate();
 });
 
-autoUpdater.on('checking-for-update', () => {
+autoUpdater.on("checking-for-update", () => {
   if (!win) return;
   win.webContents.send("update-check-checking");
 });
-autoUpdater.on('update-available', (info) => {
+autoUpdater.on("update-available", (info) => {
   if (!win) return;
   win.webContents.send("update-check-hasupdate");
 });
-autoUpdater.on('update-not-available', (info) => {
+autoUpdater.on("update-not-available", (info) => {
   if (!win) return;
   win.webContents.send("update-check-noupdate");
 });
-autoUpdater.on('error', (err) => {
-});
-autoUpdater.on('download-progress', (progressObj) => {
-});
-autoUpdater.on('update-downloaded', (info) => {
+autoUpdater.on("error", (err) => {});
+autoUpdater.on("download-progress", (progressObj) => {});
+autoUpdater.on("update-downloaded", (info) => {
   autoUpdater.quitAndInstall();
 });
