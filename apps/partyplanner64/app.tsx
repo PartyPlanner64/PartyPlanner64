@@ -391,7 +391,7 @@ function usePP64Hotkeys(): void {
     },
     {
       enabled: allowUndoRedo,
-      enableOnTags: ["INPUT", "SELECT"],
+      enableOnFormTags: ["INPUT", "SELECT"],
     },
   );
 
@@ -402,7 +402,7 @@ function usePP64Hotkeys(): void {
     },
     {
       enabled: allowUndoRedo,
-      enableOnTags: ["INPUT", "SELECT"],
+      enableOnFormTags: ["INPUT", "SELECT"],
     },
   );
 }
