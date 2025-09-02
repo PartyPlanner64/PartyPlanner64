@@ -64,11 +64,11 @@ let _strFsInstances: { [locale: string]: StringTableSet } | null;
 class StringTableSet {
   private dirs: StringTable[];
 
-  constructor(dataView: DataView) {
+  constructor(dataView: DataView<ArrayBuffer>) {
     this.dirs = this._extract(dataView);
   }
 
-  _extract(view: DataView) {
+  _extract(view: DataView<ArrayBuffer>) {
     const dirCount = this._getDirectoryCountFromView(view);
     const dirs = new Array(dirCount);
     for (let d = 0; d < dirCount; d++) {
@@ -77,18 +77,18 @@ class StringTableSet {
     return dirs;
   }
 
-  _getDirectoryCountFromView(view: DataView) {
+  _getDirectoryCountFromView(view: DataView<ArrayBuffer>) {
     return view.getUint32(0);
   }
 
-  _readDirFromView(view: DataView, dir: number) {
+  _readDirFromView(view: DataView<ArrayBuffer>, dir: number) {
     const entryOffset = this._getDirOffsetFromView(view, dir);
     const entryView = new DataView(view.buffer, view.byteOffset + entryOffset);
     const decompressedDir = this._decompressDir(entryView);
     return new strings.StringTable(new DataView(decompressedDir));
   }
 
-  _decompressDir(view: DataView) {
+  _decompressDir(view: DataView<ArrayBuffer>) {
     const decompressedSize = view.getUint32(0);
     const compressionType = view.getUint32(4);
     const dirStartView = new DataView(view.buffer, view.byteOffset + 8);

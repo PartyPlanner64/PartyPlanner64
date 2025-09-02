@@ -50,11 +50,11 @@ export class MBF0 {
 
   public _headerContents!: ArrayBuffer;
 
-  constructor(dataView: DataView) {
+  constructor(dataView: DataView<ArrayBuffer>) {
     this._extract(dataView);
   }
 
-  private _extract(view: DataView) {
+  private _extract(view: DataView<ArrayBuffer>) {
     if (view.getUint32(0) !== MBF0_MAGIC)
       // "MBF0"
       throw new Error("MBF0 constructor encountered non-MBF0 structure");

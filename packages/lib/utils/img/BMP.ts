@@ -84,12 +84,22 @@ export function BMPtoRGBA(
 }
 
 export function BMPfromRGBA(
-  buffer: ArrayBuffer | DataView,
+  buffer: ArrayBuffer | DataView<ArrayBuffer> | ImageDataArray,
   inBpp: number,
   outBpp: number,
 ): [ArrayBuffer, IPaletteInfo] {
-  let pixelView = buffer;
-  if (!(pixelView instanceof DataView)) pixelView = new DataView(pixelView);
+  let pixelView: DataView<ArrayBuffer>;
+  if (buffer instanceof DataView) {
+    pixelView = buffer;
+  } else if (buffer instanceof Uint8ClampedArray) {
+    pixelView = new DataView<ArrayBuffer>(
+      buffer.buffer,
+      buffer.byteOffset,
+      buffer.byteLength,
+    );
+  } else {
+    pixelView = new DataView<ArrayBuffer>(buffer);
+  }
 
   const palette: IPaletteInfo = {
     colors: [],

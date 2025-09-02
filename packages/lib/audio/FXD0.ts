@@ -4,7 +4,7 @@ export class FXD0 {
 
   public hunks!: ArrayBuffer[];
 
-  constructor(dataView: DataView) {
+  constructor(dataView: DataView<ArrayBuffer>) {
     if (dataView.getUint32(0) !== 0x46584430)
       // "FXD0"
       throw new Error("FXD0 constructor encountered non-FXD0 structure");
@@ -12,7 +12,7 @@ export class FXD0 {
     this._extract(dataView);
   }
 
-  _extract(view: DataView) {
+  _extract(view: DataView<ArrayBuffer>) {
     this.hunks = [];
     const hunkCount = view.getUint32(4);
 

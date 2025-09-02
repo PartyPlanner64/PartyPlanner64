@@ -18,7 +18,7 @@ import { createContext, createImage } from "../utils/canvas";
 import { $$log } from "../utils/debug";
 import { toArrayBuffer, cutFromWhole } from "../utils/image";
 import { mainfs } from "../fs/mainfs";
-import { toPack } from "../utils/img/ImgPack";
+import { imgInfoSrcToArrayBuffer, toPack } from "../utils/img/ImgPack";
 import { IBoardInfo } from "./boardinfobase";
 import { BankEvent } from "../events/builtin/events.common";
 import { getImageData } from "../utils/img/getImageData";
@@ -635,7 +635,7 @@ export class MP2Adapter extends AdapterBase {
     const bgInfo = this._readImgInfoFromMainFS(9, 15, 0);
     const [x, y] = boardInfo.img.boardSelectIconCoords;
     const icon = cutFromWhole(
-      bgInfo.src!,
+      imgInfoSrcToArrayBuffer(bgInfo.src!),
       bgInfo.width,
       bgInfo.height,
       32,
@@ -692,7 +692,7 @@ export class MP2Adapter extends AdapterBase {
           // Draw the original onto a canvas
           const canvasCtx = createContext(bgInfo.width, bgInfo.height);
           const origImageData = arrayBufferToImageData(
-            bgInfo.src!,
+            imgInfoSrcToArrayBuffer(bgInfo.src!),
             bgInfo.width,
             bgInfo.height,
           );

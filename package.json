@@ -74,7 +74,7 @@
     "gh-pages": "^4.0.0",
     "prettier": "3.2.5",
     "sass": "^1.54.4",
-    "typescript": "~5.4.5",
+    "typescript": "~5.9.2",
     "vite": "^5.2.8"
   },
   "browserslist": {

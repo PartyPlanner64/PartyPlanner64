@@ -58,7 +58,7 @@ export class SBF0 {
   public tbl!: ArrayBuffer;
   public sounds: ALSoundSimple[] = [];
 
-  constructor(dataView: DataView) {
+  constructor(dataView: DataView<ArrayBuffer>) {
     if (dataView.getUint32(0) !== 0x53424630)
       // "SBF0"
       throw new Error("SBF0 constructor encountered non-SBF0 structure");
@@ -66,7 +66,7 @@ export class SBF0 {
     this._extract(dataView);
   }
 
-  _extract(view: DataView) {
+  _extract(view: DataView<ArrayBuffer>) {
     const soundCount = view.getUint32(0x44);
     const tableEntriesOffset = 0x74;
 

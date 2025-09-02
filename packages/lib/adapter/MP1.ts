@@ -72,7 +72,7 @@ export class MP1Adapter extends AdapterBase {
   }
 
   onAfterOverwrite(
-    romView: DataView,
+    romView: DataView<ArrayBuffer>,
     board: IBoard,
     boardInfo: IBoardInfo,
     boardIndex: number,

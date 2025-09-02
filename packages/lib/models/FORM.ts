@@ -72,7 +72,9 @@ interface IPAL1Parsed {
 
 // Extracts a FORM file into a usable format.
 export const FORM = class FORM {
-  static unpack(formView: ArrayBuffer | DataView): IFormObj | null {
+  static unpack(
+    formView: ArrayBuffer | DataView<ArrayBuffer>,
+  ): IFormObj | null {
     if (!(formView instanceof DataView)) formView = new DataView(formView);
 
     if (!FORM.isForm(formView)) return null;

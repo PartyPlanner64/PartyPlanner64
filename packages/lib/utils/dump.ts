@@ -2,7 +2,11 @@ import { $$log, $$hex } from "./debug";
 import { arrayBufferToDataURL, toHexString } from "./arrays";
 import { print } from "mips-inst";
 import { pad } from "./string";
-import { fromPack } from "./img/ImgPack";
+import {
+  fromPack,
+  imgInfoSrcToArrayBuffer,
+  imgInfoSrcToDataView,
+} from "./img/ImgPack";
 import { fromTiles } from "./img/tiler";
 import { mainfs } from "../fs/mainfs";
 import { strings3 } from "../fs/strings3";
@@ -162,7 +166,7 @@ export function images() {
         const imgs = _readImgsFromMainFS(d, f)!;
         imgs.forEach((imgInfo, idx) => {
           const dataUri = arrayBufferToDataURL(
-            imgInfo.src!,
+            imgInfoSrcToArrayBuffer(imgInfo.src!),
             imgInfo.width,
             imgInfo.height,
           );
@@ -205,7 +209,7 @@ export function images() {
     if (!imgArr || !imgArr.length) return;
 
     const dataViews = imgArr.map((imgInfo) => {
-      return new DataView(imgInfo.src!);
+      return imgInfoSrcToDataView(imgInfo.src!);
     });
 
     return dataViews;

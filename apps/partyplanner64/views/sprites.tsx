@@ -2,7 +2,11 @@ import * as React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { mainfs } from "../../../packages/lib/fs/mainfs";
 import { arrayBufferToDataURL } from "../../../packages/lib/utils/arrays";
-import { fromPack, IImgInfo } from "../../../packages/lib/utils/img/ImgPack";
+import {
+  fromPack,
+  IImgInfo,
+  imgInfoSrcToArrayBuffer,
+} from "../../../packages/lib/utils/img/ImgPack";
 
 import "../css/sprites.scss";
 
@@ -105,7 +109,7 @@ function SpriteDisplay(props: ISpriteDisplayProps) {
 
   const imgs = imgInfos.map((imgInfo, i) => {
     const dataUri = arrayBufferToDataURL(
-      imgInfo.src!,
+      imgInfoSrcToArrayBuffer(imgInfo.src!),
       imgInfo.width,
       imgInfo.height,
     );

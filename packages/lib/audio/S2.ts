@@ -24,11 +24,11 @@ export class S2 {
   public soundbanks!: B1;
   private _rawB1!: ArrayBuffer;
 
-  constructor(dataView: DataView) {
+  constructor(dataView: DataView<ArrayBuffer>) {
     this._extract(dataView);
   }
 
-  _extract(view: DataView) {
+  _extract(view: DataView<ArrayBuffer>) {
     if (view.getUint16(0) !== S2_MAGIC)
       // "S2"
       throw new Error("S2 constructor encountered non-S2 structure");

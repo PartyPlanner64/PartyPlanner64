@@ -23,7 +23,7 @@ export function RGBA5551toRGBA32(
 }
 
 export function RGBA5551fromRGBA32(
-  buffer: ArrayBuffer,
+  buffer: ArrayBuffer | ImageDataArray,
   width: number,
   height: number,
 ) {

@@ -47,7 +47,7 @@ export class T3 {
   public tbl!: ArrayBuffer;
   public sounds: ALSoundSimple[] = [];
 
-  constructor(dataView: DataView) {
+  constructor(dataView: DataView<ArrayBuffer>) {
     if (dataView.getUint16(0) !== 0x5433)
       // "T3"
       throw new Error("T3 constructor encountered non-T3 structure");
@@ -55,7 +55,7 @@ export class T3 {
     this._extract(dataView);
   }
 
-  _extract(view: DataView) {
+  _extract(view: DataView<ArrayBuffer>) {
     const soundFxCount = view.getUint16(2);
 
     // Get metadata about each sound effect. Right now, we just need the sample rate really.

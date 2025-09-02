@@ -49,7 +49,12 @@ import { assemble } from "mips-assembler";
 import { createContext, createImage } from "../utils/canvas";
 import { toArrayBuffer } from "../utils/image";
 import { RGBA5551fromRGBA32 } from "../utils/img/RGBA5551";
-import { toPack, fromPack } from "../utils/img/ImgPack";
+import {
+  toPack,
+  fromPack,
+  imgInfoSrcToDataView,
+  imgInfoSrcToArrayBuffer,
+} from "../utils/img/ImgPack";
 import { arrayBufferToDataURL, dataUrlToArrayBuffer } from "../utils/arrays";
 import {
   makeGameSymbolLabels,
@@ -571,7 +576,7 @@ export abstract class AdapterBase {
     // PP64 sometimes stores board ASM in the main filesystem. We need to
     // be able to parse both that or the stock boards.
     let buffer: ArrayBuffer | undefined;
-    let bufferView: DataView | undefined;
+    let bufferView: DataView<ArrayBuffer> | undefined;
     const eventTable = new SpaceEventTable();
     if (boardInfo.mainfsEventFile) {
       const [mainFsDir, mainFsFile] = boardInfo.mainfsEventFile;
@@ -1631,7 +1636,7 @@ ${eventAsmCombinedString}
     if (!imgArr || !imgArr.length) return;
 
     const dataViews = imgArr.map((imgInfo) => {
-      return new DataView(imgInfo.src!);
+      return imgInfoSrcToDataView(imgInfo.src!);
     });
 
     return dataViews;
@@ -1652,7 +1657,8 @@ ${eventAsmCombinedString}
 
   _readImgFromMainFS(dir: number, file: number, imgArrIndex: number) {
     const imgInfo = this._readImgInfoFromMainFS(dir, file, imgArrIndex);
-    return arrayBufferToDataURL(imgInfo.src!, imgInfo.width, imgInfo.height);
+    const arrayBuffer = imgInfoSrcToArrayBuffer(imgInfo.src!);
+    return arrayBufferToDataURL(arrayBuffer, imgInfo.width, imgInfo.height);
   }
 
   _parseAudio(board: IBoard, boardInfo: IBoardInfo) {

@@ -41,7 +41,7 @@ export const scenes = new (class Scenes {
     return this._sceneInfo![index] || null;
   }
 
-  getDataView(index: number) {
+  getDataView(index: number): DataView<ArrayBuffer> {
     return new DataView(this._overlays![index]);
   }
 

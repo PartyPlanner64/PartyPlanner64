@@ -320,7 +320,7 @@ function compress05(src: DataView) {
 // The compressed size is attached as a property to the buffer object.
 export function decompress(
   type: number,
-  srcDataView: DataView,
+  srcDataView: DataView<ArrayBuffer>,
   decompressedSize: number,
 ): ArrayBuffer {
   const dstBuffer = new ArrayBuffer(decompressedSize);
@@ -353,7 +353,10 @@ export function decompress(
   return dstBuffer;
 }
 
-export function compress(type: number, srcDataView: DataView): ArrayBuffer {
+export function compress(
+  type: number,
+  srcDataView: DataView<ArrayBuffer>,
+): ArrayBuffer {
   switch (type) {
     case 1:
       return compress01(srcDataView);
@@ -376,7 +379,7 @@ export function compress(type: number, srcDataView: DataView): ArrayBuffer {
 
 export function getCompressedSize(
   type: number,
-  srcDataView: DataView,
+  srcDataView: DataView<ArrayBuffer>,
   decompressedSize: number,
 ) {
   const dstBuffer = new ArrayBuffer(decompressedSize);

@@ -233,7 +233,7 @@ export const animationfs = {
     });
   },
 
-  _extractSets(view: DataView, offset: number) {
+  _extractSets(view: DataView<ArrayBuffer>, offset: number) {
     const sets = [];
     const count = view.getUint32(offset) - 1; // Extra offset
     for (let i = 0; i < count; i++) {
@@ -243,7 +243,7 @@ export const animationfs = {
     return sets;
   },
 
-  _extractSetEntries(view: DataView, offset: number) {
+  _extractSetEntries(view: DataView<ArrayBuffer>, offset: number) {
     const setEntries = [];
     const count = view.getUint32(offset);
     for (let i = 0; i < count; i++) {
@@ -253,7 +253,7 @@ export const animationfs = {
     return setEntries;
   },
 
-  _extractTiles(view: DataView, offset: number) {
+  _extractTiles(view: DataView<ArrayBuffer>, offset: number) {
     const tiles: { [index: number]: IAnimationFsReadInfo } = {};
     const count = view.getUint32(offset) - 1; // Extra offset
     for (let i = 0; i < count; i++) {
@@ -268,7 +268,7 @@ export const animationfs = {
     return tiles;
   },
 
-  _readTile(view: DataView, offset: number) {
+  _readTile(view: DataView<ArrayBuffer>, offset: number) {
     const index = view.getUint32(offset);
     const compressionType = view.getUint32(offset + 4); // 3
     const decompressedSize = view.getUint32(offset + 8); // 0x1800
