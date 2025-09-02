@@ -6,8 +6,8 @@ import {
   IVTX1Vertex,
 } from "./FORM";
 import * as THREE from "three";
-import { VertexNormalsHelper } from "three/examples/jsm/helpers/VertexNormalsHelper";
-import { Face3, Geometry } from "three/examples/jsm/deprecated/Geometry";
+import { VertexNormalsHelper } from "three/addons/helpers/VertexNormalsHelper.js";
+import { Face3, Geometry } from "./three-support/Geometry";
 import { invertColor } from "../utils/image";
 import { $$hex, $$log } from "../utils/debug";
 import { arrayBufferToDataURL } from "../utils/arrays";
@@ -100,6 +100,8 @@ export class FormToThreeJs {
       } else if (obj.objType === 0x3a) {
         const newObj = this._createObject3DFromOBJ1Entry(obj);
 
+        // TODO: Switch to BufferedGeometry instead of legacy Geometry
+        // https://github.com/mrdoob/three.js/issues/21538 is fixed
         const geometry = new Geometry();
 
         for (let f = obj.faceIndex; f < obj.faceIndex + obj.faceCount; f++) {
@@ -108,9 +110,6 @@ export class FormToThreeJs {
         }
 
         const bufferGeometry = geometry.toBufferGeometry();
-
-        // This is a hack - indexed geometry exports better with GLTFExporter currently.
-        bufferGeometry.setIndex(geometry.vertices.map((_v, i) => i));
 
         if (this.showTextures) {
           const textureMesh = new THREE.Mesh(bufferGeometry, materials);
@@ -352,24 +351,25 @@ export class FormToThreeJs {
     $$log("Texture", dataUri);
     const loader = new THREE.TextureLoader();
     loader.crossOrigin = "";
-    let texture: any;
+    let texture: THREE.Texture;
     const texturePromise = new Promise((resolve) => {
       texture = loader.load(dataUri, resolve);
       texture.flipY = false;
       texture.wrapS = this._getWrappingBehavior(atr.xBehavior);
       texture.wrapT = this._getWrappingBehavior(atr.yBehavior);
+      texture.colorSpace = THREE.SRGBColorSpace;
     });
     this.__promises.push(texturePromise);
 
     return new THREE.MeshBasicMaterial({
       alphaTest: 0.5,
-      map: texture,
+      map: texture!,
       //transparent: true,
       vertexColors: true,
     });
   }
 
-  _getWrappingBehavior(behavior: THREE.Wrapping) {
+  _getWrappingBehavior(behavior: any): THREE.Wrapping {
     switch (behavior) {
       case 0x2c:
         return THREE.MirroredRepeatWrapping;

@@ -7,11 +7,11 @@ import { Button, ToggleButton } from "../controls";
 import * as React from "react";
 import { MTNX } from "../../../packages/lib/models/MTNX";
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import {
   GLTFExporter,
   GLTFExporterOptions,
-} from "three/examples/jsm/exporters/GLTFExporter";
+} from "three/addons/exporters/GLTFExporter.js";
 import { MtnxToThreeJs } from "../../../packages/lib/models/MtnxToThreeJs";
 import { pad } from "../../../packages/lib/utils/string";
 import { saveAs } from "file-saver";
@@ -909,7 +909,7 @@ class ModelExportObjButton extends React.Component<IModelExportObjButtonProps> {
     }
 
     const exporter = new GLTFExporter();
-    const result: any = await exporter.parseAsync(modelObj, exporterOpts);
+    const result = await exporter.parseAsync(modelObj, exporterOpts);
 
     if (binary) {
       saveAs(new Blob([result as ArrayBuffer]), `model-${dir}-${file}.glb`);
