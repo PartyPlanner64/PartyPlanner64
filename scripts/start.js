@@ -8,7 +8,12 @@ const spawn = require("child_process").spawn;
 getVersion((version) => {
   process.env.VITE_PP64_VERSION = version;
 
-  const reactAppStart = spawn("npm", ["run", "vite-start"]);
+  const npmCmd = "npm";
+  const reactAppStart = spawn(
+    npmCmd,
+    ["run", "vite-start"],
+    { shell: process.platform === "win32" }
+  );
   reactAppStart.stdout.on("data", function (data) {
     console.log(data.toString());
   });

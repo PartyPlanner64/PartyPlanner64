@@ -17,6 +17,7 @@ export enum View {
   ADDITIONAL_BGS = 12,
   AUDIO_SELECTION_CODE = 13,
   SPRITES = 14,
+  BOARD_BROWSER = 15,
 }
 
 export enum Space {
@@ -137,6 +138,7 @@ export enum Action {
   ADD_DUEL_START_BLUE = 40,
   ADD_DUEL_START_RED = 41,
   TELESCOPE = 42,
+  BOARD_BROWSE = 43,
 }
 
 export enum Game {

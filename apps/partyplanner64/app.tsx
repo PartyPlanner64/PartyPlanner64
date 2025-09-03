@@ -108,6 +108,7 @@ import {
 import { setEventLibraryImplementation } from "../../packages/lib/events/EventLibrary";
 import { ReduxEventLibrary } from "./events/ReduxEventLibrary";
 import { fixPotentiallyOldBoard } from "../../packages/lib/boards";
+import BoardBrowserPage from "./views/BoardBrowserPage";
 
 /* eslint-disable jsx-a11y/anchor-is-valid */
 
@@ -277,6 +278,9 @@ function PP64AppInternal(props: PP64AppInternalProps) {
           }
         />
       );
+      break;
+    case View.BOARD_BROWSER:
+      mainView = <BoardBrowserPage />;
       break;
   }
 

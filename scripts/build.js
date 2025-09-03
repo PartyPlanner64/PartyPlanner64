@@ -10,7 +10,7 @@ process.env.GENERATE_SOURCEMAP = "false";
 getVersion((version) => {
   process.env.VITE_PP64_VERSION = version;
 
-  const reactAppBuild = spawn("npm", ["run", "vite-build"]);
+  const reactAppBuild = spawn("C:\\Program Files\\nodejs\\npm.cmd", ["run", "vite-build"]);
   reactAppBuild.stdout.on("data", function (data) {
     console.log(data.toString());
   });
