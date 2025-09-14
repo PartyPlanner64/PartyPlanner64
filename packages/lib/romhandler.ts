@@ -1,4 +1,4 @@
-import { Game } from "./types";
+import { Game, GameVersion } from "./types";
 import { scenes } from "./fs/scenes";
 import { mainfs } from "./fs/mainfs";
 import { strings } from "./fs/strings";
@@ -14,17 +14,42 @@ import { $$log } from "./utils/debug";
 import { getROMAdapter } from "./adapter/adapters";
 import { resetCheats } from "./patches/gameshark/cheats";
 
-// The ROM Handler handles the ROM... it holds the ROM buffer reference and
-// orchestrates ROM loading and saving via adapter code.
-export const romhandler = new (class RomHandler {
-  _rom: ArrayBuffer | null = null;
-  _u8array: Uint8Array | null = null;
-  _gameId: Game | null = null;
-  _gameVersion: number | null = null;
+/** Represents a loaded Mario Party ROM in memory. */
+export class ROM {
+  private _rom: ArrayBuffer;
+  private _u8array: Uint8Array;
 
-  getROMGame(): Game | null {
-    if (!this._rom) return null;
+  private _gameId: Game | null = null;
+  private _gameVersion: GameVersion | null = null;
 
+  public constructor(rom: ArrayBuffer) {
+    this._rom = rom;
+    this._u8array = new Uint8Array(this._rom);
+    this.byteSwapIfNeeded();
+  }
+
+  public getBuffer(): ArrayBuffer {
+    return this._rom;
+  }
+
+  public setBuffer(rom: ArrayBuffer): void {
+    this._rom = rom;
+    this._u8array = new Uint8Array(this._rom);
+  }
+
+  public getDataView(startingOffset = 0, endOffset = 0) {
+    if (!this._rom) throw new Error("ROM not loaded, cannot get DataView.");
+    if (endOffset) {
+      return new DataView(
+        this._rom,
+        startingOffset,
+        endOffset - startingOffset,
+      );
+    }
+    return new DataView(this._rom, startingOffset);
+  }
+
+  public getGame(): Game | null {
     if (this._gameId) return this._gameId as Game;
 
     if (this._rom.byteLength < 0x40) return null;
@@ -38,15 +63,106 @@ export const romhandler = new (class RomHandler {
     return this._gameId;
   }
 
-  getROMBuffer() {
-    return this._rom;
+  getGameVersion(): GameVersion | null {
+    if (this._gameVersion !== null) return this._gameVersion;
+
+    const gameID = this.getGame();
+    if (!gameID) return null;
+
+    switch (gameID) {
+      case Game.MP1_USA:
+      case Game.MP1_JPN:
+      case Game.MP1_PAL:
+        this._gameVersion = 1;
+        return 1;
+      case Game.MP2_USA:
+      case Game.MP2_JPN:
+        this._gameVersion = 2;
+        return 2;
+      case Game.MP3_USA:
+      case Game.MP3_JPN:
+        this._gameVersion = 3;
+        return 3;
+    }
+
+    return null;
   }
 
-  clear() {
+  romRecognized(): boolean {
+    return this.getGameVersion() !== null;
+  }
+
+  romSupported(): boolean {
+    let supported = false;
+    switch (this.getGame()) {
+      case Game.MP1_USA:
+      case Game.MP2_USA:
+      case Game.MP3_USA:
+        supported = true;
+    }
+    return supported;
+  }
+
+  private byteSwapIfNeeded(): void {
+    if (!this._rom || this._rom.byteLength < 4 || !this._u8array) return;
+    const romView = this.getDataView();
+    const magic = romView.getUint32(0);
+    if (magic === 0x80371240) return; // Normal, big endian ROM.
+
+    $$log("Byteswapping ROM...");
+    const evenLen = this._rom.byteLength - (this._rom.byteLength % 2);
+    const fourLen = this._rom.byteLength - (this._rom.byteLength % 4);
+    if (magic === 0x37804012) {
+      // BADC, .v64 format
+      for (let i = 0; i < evenLen; i += 2) {
+        [this._u8array[i], this._u8array[i + 1]] = [
+          this._u8array[i + 1],
+          this._u8array[i],
+        ];
+      }
+    } else if (magic === 0x40123780) {
+      // DCBA, little endian
+      for (let i = 0; i < fourLen; i += 4) {
+        [
+          this._u8array[i],
+          this._u8array[i + 1],
+          this._u8array[i + 2],
+          this._u8array[i + 3],
+        ] = [
+          this._u8array[i + 3],
+          this._u8array[i + 2],
+          this._u8array[i + 1],
+          this._u8array[i],
+        ];
+      }
+    } else if (magic === 0x12408037) {
+      // CDAB, wordswapped
+      for (let i = 0; i < fourLen; i += 4) {
+        const last = romView.getUint16(i + 2);
+        romView.setUint16(i + 2, romView.getUint16(i));
+        romView.setUint16(i, last);
+      }
+    }
+  }
+}
+
+/**
+ * The ROM Handler handles the ROM... it holds the ROM buffer reference and
+ * orchestrates ROM loading and saving via adapter code.
+ */
+class RomHandler {
+  _rom: ROM | null = null;
+
+  public getROMGame(): Game | null {
+    return this._rom?.getGame() ?? null;
+  }
+
+  public getROMBuffer(): ArrayBuffer | null {
+    return this._rom?.getBuffer() ?? null;
+  }
+
+  public clear(): void {
     this._rom = null;
-    this._u8array = null;
-    this._gameId = null;
-    this._gameVersion = null;
 
     scenes.clearCache();
     mainfs.clearCache();
@@ -67,18 +183,15 @@ export const romhandler = new (class RomHandler {
       return Promise.resolve(false);
     }
 
-    this._rom = buffer;
-    this._u8array = new Uint8Array(this._rom);
+    const rom = (this._rom = new ROM(buffer));
 
-    this.byteSwapIfNeeded();
-
-    if (!skipSupportedCheck && !this.romRecognized()) {
+    if (!rom.romRecognized()) {
       onError("File is not recognized as any valid ROM.");
       this.clear();
       return Promise.resolve(false);
     }
 
-    if (!this.romSupported()) {
+    if (!skipSupportedCheck && !rom.romSupported()) {
       onError("This ROM is not supported right now.");
       this.clear();
       return Promise.resolve(false);
@@ -101,17 +214,18 @@ export const romhandler = new (class RomHandler {
     return Promise.all(promises).then(() => {
       // Now that we've extracted, shrink _rom to just be the initial part of the ROM.
       const ovlStart = scenes.getInfo(0);
-      this._rom = this._rom!.slice(0, ovlStart.rom_start);
+      rom.setBuffer(rom.getBuffer().slice(0, ovlStart.rom_start));
       return true;
     });
   }
 
   saveROM(writeDecompressed: boolean): ArrayBuffer {
-    if (!this._rom) throw new Error("Cannot save ROM, buffer was not present");
+    const rom = this._rom;
+    if (!rom) throw new Error("Cannot save ROM, buffer was not present");
 
     const gameVersion = this.getGameVersion();
 
-    const initialLen = this._rom.byteLength;
+    const initialLen = rom.getBuffer().byteLength;
 
     // Grab all the sizes of the different sections.
     const sceneLen = makeDivisibleBy(scenes.getByteLength(), 16);
@@ -144,7 +258,7 @@ export const romhandler = new (class RomHandler {
         audioLen,
     );
 
-    copyRange(newROMBuffer, this._rom, 0, 0, initialLen);
+    copyRange(newROMBuffer, rom.getBuffer(), 0, 0, initialLen);
 
     applyHook(newROMBuffer); // Before main fs is packed
 
@@ -190,107 +304,31 @@ export const romhandler = new (class RomHandler {
 
     fixChecksum(newROMBuffer);
 
-    this._rom = newROMBuffer.slice(0, initialLen);
-    this._u8array = new Uint8Array(this._rom);
+    rom.setBuffer(newROMBuffer.slice(0, initialLen));
 
     return newROMBuffer;
   }
 
-  romIsLoaded() {
+  romIsLoaded(): boolean {
     return !!this._rom;
   }
 
-  getDataView(startingOffset = 0, endOffset = 0) {
+  getDataView(startingOffset = 0, endOffset = 0): DataView {
     if (!this._rom) throw new Error("ROM not loaded, cannot get DataView.");
-    if (endOffset) {
-      return new DataView(
-        this._rom,
-        startingOffset,
-        endOffset - startingOffset,
-      );
-    }
-    return new DataView(this._rom, startingOffset);
+    return this._rom.getDataView(startingOffset, endOffset);
   }
 
-  getGameVersion() {
-    if (this._gameVersion !== null) return this._gameVersion;
-
-    const gameID = this.getROMGame();
-    if (!gameID) return null;
-
-    switch (gameID) {
-      case Game.MP1_USA:
-      case Game.MP1_JPN:
-      case Game.MP1_PAL:
-        this._gameVersion = 1;
-        return 1;
-      case Game.MP2_USA:
-      case Game.MP2_JPN:
-        this._gameVersion = 2;
-        return 2;
-      case Game.MP3_USA:
-      case Game.MP3_JPN:
-        this._gameVersion = 3;
-        return 3;
-    }
-
-    return null;
+  getGameVersion(): GameVersion | null {
+    return this._rom?.getGameVersion() ?? null;
   }
 
   romRecognized(): boolean {
-    return this.getGameVersion() !== null;
+    return this._rom?.romRecognized() ?? false;
   }
 
   romSupported(): boolean {
-    let supported = false;
-    switch (this.getROMGame()) {
-      case Game.MP1_USA:
-      case Game.MP2_USA:
-      case Game.MP3_USA:
-        supported = true;
-    }
-    return supported;
+    return this._rom?.romSupported() ?? false;
   }
+}
 
-  byteSwapIfNeeded(): void {
-    if (!this._rom || this._rom.byteLength < 4 || !this._u8array) return;
-    const romView = this.getDataView();
-    const magic = romView.getUint32(0);
-    if (magic === 0x80371240) return; // Normal, big endian ROM.
-
-    $$log("Byteswapping ROM...");
-    const evenLen = this._rom.byteLength - (this._rom.byteLength % 2);
-    const fourLen = this._rom.byteLength - (this._rom.byteLength % 4);
-    if (magic === 0x37804012) {
-      // BADC, .v64 format
-      for (let i = 0; i < evenLen; i += 2) {
-        [this._u8array[i], this._u8array[i + 1]] = [
-          this._u8array[i + 1],
-          this._u8array[i],
-        ];
-      }
-    } else if (magic === 0x40123780) {
-      // DCBA, little endian
-      for (let i = 0; i < fourLen; i += 4) {
-        [
-          this._u8array[i],
-          this._u8array[i + 1],
-          this._u8array[i + 2],
-          this._u8array[i + 3],
-        ] = [
-          this._u8array[i + 3],
-          this._u8array[i + 2],
-          this._u8array[i + 1],
-          this._u8array[i],
-        ];
-      }
-    } else if (magic === 0x12408037) {
-      // CDAB, wordswapped
-      for (let i = 0; i < fourLen; i += 4) {
-        const last = romView.getUint16(i + 2);
-        romView.setUint16(i + 2, romView.getUint16(i));
-        romView.setUint16(i, last);
-      }
-    }
-  }
-})();
+export const romhandler = new RomHandler();
