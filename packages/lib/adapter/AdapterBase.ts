@@ -31,7 +31,7 @@ import {
 } from "../types";
 import { $$log, $$hex, assert } from "../utils/debug";
 import { getSymbol } from "../symbols/symbols";
-import { scenes, ISceneInfo } from "../fs/scenes";
+import { ISceneInfo } from "../fs/scenes";
 import { findCalls, getRegSetAddress } from "../utils/MIPS";
 import { SpaceEventTable } from "./eventtable";
 import { SpaceEventList } from "./eventlist";
@@ -290,6 +290,7 @@ export abstract class AdapterBase {
     //   throw new Error(``);
     // }
 
+    const scenes = romhandler.getRom()?.getScenes()!;
     const sceneInfo = scenes.getInfo(boardInfo.sceneIndex!);
     const eventSyms: string = this._makeSymbolsForEventAssembly(
       outSyms,
@@ -475,6 +476,7 @@ export abstract class AdapterBase {
    */
   _offsetToAddr(offset: number, boardInfo: IBoardInfo) {
     if (typeof boardInfo.sceneIndex === "number" && boardInfo.sceneIndex >= 0) {
+      const scenes = romhandler.getRom()?.getScenes()!;
       const sceneInfo = scenes.getInfo(boardInfo.sceneIndex);
       if (offset < sceneInfo.rom_start) {
         // This is an offset that is already relative to the scene.
@@ -539,8 +541,10 @@ export abstract class AdapterBase {
     if (typeof boardInfo.sceneIndex !== "number" || boardInfo.sceneIndex < 0)
       return;
 
-    const game = romhandler.getROMGame()!;
+    const rom = romhandler.getRom()!;
+    const game = rom.getGame()!;
     const hydrateEventTableAddr = getSymbol(game, "EventTableHydrate");
+    const scenes = rom.getScenes();
     const sceneInfo = scenes.getInfo(boardInfo.sceneIndex);
     const boardCodeDataView = scenes.getCodeDataView(boardInfo.sceneIndex);
     const tableCalls = findCalls(boardCodeDataView, hydrateEventTableAddr);
@@ -588,6 +592,7 @@ export abstract class AdapterBase {
       }
     }
 
+    const scenes = romhandler.getRom()?.getScenes()!;
     const sceneInfo = scenes.getInfo(boardInfo.sceneIndex);
     if (!buffer) {
       bufferView = scenes.getDataView(boardInfo.sceneIndex);
@@ -1149,6 +1154,7 @@ ${eventAsmCombinedString}
     // AKA Toads or Baby Bowsers lol
     if (!boardInfo.sceneIndex) return;
 
+    const scenes = romhandler.getRom()!.getScenes();
     const sceneView = scenes.getDataView(boardInfo.sceneIndex);
 
     // Training writes the toad directly.
@@ -1185,6 +1191,7 @@ ${eventAsmCombinedString}
   _writeStarInfo(board: IBoard, boardInfo: IBoardInfo) {
     const starCount = boardInfo.starSpaceCount;
     if (starCount) {
+      const scenes = romhandler.getRom()!.getScenes();
       const sceneView = scenes.getDataView(boardInfo.sceneIndex!);
 
       const starIndices = [];
@@ -1240,6 +1247,7 @@ ${eventAsmCombinedString}
   _extractBoos(board: IBoard, boardInfo: IBoardInfo) {
     if (!boardInfo.sceneIndex) return;
 
+    const scenes = romhandler.getRom()!.getScenes();
     const sceneView = scenes.getDataView(boardInfo.sceneIndex);
     let booSpace;
     if (boardInfo.boosLoopFnOffset) {
@@ -1291,6 +1299,7 @@ ${eventAsmCombinedString}
     // Find the boo spaces
     const booSpaces = getSpacesOfSubType(SpaceSubtype.BOO, board);
 
+    const scenes = romhandler.getRom()!.getScenes();
     const sceneView = scenes.getDataView(boardInfo.sceneIndex);
     if (boardInfo.boosLoopFnOffset) {
       let booFnOffset = boardInfo.boosLoopFnOffset;
@@ -1345,6 +1354,7 @@ ${eventAsmCombinedString}
   _extractBanks(board: IBoard, boardInfo: IBoardInfo) {
     if (!boardInfo.bankCount || !boardInfo.sceneIndex) return;
 
+    const scenes = romhandler.getRom()!.getScenes();
     const sceneView = scenes.getDataView(boardInfo.sceneIndex);
     const bankArrOffset = boardInfo.bankArrOffset!;
     for (let b = 0; b < bankArrOffset.length; b++) {
@@ -1370,6 +1380,7 @@ ${eventAsmCombinedString}
   _writeBanks(board: IBoard, boardInfo: IBoardInfo) {
     if (!boardInfo.bankCount || !boardInfo.sceneIndex) return;
 
+    const scenes = romhandler.getRom()!.getScenes();
     const sceneView = scenes.getDataView(boardInfo.sceneIndex);
     const bankSpaces = getSpacesOfSubType(SpaceSubtype.BANK, board);
     const bankArrOffset = boardInfo.bankArrOffset!;
@@ -1402,6 +1413,7 @@ ${eventAsmCombinedString}
   _extractItemShops(board: IBoard, boardInfo: IBoardInfo) {
     if (!boardInfo.itemShopCount || !boardInfo.sceneIndex) return;
 
+    const scenes = romhandler.getRom()!.getScenes();
     const sceneView = scenes.getDataView(boardInfo.sceneIndex);
     for (let b = 0; b < boardInfo.itemShopArrOffset!.length; b++) {
       let curItemShopSpaceIndexOffset = boardInfo.itemShopArrOffset![b];
@@ -1417,6 +1429,7 @@ ${eventAsmCombinedString}
   _writeItemShops(board: IBoard, boardInfo: IBoardInfo) {
     if (!boardInfo.itemShopCount || !boardInfo.sceneIndex) return;
 
+    const scenes = romhandler.getRom()!.getScenes();
     const sceneView = scenes.getDataView(boardInfo.sceneIndex);
     const itemShopSpaces = getSpacesOfSubType(SpaceSubtype.ITEMSHOP, board);
     for (let b = 0; b < boardInfo.itemShopArrOffset!.length; b++) {
@@ -1436,6 +1449,7 @@ ${eventAsmCombinedString}
   _writeGates(board: IBoard, boardInfo: IBoardInfo) {
     if (!boardInfo.gateCount || !boardInfo.sceneIndex) return;
 
+    const scenes = romhandler.getRom()!.getScenes();
     const sceneView = scenes.getDataView(boardInfo.sceneIndex);
     const gateSpaces = [];
     for (let i = 0; i < board.spaces.length; i++) {
@@ -1664,6 +1678,7 @@ ${eventAsmCombinedString}
   _parseAudio(board: IBoard, boardInfo: IBoardInfo) {
     if (!boardInfo.audioIndexOffset || !boardInfo.sceneIndex) return;
 
+    const scenes = romhandler.getRom()!.getScenes();
     const sceneView = scenes.getDataView(boardInfo.sceneIndex);
     board.audioIndex = sceneView.getUint16(boardInfo.audioIndexOffset);
   }

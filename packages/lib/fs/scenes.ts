@@ -1,5 +1,5 @@
 import { copyRange } from "../utils/arrays";
-import { romhandler } from "../romhandler";
+import { ROM } from "../romhandler";
 import { $$log, $$hex } from "../utils/debug";
 import { getSymbol } from "../symbols/symbols";
 import { ramToROM } from "../utils/offsets";
@@ -19,18 +19,15 @@ export interface ISceneInfo {
 const SIZEOF_SCENE_TABLE_ENTRY = 9 * 4;
 
 /** Handles the overlays used in the game. */
-export const scenes = new (class Scenes {
+export class Scenes {
+  private _rom: ROM;
   private _overlays: ArrayBuffer[] | null;
   private _sceneInfo: ISceneInfo[] | null;
 
-  constructor() {
+  constructor(rom: ROM) {
+    this._rom = rom;
     this._overlays = [];
     this._sceneInfo = [];
-  }
-
-  clearCache() {
-    this._overlays = null;
-    this._sceneInfo = null;
   }
 
   count() {
@@ -81,15 +78,15 @@ export const scenes = new (class Scenes {
     this._overlays = [];
     this._sceneInfo = [];
 
-    let sceneTableOffset = getSymbol(romhandler.getROMGame()!, "overlay_table");
+    let sceneTableOffset = getSymbol(this._rom.getGame()!, "overlay_table");
     if (!sceneTableOffset) {
       $$log("overlay_table symbol undefined for current ROM");
       return;
     }
     sceneTableOffset = ramToROM(sceneTableOffset);
 
-    const romBuffer = romhandler.getROMBuffer()!;
-    const romView = romhandler.getDataView();
+    const romBuffer = this._rom.getBuffer()!;
+    const romView = this._rom.getDataView();
     let curOffset = sceneTableOffset;
     while (romView.getUint32(curOffset) !== 0x44200000) {
       const info: ISceneInfo = {
@@ -112,7 +109,7 @@ export const scenes = new (class Scenes {
   }
 
   public pack(buffer: ArrayBuffer, offset = 0): void {
-    let sceneTableOffset = getSymbol(romhandler.getROMGame()!, "overlay_table");
+    let sceneTableOffset = getSymbol(this._rom.getGame()!, "overlay_table");
     if (!sceneTableOffset) {
       throw new Error("overlay_table symbol undefined for current ROM");
     }
@@ -184,4 +181,4 @@ export const scenes = new (class Scenes {
       newInfoValues,
     );
   }
-})();
+}

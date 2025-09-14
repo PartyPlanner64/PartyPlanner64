@@ -2,7 +2,6 @@ import { $$log, $$hex, assert } from "../utils/debug";
 import { copyRange } from "../utils/arrays";
 import { Game } from "../types";
 import { romhandler } from "../romhandler";
-import { scenes } from "./scenes";
 import { getRegSetAddress, getRegSetUpperAndLower } from "../utils/MIPS";
 import { S2 } from "../audio/S2";
 import { MBF0 } from "../audio/MBF0";
@@ -181,6 +180,9 @@ const _audioOffsets: AudioOffsetInfo = {
 
 export const audio = {
   getROMOffset(subsection = 0) {
+    const rom = romhandler.getRom();
+    const scenes = rom?.getScenes();
+    if (!scenes) return null;
     const infos = this.getPatchInfo();
     if (!infos || !infos.length) return null;
     const patchInfo = infos[subsection];
@@ -233,6 +235,8 @@ export const audio = {
 
   setROMOffset(newOffset: number, outBuffer: ArrayBuffer) {
     $$log(`Audio.setROMOffset(${$$hex(newOffset)})`);
+    const rom = romhandler.getRom();
+    const scenes = rom?.getScenes()!;
     const infos = this.getPatchInfo();
     let currentOffset = newOffset;
     for (let i = 0; i < infos.length; i++) {

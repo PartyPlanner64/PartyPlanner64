@@ -17,7 +17,6 @@ import { BMPfromRGBA } from "../utils/img/BMP";
 import { toArrayBuffer } from "../utils/image";
 import { toPack } from "../utils/img/ImgPack";
 import { assemble } from "mips-assembler";
-import { scenes } from "../fs/scenes";
 import { createBoardOverlay } from "./MP1.U.boardoverlay";
 import { IBoardInfo } from "./boardinfobase";
 import { ChanceTime } from "../events/builtin/MP1/U/ChanceTimeEvent1";
@@ -27,6 +26,7 @@ import { getSoundEffectMapMP1 } from "./MP1.U.soundeffects";
 import { getEventsInLibrary } from "../events/EventLibrary";
 import { getAudioMapMP1 } from "./MP1.U.audio";
 import { createImage } from "../utils/canvas";
+import { romhandler } from "../romhandler";
 
 export class MP1Adapter extends AdapterBase {
   public gameVersion: GameVersion = 1;
@@ -479,6 +479,7 @@ export class MP1Adapter extends AdapterBase {
   _extractKoopa(board: IBoard, boardInfo: IBoardInfo) {
     if (!boardInfo.koopaSpaceInst || !boardInfo.sceneIndex) return;
 
+    const scenes = romhandler.getRom()!.getScenes();
     const sceneView = scenes.getDataView(boardInfo.sceneIndex);
     const koopaSpace = sceneView.getUint16(boardInfo.koopaSpaceInst + 2);
     if (board.spaces[koopaSpace])
@@ -498,6 +499,7 @@ export class MP1Adapter extends AdapterBase {
 
     koopaSpace =
       koopaSpace === undefined ? getDeadSpaceIndex(board) : koopaSpace;
+    const scenes = romhandler.getRom()!.getScenes();
     const sceneView = scenes.getDataView(boardInfo.sceneIndex);
     sceneView.setUint16(boardInfo.koopaSpaceInst + 2, koopaSpace);
   }
@@ -505,6 +507,7 @@ export class MP1Adapter extends AdapterBase {
   _extractBowser(board: IBoard, boardInfo: IBoardInfo) {
     if (!boardInfo.bowserSpaceInst || !boardInfo.sceneIndex) return;
 
+    const scenes = romhandler.getRom()!.getScenes();
     const sceneView = scenes.getDataView(boardInfo.sceneIndex);
     const bowserSpace = sceneView.getUint16(boardInfo.bowserSpaceInst + 2);
     if (board.spaces[bowserSpace])
@@ -524,6 +527,7 @@ export class MP1Adapter extends AdapterBase {
 
     bowserSpace =
       bowserSpace === undefined ? getDeadSpaceIndex(board) : bowserSpace;
+    const scenes = romhandler.getRom()!.getScenes();
     const sceneView = scenes.getDataView(boardInfo.sceneIndex);
     sceneView.setUint16(boardInfo.bowserSpaceInst + 2, bowserSpace);
   }
@@ -531,6 +535,7 @@ export class MP1Adapter extends AdapterBase {
   _extractGoomba(board: IBoard, boardInfo: IBoardInfo) {
     if (!boardInfo.goombaSpaceInst || !boardInfo.sceneIndex) return;
 
+    const scenes = romhandler.getRom()!.getScenes();
     const sceneView = scenes.getDataView(boardInfo.sceneIndex);
     const goombaSpace = sceneView.getUint16(boardInfo.goombaSpaceInst + 2);
     if (board.spaces[goombaSpace])

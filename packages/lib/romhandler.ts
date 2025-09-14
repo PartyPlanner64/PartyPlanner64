@@ -1,5 +1,5 @@
 import { Game, GameVersion } from "./types";
-import { scenes } from "./fs/scenes";
+import { Scenes } from "./fs/scenes";
 import { mainfs } from "./fs/mainfs";
 import { strings } from "./fs/strings";
 import { strings3 } from "./fs/strings3";
@@ -19,6 +19,8 @@ export class ROM {
   private _rom: ArrayBuffer;
   private _u8array: Uint8Array;
 
+  private _scenes: Scenes | null = null;
+
   private _gameId: Game | null = null;
   private _gameVersion: GameVersion | null = null;
 
@@ -37,7 +39,7 @@ export class ROM {
     this._u8array = new Uint8Array(this._rom);
   }
 
-  public getDataView(startingOffset = 0, endOffset = 0) {
+  public getDataView(startingOffset = 0, endOffset = 0): DataView<ArrayBuffer> {
     if (!this._rom) throw new Error("ROM not loaded, cannot get DataView.");
     if (endOffset) {
       return new DataView(
@@ -63,7 +65,7 @@ export class ROM {
     return this._gameId;
   }
 
-  getGameVersion(): GameVersion | null {
+  public getGameVersion(): GameVersion | null {
     if (this._gameVersion !== null) return this._gameVersion;
 
     const gameID = this.getGame();
@@ -88,11 +90,11 @@ export class ROM {
     return null;
   }
 
-  romRecognized(): boolean {
+  public romRecognized(): boolean {
     return this.getGameVersion() !== null;
   }
 
-  romSupported(): boolean {
+  public romSupported(): boolean {
     let supported = false;
     switch (this.getGame()) {
       case Game.MP1_USA:
@@ -101,6 +103,38 @@ export class ROM {
         supported = true;
     }
     return supported;
+  }
+
+  public getScenes(): Scenes {
+    if (!this._scenes) {
+      throw new Error("ROM was not loaded");
+    }
+    return this._scenes;
+  }
+
+  public async loadAsync(): Promise<boolean> {
+    const gameVersion = this.getGameVersion();
+
+    // A crude async attempt to hopefully free the UI thread a bit.
+    const promises = [];
+    this._scenes = new Scenes(this);
+    promises.push(this._scenes.extractAsync());
+    promises.push(mainfs.extractAsync());
+    if (gameVersion === 3) {
+      promises.push(strings3.extractAsync());
+    } else promises.push(strings.extractAsync());
+    promises.push(hvqfs.extractAsync());
+    promises.push(audio.extractAsync());
+    if (gameVersion === 2) {
+      promises.push(animationfs.extractAsync());
+    }
+
+    await Promise.all(promises);
+
+    // Now that we've extracted, shrink _rom to just be the initial part of the ROM.
+    const ovlStart = this._scenes.getInfo(0);
+    this.setBuffer(this.getBuffer().slice(0, ovlStart.rom_start));
+    return true;
   }
 
   private byteSwapIfNeeded(): void {
@@ -153,6 +187,10 @@ export class ROM {
 class RomHandler {
   _rom: ROM | null = null;
 
+  public getRom(): ROM | null {
+    return this._rom;
+  }
+
   public getROMGame(): Game | null {
     return this._rom?.getGame() ?? null;
   }
@@ -164,7 +202,6 @@ class RomHandler {
   public clear(): void {
     this._rom = null;
 
-    scenes.clearCache();
     mainfs.clearCache();
     strings.clear();
     strings3.clear();
@@ -199,24 +236,7 @@ class RomHandler {
 
     resetCheats();
 
-    const gameVersion = this.getGameVersion();
-
-    // A crude async attempt to hopefully free the UI thread a bit.
-    const promises = [];
-    promises.push(scenes.extractAsync());
-    promises.push(mainfs.extractAsync());
-    if (gameVersion === 3) promises.push(strings3.extractAsync());
-    else promises.push(strings.extractAsync());
-    promises.push(hvqfs.extractAsync());
-    promises.push(audio.extractAsync());
-    if (gameVersion === 2) promises.push(animationfs.extractAsync());
-
-    return Promise.all(promises).then(() => {
-      // Now that we've extracted, shrink _rom to just be the initial part of the ROM.
-      const ovlStart = scenes.getInfo(0);
-      rom.setBuffer(rom.getBuffer().slice(0, ovlStart.rom_start));
-      return true;
-    });
+    return rom.loadAsync();
   }
 
   saveROM(writeDecompressed: boolean): ArrayBuffer {
@@ -228,7 +248,7 @@ class RomHandler {
     const initialLen = rom.getBuffer().byteLength;
 
     // Grab all the sizes of the different sections.
-    const sceneLen = makeDivisibleBy(scenes.getByteLength(), 16);
+    const sceneLen = makeDivisibleBy(rom.getScenes().getByteLength(), 16);
     const mainLen = makeDivisibleBy(
       mainfs.getByteLength(writeDecompressed),
       16,
@@ -297,7 +317,7 @@ class RomHandler {
     );
 
     // Do this last, so that any patches made to scenes just prior take effect.
-    scenes.pack(newROMBuffer, initialLen);
+    rom.getScenes().pack(newROMBuffer, initialLen);
 
     const adapter = getROMAdapter({})!;
     if (adapter.onAfterSave) adapter.onAfterSave(new DataView(newROMBuffer));
@@ -313,7 +333,7 @@ class RomHandler {
     return !!this._rom;
   }
 
-  getDataView(startingOffset = 0, endOffset = 0): DataView {
+  getDataView(startingOffset = 0, endOffset = 0): DataView<ArrayBuffer> {
     if (!this._rom) throw new Error("ROM not loaded, cannot get DataView.");
     return this._rom.getDataView(startingOffset, endOffset);
   }

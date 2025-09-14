@@ -5,8 +5,8 @@ import { strings } from "../fs/strings";
 import { mainfs } from "../fs/mainfs";
 import { arrayToArrayBuffer } from "../utils/arrays";
 import { toPack } from "../utils/img/ImgPack";
-import { scenes } from "../fs/scenes";
 import { CostumeType } from "../types";
+import { romhandler } from "../romhandler";
 
 // Western Land - (U) ROM
 const MP2_WESTERN = createBoardInfo("MP2_WESTERN", {
@@ -67,6 +67,7 @@ const MP2_WESTERN = createBoardInfo("MP2_WESTERN", {
     // 0x004F is the Bowser scene, 0x0051 is the results scene.
     // To debug, end game early with 0x800F93AF (turn count)
     // Then watch scene change 0x800FA63C
+    const scenes = romhandler.getRom()!.getScenes();
     const sceneEndView = scenes.getDataView(82);
     sceneEndView.setUint16(0x2e0e, 0x0051); // 0x8010560C, 0x35BBEE
 

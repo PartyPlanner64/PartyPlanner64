@@ -24,7 +24,6 @@ import { mainfs } from "../fs/mainfs";
 import { toPack } from "../utils/img/ImgPack";
 import { BMPfromRGBA } from "../utils/img/BMP";
 import { FORM } from "../models/FORM";
-import { scenes } from "../fs/scenes";
 import { SpaceEventList } from "./eventlist";
 import { IBoardInfo } from "./boardinfobase";
 import { ChainSplit3 } from "../events/builtin/MP3/U/ChainSplit3";
@@ -38,6 +37,7 @@ import { getEventsInLibrary } from "../events/EventLibrary";
 
 import genericgateImage from "../../../apps/partyplanner64/img/assets/genericgate.png";
 import { createImage } from "../utils/canvas";
+import { romhandler } from "../romhandler";
 
 export class MP3Adapter extends AdapterBase {
   public gameVersion: 1 | 2 | 3 = 3;
@@ -80,6 +80,7 @@ export class MP3Adapter extends AdapterBase {
 
     // gamemasterplc: patch both ROM address 0x50DA60 and 0x50DA80 with the value 0x24020001 to fix character unlocks
     // gamemasterplc: aka MIPS Instruction ADDIU V0, R0, 0x1
+    const scenes = romhandler.getRom()!.getScenes();
     const playerSelectScene = scenes.getDataView(120);
     playerSelectScene.setUint32(0xbe60, 0x24020001); // 0x50DA60
     playerSelectScene.setUint32(0xbe80, 0x24020001); // 0x50DA80

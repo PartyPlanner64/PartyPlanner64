@@ -11,7 +11,6 @@ import { fromTiles } from "./img/tiler";
 import { mainfs } from "../fs/mainfs";
 import { strings3 } from "../fs/strings3";
 import { strings } from "../fs/strings";
-import { scenes } from "../fs/scenes";
 import { romhandler } from "../romhandler";
 import { FORM } from "../models/FORM";
 import { MTNX } from "../models/MTNX";
@@ -380,11 +379,13 @@ export function searchForPatchLocations(offset: number) {
 }
 
 export function printSceneTable() {
-  if (!romhandler.romIsLoaded()) {
+  const rom = romhandler.getRom();
+  if (!rom) {
     console.log("ROM is not loaded");
     return;
   }
 
+  const scenes = rom.getScenes();
   const sceneCount = scenes.count();
   const table = [];
   for (let i = 0; i < sceneCount; i++) {
@@ -408,11 +409,13 @@ export function printSceneTable() {
 
 /** Prints the overlay table in n64split format. */
 export function printSceneN64Split() {
-  if (!romhandler.romIsLoaded()) {
+  const rom = romhandler.getRom();
+  if (!rom) {
     console.log("ROM is not loaded");
     return;
   }
 
+  const scenes = rom.getScenes();
   const sceneCount = scenes.count();
   const strings = [];
   for (let i = 0; i < sceneCount; i++) {
@@ -440,11 +443,13 @@ export function printSceneN64Split() {
 
 /** Prints the overlay table in n64splat format. */
 export function printSceneN64Splat() {
-  if (!romhandler.romIsLoaded()) {
+  const rom = romhandler.getRom();
+  if (!rom) {
     console.log("ROM is not loaded");
     return;
   }
 
+  const scenes = rom.getScenes();
   const sceneCount = scenes.count();
   const strings = [];
   for (let i = 0; i < sceneCount; i++) {
@@ -493,6 +498,13 @@ export function printAsm(start: number, end: number) {
  * @param {number} sceneIndex
  */
 export function printSceneAsm(sceneIndex: number) {
+  const rom = romhandler.getRom();
+  if (!rom) {
+    console.log("ROM is not loaded");
+    return;
+  }
+
+  const scenes = rom.getScenes();
   const sceneInfo = scenes.getInfo(sceneIndex);
   let currentAsmAddr = sceneInfo.code_start;
   const codeDataView = scenes.getCodeDataView(sceneIndex);

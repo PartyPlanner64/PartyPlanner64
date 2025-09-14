@@ -7,7 +7,6 @@ import { createContext } from "../utils/canvas";
 import { copyRange } from "../utils/arrays";
 import { Game } from "../types";
 import { romhandler } from "../romhandler";
-import { scenes } from "./scenes";
 import { getRegSetAddress, getRegSetUpperAndLower } from "../utils/MIPS";
 import { isDebug } from "../../../apps/partyplanner64/debug";
 
@@ -201,6 +200,10 @@ interface IHVQMetadata {
 
 export const hvqfs = {
   getROMOffset() {
+    const rom = romhandler.getRom();
+    const scenes = rom?.getScenes();
+    if (!scenes) return null;
+
     const patchOffsets = this.getPatchOffsets();
     if (!patchOffsets) return null;
     const romPatchInfo = patchOffsets[0];
@@ -255,6 +258,8 @@ export const hvqfs = {
 
   setROMOffset(newOffset: number, buffer: ArrayBuffer) {
     $$log(`HVQFS.setROMOffset(${$$hex(newOffset)})`);
+    const rom = romhandler.getRom();
+    const scenes = rom?.getScenes()!;
     const patchOffsets = this.getPatchOffsets()!;
     const [upper, lower] = getRegSetUpperAndLower(newOffset);
     for (let i = 0; i < patchOffsets.length; i++) {

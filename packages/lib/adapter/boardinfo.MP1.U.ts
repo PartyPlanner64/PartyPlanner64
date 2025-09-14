@@ -3,9 +3,9 @@ import { IBoard } from "../../../apps/partyplanner64/boards";
 import { hvqfs } from "../fs/hvqfs";
 import { strings } from "../fs/strings";
 import { arrayToArrayBuffer } from "../utils/arrays";
-import { scenes } from "../fs/scenes";
 import { toPack } from "../utils/img/ImgPack";
 import { mainfs } from "../fs/mainfs";
+import { romhandler } from "../romhandler";
 
 // DK's Jungle Adventure - (U) ROM
 const MP1_USA_DK = createBoardInfo("MP1_USA_DK", {
@@ -48,6 +48,7 @@ const MP1_USA_DK = createBoardInfo("MP1_USA_DK", {
 
   onAfterOverwrite: function () {
     // Remove the "box" from the game start scenery.
+    const scenes = romhandler.getRom()!.getScenes();
     const introSceneView = scenes.getDataView(98);
     introSceneView.setUint32(0x7098, 0xc57a0000); // 0x2A9598 // Some random float to get it away
     introSceneView.setUint32(0x709c, 0); // 0x2A959C
