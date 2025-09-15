@@ -2658,6 +2658,14 @@ export default [{
       name: "SetBoardPlayerAnimation",
       desc: "A0=player_index" },
 {
+      addr: 2148483472, // 0x800F4190
+      type: "code",
+      name: "createHudElements" },
+{
+      addr: 2148483912, // 0x800F4348
+      type: "code",
+      name: "destroyHudElements" },
+{
       addr: 2148490564, // 0x800F5D44
       type: "code",
       name: "AdjustPlayerCoinsGradual",
