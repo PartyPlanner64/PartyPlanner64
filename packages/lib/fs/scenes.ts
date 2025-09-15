@@ -84,6 +84,7 @@ export class Scenes {
       return;
     }
     sceneTableOffset = ramToROM(sceneTableOffset);
+    $$log(`Scene table found at ROM offset ${$$hex(sceneTableOffset)}`);
 
     const romBuffer = this._rom.getBuffer()!;
     const romView = this._rom.getDataView();
