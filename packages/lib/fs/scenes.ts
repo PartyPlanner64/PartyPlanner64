@@ -1,8 +1,6 @@
 import { copyRange } from "../utils/arrays";
 import { ROM } from "../romhandler";
 import { $$log, $$hex } from "../utils/debug";
-import { getSymbol } from "../symbols/symbols";
-import { ramToROM } from "../utils/offsets";
 
 export interface ISceneInfo {
   rom_start: number;
@@ -21,11 +19,13 @@ const SIZEOF_SCENE_TABLE_ENTRY = 9 * 4;
 /** Handles the overlays used in the game. */
 export class Scenes {
   private _rom: ROM;
-  private _overlays: ArrayBuffer[] | null;
-  private _sceneInfo: ISceneInfo[] | null;
+  private _overlayTableRomOffset: number | null;
+  private _overlays: ArrayBuffer[];
+  private _sceneInfo: ISceneInfo[];
 
   constructor(rom: ROM) {
     this._rom = rom;
+    this._overlayTableRomOffset = null;
     this._overlays = [];
     this._sceneInfo = [];
   }
@@ -39,7 +39,16 @@ export class Scenes {
   }
 
   getDataView(index: number): DataView<ArrayBuffer> {
-    return new DataView(this._overlays![index]);
+    const buffer = this._overlays[index];
+    if (!buffer) {
+      if (!this._overlays.length) {
+        throw new Error("Overlay table was not parsed");
+      }
+      throw new Error(
+        `Index ${index} was not within the overlay table (0 - ${this._overlays.length - 1})`,
+      );
+    }
+    return new DataView(this._overlays[index]);
   }
 
   getCodeDataView(index: number) {
@@ -78,43 +87,30 @@ export class Scenes {
     this._overlays = [];
     this._sceneInfo = [];
 
-    let sceneTableOffset = getSymbol(this._rom.getGame()!, "overlay_table");
+    const sceneTableOffset = (this._overlayTableRomOffset =
+      this.findOverlayTableOffset());
     if (!sceneTableOffset) {
-      $$log("overlay_table symbol undefined for current ROM");
+      $$log("Overlay table not found in current ROM");
       return;
     }
-    sceneTableOffset = ramToROM(sceneTableOffset);
     $$log(`Scene table found at ROM offset ${$$hex(sceneTableOffset)}`);
 
     const romBuffer = this._rom.getBuffer()!;
     const romView = this._rom.getDataView();
     let curOffset = sceneTableOffset;
     while (romView.getUint32(curOffset) !== 0x44200000) {
-      const info: ISceneInfo = {
-        rom_start: romView.getUint32(curOffset),
-        rom_end: romView.getUint32(curOffset + 4),
-        ram_start: romView.getUint32(curOffset + 8),
-        code_start: romView.getUint32(curOffset + 12),
-        code_end: romView.getUint32(curOffset + 16),
-        rodata_start: romView.getUint32(curOffset + 20),
-        rodata_end: romView.getUint32(curOffset + 24),
-        bss_start: romView.getUint32(curOffset + 28),
-        bss_end: romView.getUint32(curOffset + 32),
-      };
+      const info = readOverlayStruct(romView, curOffset);
       this._sceneInfo.push(info);
-
       this._overlays.push(romBuffer.slice(info.rom_start, info.rom_end));
-
       curOffset += SIZEOF_SCENE_TABLE_ENTRY;
     }
   }
 
   public pack(buffer: ArrayBuffer, offset = 0): void {
-    let sceneTableOffset = getSymbol(this._rom.getGame()!, "overlay_table");
+    const sceneTableOffset = this._overlayTableRomOffset;
     if (!sceneTableOffset) {
-      throw new Error("overlay_table symbol undefined for current ROM");
+      throw new Error("Overlay table ROM offset wasn't determined");
     }
-    sceneTableOffset = ramToROM(sceneTableOffset);
 
     const romView = new DataView(buffer);
     let curOffset = sceneTableOffset;
@@ -182,4 +178,72 @@ export class Scenes {
       newInfoValues,
     );
   }
+
+  private findOverlayTableOffset(): number | null {
+    const romView = this._rom.getDataView();
+    for (let i = 0; i < romView.byteLength; i += 4) {
+      // Look for the value that always seems to follow the table.
+      const val = romView.getUint32(i);
+      if (val !== 0x44200000) {
+        continue;
+      }
+
+      // See if the data before the value looks like an overlay table.
+      let tableEntries = 0;
+      let currentOffset = i - SIZEOF_SCENE_TABLE_ENTRY;
+      while (looksLikeOverlayTableEntry(romView, currentOffset)) {
+        tableEntries++;
+        currentOffset -= SIZEOF_SCENE_TABLE_ENTRY;
+      }
+      if (tableEntries > 60) {
+        return (currentOffset += SIZEOF_SCENE_TABLE_ENTRY);
+      }
+    }
+    return null;
+  }
+}
+
+function readOverlayStruct(romView: DataView, offset: number): ISceneInfo {
+  const info: ISceneInfo = {
+    rom_start: romView.getUint32(offset),
+    rom_end: romView.getUint32(offset + 4),
+    ram_start: romView.getUint32(offset + 8),
+    code_start: romView.getUint32(offset + 12),
+    code_end: romView.getUint32(offset + 16),
+    rodata_start: romView.getUint32(offset + 20),
+    rodata_end: romView.getUint32(offset + 24),
+    bss_start: romView.getUint32(offset + 28),
+    bss_end: romView.getUint32(offset + 32),
+  };
+  return info;
+}
+
+function looksLikeOverlayTableEntry(
+  romView: DataView,
+  offset: number,
+): boolean {
+  if (offset < 0) {
+    return false;
+  }
+  const info = readOverlayStruct(romView, offset);
+  return (
+    !looksLikeRamPointer(info.rom_start) &&
+    !looksLikeRamPointer(info.rom_end) &&
+    looksLikeRamPointer(info.ram_start) &&
+    looksLikeRamPointer(info.code_start) &&
+    looksLikeRamPointer(info.code_end) &&
+    looksLikeRamPointer(info.rodata_start) &&
+    looksLikeRamPointer(info.rodata_end) &&
+    looksLikeRamPointer(info.bss_start) &&
+    looksLikeRamPointer(info.bss_end) &&
+    info.rom_start <= info.rom_end &&
+    info.ram_start === info.code_start &&
+    info.code_start <= info.code_end &&
+    info.rodata_start <= info.rodata_end &&
+    info.bss_start <= info.bss_end
+  );
+}
+
+function looksLikeRamPointer(value: number): boolean {
+  return (value & 0x80000000) >>> 0 === 0x80000000;
 }
