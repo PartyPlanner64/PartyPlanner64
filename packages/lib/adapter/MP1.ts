@@ -12,7 +12,6 @@ import { strings } from "../fs/strings";
 import { arrayToArrayBuffer, arrayBufferToDataURL } from "../utils/arrays";
 import { fromTiles, toTiles } from "../utils/img/tiler";
 import { FORM } from "../models/FORM";
-import { mainfs } from "../fs/mainfs";
 import { BMPfromRGBA } from "../utils/img/BMP";
 import { toArrayBuffer } from "../utils/image";
 import { toPack } from "../utils/img/ImgPack";
@@ -545,6 +544,7 @@ export class MP1Adapter extends AdapterBase {
   onParseBoardSelectImg(board: IBoard, boardInfo: IBoardInfo) {
     if (!boardInfo.img.boardSelectImg) return;
 
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const boardSelectFORM = mainfs.get(9, boardInfo.img.boardSelectImg);
     const boardSelectUnpacked = FORM.unpack(boardSelectFORM)!;
     const boardSelectImgTiles = [
@@ -588,6 +588,7 @@ export class MP1Adapter extends AdapterBase {
     });
 
     // Now write the BMPs back into the FORM.
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const boardSelectFORM = mainfs.get(9, boardSelectIndex!);
     const boardSelectUnpacked = FORM.unpack(boardSelectFORM)!;
     for (let i = 0; i < 4; i++) {
@@ -635,6 +636,8 @@ export class MP1Adapter extends AdapterBase {
         45000,
       );
       srcImage.onload = () => {
+        const mainfs = romhandler.getRom()?.getMainFS()!;
+
         // Write the intro logo images.
         if (introLogoImgs) {
           const imgBuffer = toArrayBuffer(srcImage, introWidth, introHeight);
@@ -692,6 +695,7 @@ export class MP1Adapter extends AdapterBase {
   _clearOtherBoardNames(boardIndex: number) {
     // There is an ugly comic-sansy board name graphic in the after-game results.
     // We will just make it totally transparent because it is not important.
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const resultsBoardNameImgPack = mainfs.get(10, 406 + boardIndex);
     const imgPackU8Array = new Uint8Array(resultsBoardNameImgPack);
     imgPackU8Array.fill(0, 0x2c); // To the end

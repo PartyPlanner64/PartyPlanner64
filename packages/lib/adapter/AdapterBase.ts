@@ -1,7 +1,6 @@
 import { romhandler } from "../romhandler";
 import { getBoardInfos, getBoardInfoByIndex } from "./boardinfo";
 import { hvqfs } from "../fs/hvqfs";
-import { mainfs } from "../fs/mainfs";
 import { audio } from "../fs/audio";
 import {
   IBoard,
@@ -149,6 +148,7 @@ export abstract class AdapterBase {
           otherbg: {},
           events: {},
         };
+        const mainfs = romhandler.getRom()?.getMainFS()!;
         const boardBuffer = mainfs.get(
           this.boardDefDirectory,
           boardInfo.boardDefFile,
@@ -221,6 +221,7 @@ export abstract class AdapterBase {
     this._reversePerspective(boardCopy);
 
     const boarddef = createBoardDef(boardCopy, chains);
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     mainfs.write(this.boardDefDirectory, boardInfo.boardDefFile, boarddef);
 
     this._createGateEvents(boardCopy, boardInfo, chains);
@@ -509,6 +510,7 @@ export abstract class AdapterBase {
     const boardJsonBuffer = stringToArrayBuffer(JSON.stringify(boardCopy));
 
     const [dir, file] = boardInfo.mainfsBoardFile;
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     mainfs.write(dir, file, boardJsonBuffer);
   }
 
@@ -516,6 +518,7 @@ export abstract class AdapterBase {
     if (!boardInfo.mainfsBoardFile) return null;
 
     const [dir, file] = boardInfo.mainfsBoardFile;
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     if (!mainfs.has(dir, file)) return null;
 
     const boardJsonBuffer = mainfs.get(dir, file);
@@ -584,6 +587,7 @@ export abstract class AdapterBase {
     const eventTable = new SpaceEventTable();
     if (boardInfo.mainfsEventFile) {
       const [mainFsDir, mainFsFile] = boardInfo.mainfsEventFile;
+      const mainfs = romhandler.getRom()?.getMainFS()!;
       if (mainfs.has(mainFsDir, mainFsFile)) {
         buffer = mainfs.get(mainFsDir, mainFsFile);
         bufferView = new DataView(buffer);
@@ -1111,6 +1115,7 @@ ${eventAsmCombinedString}
     // We write list blob of ASM/structures into the MainFS, in a location
     // that is not used by the game.
     const [mainFsDir, mainFsFile] = boardInfo.mainfsEventFile;
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     mainfs.write(mainFsDir, mainFsFile, buffer);
 
     //saveAs(new Blob([buffer]), "eventBuffer");
@@ -1572,6 +1577,7 @@ ${eventAsmCombinedString}
         ];
         const newPack = toPack(imgInfoArr, 16, 8);
         //saveAs(new Blob([newPack]));
+        const mainfs = romhandler.getRom()?.getMainFS()!;
         mainfs.write(
           this.hudsonLogoFSEntry![0],
           this.hudsonLogoFSEntry![1],
@@ -1586,6 +1592,7 @@ ${eventAsmCombinedString}
   }
 
   _combineSplashcreenLogos() {
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const nintendoPack = mainfs.get(
       this.nintendoLogoFSEntry![0],
       this.nintendoLogoFSEntry![1],
@@ -1645,6 +1652,7 @@ ${eventAsmCombinedString}
   }
 
   _readPackedFromMainFS(dir: number, file: number) {
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const imgPackBuffer = mainfs.get(dir, file);
     const imgArr = fromPack(imgPackBuffer);
     if (!imgArr || !imgArr.length) return;
@@ -1657,6 +1665,7 @@ ${eventAsmCombinedString}
   }
 
   _readImgsFromMainFS(dir: number, file: number) {
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const imgPackBuffer = mainfs.get(dir, file);
     const imgArr = fromPack(imgPackBuffer);
     if (!imgArr || !imgArr.length) return;

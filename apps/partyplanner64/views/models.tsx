@@ -2,7 +2,6 @@ import { FORM } from "../../../packages/lib/models/FORM";
 import { get, $setting } from "./settings";
 import { $$log, $$hex } from "../../../packages/lib/utils/debug";
 import { FormToThreeJs } from "../../../packages/lib/models/FormToThreeJs";
-import { mainfs } from "../../../packages/lib/fs/mainfs";
 import { Button, ToggleButton } from "../controls";
 import * as React from "react";
 import { MTNX } from "../../../packages/lib/models/MTNX";
@@ -20,6 +19,7 @@ import { isDebug } from "../debug";
 import exportImage from "../img/model/export.png";
 
 import "../css/models.scss";
+import { romhandler } from "../../../packages/lib/romhandler";
 
 interface IModelViewerProps {
   // bgColor: number;
@@ -71,6 +71,7 @@ export class ModelViewer extends React.Component<
     };
 
     // Set first model, start at dir 2 so it's Mario.
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const mainfsDirCount = mainfs.getDirectoryCount();
     for (let d = 2; d < mainfsDirCount; d++) {
       const dirFileCount = mainfs.getFileCount(d);
@@ -376,6 +377,7 @@ class ModelRenderer extends React.Component<IModelRendererProps> {
 
     $$log(`Rendering model ${dir}/${file}`);
 
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const form = FORM.unpack(mainfs.get(dir, file!))!;
 
     $$log("form", form);
@@ -581,6 +583,7 @@ class ModelSelect extends React.Component<IModelSelectProps> {
 
   getModelEntries(): [number, number][] {
     const entries: [number, number][] = [];
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const mainfsDirCount = mainfs.getDirectoryCount();
     for (let d = 0; d < mainfsDirCount; d++) {
       const dirFileCount = mainfs.getFileCount(d);
@@ -655,6 +658,7 @@ class AnimSelect extends React.Component<IAnimSelectProps> {
     if (get($setting.limitModelAnimations)) {
       return this.getAnimationsInDir(this.props.selectedModelDir);
     } else {
+      const mainfs = romhandler.getRom()?.getMainFS()!;
       const mainfsDirCount = mainfs.getDirectoryCount();
       for (let d = 0; d < mainfsDirCount; d++) {
         entries = entries.concat(this.getAnimationsInDir(d));
@@ -665,6 +669,7 @@ class AnimSelect extends React.Component<IAnimSelectProps> {
 
   getAnimationsInDir(d: number) {
     const entries = [];
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const dirFileCount = mainfs.getFileCount(d);
     for (let f = 0; f < dirFileCount; f++) {
       const file = mainfs.get(d, f);
@@ -885,6 +890,7 @@ class ModelExportObjButton extends React.Component<IModelExportObjButtonProps> {
       this.props.selectedModelFile,
     ];
 
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const form = FORM.unpack(mainfs.get(dir!, file!))!;
     const converter = new FormToThreeJs();
     const modelObj = await converter.createModel(form);

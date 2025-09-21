@@ -20,7 +20,6 @@ import { $$hex } from "../../../packages/lib/utils/debug";
 import { strings3 } from "../../../packages/lib/fs/strings3";
 import { strings } from "../../../packages/lib/fs/strings";
 import { saveAs } from "file-saver";
-import { mainfs } from "../../../packages/lib/fs/mainfs";
 import { makeDivisibleBy } from "../../../packages/lib/utils/number";
 import { romToRAM } from "../../../packages/lib/utils/offsets";
 
@@ -344,6 +343,7 @@ export const DebugView = class DebugView extends React.Component<
     let result = "";
     const dir = parseInt(this.state.mainfsToRomDir, 10);
     const file = parseInt(this.state.mainfsToRomIndex, 10);
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     if (!isNaN(dir) && !isNaN(file)) {
       let currentOffset = mainfs.getROMOffset()!;
 
@@ -380,6 +380,7 @@ export const DebugView = class DebugView extends React.Component<
   };
 
   private findInMainFS(num: number): string {
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const mainfsOffset = mainfs.getROMOffset()!;
     const writeDecompressed = !!get($setting.writeDecompressed);
     const mainfsSize = mainfs.getByteLength(writeDecompressed);

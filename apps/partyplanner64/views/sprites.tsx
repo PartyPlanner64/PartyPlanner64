@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { mainfs } from "../../../packages/lib/fs/mainfs";
 import { arrayBufferToDataURL } from "../../../packages/lib/utils/arrays";
 import {
   fromPack,
@@ -9,6 +8,7 @@ import {
 } from "../../../packages/lib/utils/img/ImgPack";
 
 import "../css/sprites.scss";
+import { romhandler } from "../../../packages/lib/romhandler";
 
 type MainFSPair = [number, number];
 
@@ -151,6 +151,7 @@ function SpriteImage(props: ISpriteImageProps) {
 function getSpriteFSPairs(): MainFSPair[] {
   const fsPairs: MainFSPair[] = [];
 
+  const mainfs = romhandler.getRom()?.getMainFS()!;
   let mainfsDirCount = mainfs.getDirectoryCount();
   for (let d = 0; d < mainfsDirCount; d++) {
     let dirFileCount = mainfs.getFileCount(d);
@@ -168,6 +169,7 @@ function getSpriteFSPairs(): MainFSPair[] {
 }
 
 function _readImgsFromMainFS(dir: number, file: number): IImgInfo[] | null {
+  const mainfs = romhandler.getRom()?.getMainFS()!;
   let imgPackBuffer = mainfs.get(dir, file);
   let imgArr = fromPack(imgPackBuffer);
   if (!imgArr || !imgArr.length) return null;

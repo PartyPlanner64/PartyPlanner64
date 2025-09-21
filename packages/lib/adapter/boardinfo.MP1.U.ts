@@ -4,7 +4,6 @@ import { hvqfs } from "../fs/hvqfs";
 import { strings } from "../fs/strings";
 import { arrayToArrayBuffer } from "../utils/arrays";
 import { toPack } from "../utils/img/ImgPack";
-import { mainfs } from "../fs/mainfs";
 import { romhandler } from "../romhandler";
 
 // DK's Jungle Adventure - (U) ROM
@@ -121,6 +120,7 @@ const MP1_USA_PEACH = createBoardInfo("MP1_USA_PEACH", {
 
   onAfterOverwrite: function (board: IBoard) {
     // Text banner that appears over the logo
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const oldPack = mainfs.get(10, 360);
     const imgInfoArr = [
       { src: new ArrayBuffer(250 * 50 * 4), width: 250, height: 50, bpp: 32 },
@@ -171,6 +171,7 @@ const MP1_USA_YOSHI = createBoardInfo("MP1_USA_YOSHI", {
 
   onAfterOverwrite: function (board: IBoard) {
     // Text banner that appears over the logo
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const oldPack = mainfs.get(10, 363);
     const imgInfoArr = [
       { src: new ArrayBuffer(208 * 40 * 4), width: 208, height: 40, bpp: 32 },
@@ -229,6 +230,7 @@ const MP1_USA_WARIO = createBoardInfo("MP1_USA_WARIO", {
 
   onAfterOverwrite: function (board: IBoard) {
     // Text banner that appears over the logo
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const oldPack = mainfs.get(10, 366);
     const imgInfoArr = [
       { src: new ArrayBuffer(280 * 76 * 4), width: 280, height: 76, bpp: 32 },

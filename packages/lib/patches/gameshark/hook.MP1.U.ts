@@ -1,7 +1,7 @@
 import { HookBase } from "./HookBase";
 import { parse } from "mips-inst";
-import { mainfs } from "../../fs/mainfs";
 import { getCheatRoutineBuffer } from "./cheats";
+import { romhandler } from "../../romhandler";
 
 // Installs a Gameshark hook for MP1 (U)
 export const MP1UHook = new (class MP1UHook extends HookBase {
@@ -44,6 +44,7 @@ export const MP1UHook = new (class MP1UHook extends HookBase {
     romView.setUint32(this.HOOK_JUMP_ROM_OFFSET + 12, 0);
 
     const cheatRoutine = getCheatRoutineBuffer({ endInsts });
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     mainfs.write(
       this.MAINFS_CHEAT_FILE[0],
       this.MAINFS_CHEAT_FILE[1],

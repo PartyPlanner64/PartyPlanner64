@@ -2,7 +2,6 @@ import { createBoardInfo } from "./boardinfobase";
 import { IBoard } from "../../../apps/partyplanner64/boards";
 import { hvqfs } from "../fs/hvqfs";
 import { strings } from "../fs/strings";
-import { mainfs } from "../fs/mainfs";
 import { arrayToArrayBuffer } from "../utils/arrays";
 import { toPack } from "../utils/img/ImgPack";
 import { CostumeType } from "../types";
@@ -84,6 +83,7 @@ const MP2_WESTERN = createBoardInfo("MP2_WESTERN", {
 
     // Hide some intro scene graphics
     // Bowser sign
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     let oldPack = mainfs.get(10, 410);
     let imgInfoArr = [
       { src: new ArrayBuffer(144 * 128 * 4), width: 144, height: 128, bpp: 32 },

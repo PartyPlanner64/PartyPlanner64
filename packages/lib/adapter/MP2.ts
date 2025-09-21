@@ -17,7 +17,6 @@ import { hvqfs } from "../fs/hvqfs";
 import { createContext, createImage } from "../utils/canvas";
 import { $$log } from "../utils/debug";
 import { toArrayBuffer, cutFromWhole } from "../utils/image";
-import { mainfs } from "../fs/mainfs";
 import { imgInfoSrcToArrayBuffer, toPack } from "../utils/img/ImgPack";
 import { IBoardInfo } from "./boardinfobase";
 import { BankEvent } from "../events/builtin/events.common";
@@ -25,6 +24,7 @@ import { getImageData } from "../utils/img/getImageData";
 import { createBoardOverlay } from "./MP2.U.boardoverlay";
 
 import mp2boardselectblank1Image from "../../../apps/partyplanner64/img/details/mp2boardselectblank1.png";
+import { romhandler } from "../romhandler";
 
 export class MP2Adapter extends AdapterBase {
   public gameVersion: 1 | 2 | 3 = 2;
@@ -608,6 +608,7 @@ export class MP2Adapter extends AdapterBase {
         const imgBuffer = toArrayBuffer(srcImage, 64, 48);
 
         // First, read the old image pack.
+        const mainfs = romhandler.getRom()?.getMainFS()!;
         const oldPack = mainfs.get(9, boardSelectImg!);
 
         // Then, pack the image and write it.
@@ -712,6 +713,7 @@ export class MP2Adapter extends AdapterBase {
           ).data.buffer;
 
           // Read the old image pack.
+          const mainfs = romhandler.getRom()?.getMainFS()!;
           const oldPack = mainfs.get(9, 15);
 
           // Then, pack the image and write it.
@@ -806,6 +808,7 @@ export class MP2Adapter extends AdapterBase {
         return;
       }
 
+      const mainfs = romhandler.getRom()?.getMainFS()!;
       const srcImage = createImage();
       const failTimer = setTimeout(
         () => reject(`Failed to write logos for ${boardInfo.name}`),

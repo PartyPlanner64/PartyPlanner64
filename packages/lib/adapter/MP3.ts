@@ -20,7 +20,6 @@ import { strings } from "../fs/strings";
 import { arrayToArrayBuffer } from "../utils/arrays";
 import { strings3 } from "../fs/strings3";
 import { toArrayBuffer } from "../utils/image";
-import { mainfs } from "../fs/mainfs";
 import { toPack } from "../utils/img/ImgPack";
 import { BMPfromRGBA } from "../utils/img/BMP";
 import { FORM } from "../models/FORM";
@@ -691,6 +690,7 @@ export class MP3Adapter extends AdapterBase {
         const imgBuffer = toArrayBuffer(srcImage, 64, 64);
 
         // First, read the old image pack.
+        const mainfs = romhandler.getRom()?.getMainFS()!;
         const oldPack = mainfs.get(20, boardSelectImg!);
 
         // Then, pack the image and write it.
@@ -756,6 +756,7 @@ export class MP3Adapter extends AdapterBase {
       : new ArrayBuffer(width * height * 4);
 
     // First, read the old image pack.
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const oldPack = mainfs.get(19, splashLogoImg);
 
     // Then, pack the image and write it.
@@ -789,6 +790,7 @@ export class MP3Adapter extends AdapterBase {
       : new ArrayBuffer(width * height * 4);
 
     // First, read the old image pack.
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const oldPack = mainfs.get(19, splashLogoTextImg);
 
     // Then, pack the image and write it.
@@ -821,6 +823,7 @@ export class MP3Adapter extends AdapterBase {
       ? (await getImageData(boardlogomedium, width, height)).data
       : new ArrayBuffer(width * height * 4);
 
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const oldPack = mainfs.get(19, pauseLogoImg);
     const imgInfoArr = [
       {
@@ -850,6 +853,7 @@ export class MP3Adapter extends AdapterBase {
       ? (await getImageData(boardlogosmall, width, height)).data
       : new ArrayBuffer(width * height * 4);
 
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const oldPack = mainfs.get(statsLogoImg[0], statsLogoImg[1]);
     const imgInfoArr = [
       {
@@ -882,6 +886,7 @@ export class MP3Adapter extends AdapterBase {
     const gateBmp = BMPfromRGBA(imgData.data.buffer, 32, 8);
 
     // Now write the BMP back into the FORM.
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     const gateFORM = mainfs.get(19, 366); // Always use gate 3 as a base.
     const gateUnpacked = FORM.unpack(gateFORM)!;
     FORM.replaceBMP(gateUnpacked, 0, gateBmp[0], gateBmp[1]);

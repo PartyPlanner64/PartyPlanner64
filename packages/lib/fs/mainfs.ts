@@ -3,7 +3,7 @@ import { decompress } from "../utils/compression";
 import { arrayBuffersEqual, copyRange } from "../utils/arrays";
 import { makeDivisibleBy } from "../utils/number";
 import { Game } from "../types";
-import { romhandler } from "../romhandler";
+import { ROM } from "../romhandler";
 import { getRegSetUpperAndLower, getRegSetAddress } from "../utils/MIPS";
 import { isDebug } from "../../../apps/partyplanner64/debug";
 
@@ -42,8 +42,6 @@ _mainFSOffsets[Game.MP3_JPN] = [
   { upper: 0x3618a, lower: 0x36192 },
 ];
 
-let _mainfsCache: IMainFsReadInfo[][] | null;
-
 export interface IMainFsReadInfo {
   compressionType: number;
   decompressedSize?: number;
@@ -51,7 +49,7 @@ export interface IMainFsReadInfo {
   compressed?: ArrayBuffer;
 }
 
-export function _getFileHeaderSize(compressionType: number) {
+function _getFileHeaderSize(compressionType: number) {
   switch (compressionType) {
     case 0:
     case 1:
@@ -65,10 +63,17 @@ export function _getFileHeaderSize(compressionType: number) {
   throw new Error(`_getFileHeaderSize(${compressionType}) not handled`);
 }
 
-export class mainfs {
-  public static getROMOffset(): number | null {
-    const romView = romhandler.getDataView();
-    const patchOffsets = mainfs.getPatchOffsets();
+export class MainFS {
+  private _rom: ROM;
+  private _mainfsCache: IMainFsReadInfo[][] | null = null;
+
+  public constructor(rom: ROM) {
+    this._rom = rom;
+  }
+
+  public getROMOffset(): number | null {
+    const romView = this._rom.getDataView();
+    const patchOffsets = this.getPatchOffsets();
     if (!patchOffsets) return null;
     const romOffset = patchOffsets[0];
     const upper = romView.getUint16(romOffset.upper) << 16;
@@ -90,9 +95,9 @@ export class mainfs {
     return offset;
   }
 
-  public static setROMOffset(newOffset: number, buffer: ArrayBuffer) {
+  public setROMOffset(newOffset: number, buffer: ArrayBuffer) {
     const romView = new DataView(buffer);
-    const patchOffsets = mainfs.getPatchOffsets();
+    const patchOffsets = this.getPatchOffsets();
     const [upper, lower] = getRegSetUpperAndLower(newOffset);
     for (let i = 0; i < patchOffsets.length; i++) {
       romView.setUint16(patchOffsets[i].upper, upper);
@@ -101,22 +106,22 @@ export class mainfs {
     $$log(`MainFS.setROMOffset -> ${$$hex(getRegSetAddress(upper, lower))}`);
   }
 
-  public static getPatchOffsets() {
-    return _mainFSOffsets[romhandler.getROMGame()!];
+  public getPatchOffsets() {
+    return _mainFSOffsets[this._rom.getGame()!];
   }
 
-  public static get(dir: number, file: number) {
-    return _mainfsCache![dir][file].decompressed;
+  public get(dir: number, file: number) {
+    return this._mainfsCache![dir][file].decompressed;
   }
 
-  public static has(dir: number, file: number) {
-    return !!_mainfsCache![dir][file];
+  public has(dir: number, file: number) {
+    return !!this._mainfsCache![dir][file];
   }
 
-  public static read(dir: number, file: number, all: boolean): IMainFsReadInfo {
-    const buffer = romhandler.getROMBuffer()!;
+  public read(dir: number, file: number, all: boolean): IMainFsReadInfo {
+    const buffer = this._rom.getBuffer();
 
-    const fs_offset = mainfs.getROMOffset()!;
+    const fs_offset = this.getROMOffset()!;
     const fsView = new DataView(buffer, fs_offset);
 
     const dir_offset = fs_offset + fsView.getUint32(4 * (1 + dir));
@@ -157,11 +162,11 @@ export class mainfs {
     return result;
   }
 
-  public static write(dir: number, file: number, content: ArrayBuffer) {
-    let fileData = _mainfsCache![dir][file];
+  public write(dir: number, file: number, content: ArrayBuffer) {
+    let fileData = this._mainfsCache![dir][file];
     if (!fileData) {
       $$log(`Adding new file to MainFS: ${dir}/${file}`);
-      _mainfsCache![dir][file] = fileData = {
+      this._mainfsCache![dir][file] = fileData = {
         compressionType: 0,
       } as any;
     } else if (
@@ -179,23 +184,19 @@ export class mainfs {
     fileData.decompressed = content.slice(0);
   }
 
-  public static clearCache() {
-    _mainfsCache = null;
-  }
-
-  public static extract() {
+  public extract(): IMainFsReadInfo[][] {
     let t0, t1;
     if (isDebug() && typeof performance !== "undefined") {
       t0 = performance.now();
     }
 
-    const dirCount = mainfs.getDirectoryCount();
-    _mainfsCache = new Array(dirCount);
+    const dirCount = this.getDirectoryCount();
+    this._mainfsCache = new Array(dirCount);
     for (let d = 0; d < dirCount; d++) {
-      const fileCount = mainfs.getFileCount(d);
-      _mainfsCache[d] = new Array(fileCount);
+      const fileCount = this.getFileCount(d);
+      this._mainfsCache[d] = new Array(fileCount);
       for (let f = 0; f < fileCount; f++) {
-        _mainfsCache[d][f] = mainfs.read(d, f, true);
+        this._mainfsCache[d][f] = this.read(d, f, true);
       }
     }
 
@@ -204,24 +205,20 @@ export class mainfs {
       $$log(`MainFS.extract() -> ${t1 - t0}ms`);
     }
 
-    return _mainfsCache;
+    return this._mainfsCache;
   }
 
-  public static extractAsync(): Promise<void> {
+  public extractAsync(): Promise<void> {
     return new Promise((resolve) => {
-      mainfs.extract();
+      this.extract();
       resolve();
     });
   }
 
-  public static pack(
-    buffer: ArrayBuffer,
-    writeDecompressed: boolean,
-    offset = 0,
-  ) {
+  public pack(buffer: ArrayBuffer, writeDecompressed: boolean, offset = 0) {
     const view = new DataView(buffer, offset);
 
-    const dirCount = mainfs.getDirectoryCount();
+    const dirCount = this.getDirectoryCount();
     view.setUint32(0, dirCount);
 
     let curDirIndexOffset = 4;
@@ -229,7 +226,7 @@ export class mainfs {
     for (let d = 0; d < dirCount; d++) {
       view.setUint32(curDirIndexOffset, curDirWriteOffset);
       curDirIndexOffset += 4;
-      curDirWriteOffset = mainfs._writeDir(
+      curDirWriteOffset = this._writeDir(
         d,
         view,
         curDirWriteOffset,
@@ -241,13 +238,13 @@ export class mainfs {
     return curDirWriteOffset;
   }
 
-  private static _writeDir(
+  private _writeDir(
     d: number,
     view: DataView,
     offset: number,
     writeDecompressed: boolean,
   ) {
-    const fileCount = mainfs.getFileCount(d);
+    const fileCount = this.getFileCount(d);
     view.setUint32(offset, fileCount);
 
     let curFileIndexOffset = offset + 4;
@@ -255,7 +252,7 @@ export class mainfs {
     for (let f = 0; f < fileCount; f++) {
       view.setUint32(curFileIndexOffset, curFileWriteOffset - offset);
       curFileIndexOffset += 4;
-      curFileWriteOffset = mainfs._writeFile(
+      curFileWriteOffset = this._writeFile(
         d,
         f,
         view,
@@ -268,15 +265,14 @@ export class mainfs {
     return curFileWriteOffset;
   }
 
-  private static _writeFile(
+  private _writeFile(
     d: number,
     f: number,
     view: DataView,
     offset: number,
     writeDecompressed: boolean,
   ) {
-    const fileData = _mainfsCache![d][f];
-
+    const fileData = this._mainfsCache![d][f];
     if (!fileData) {
       view.setUint32(offset, 0); // No file, no size
       view.setUint32(offset + 4, 0);
@@ -321,40 +317,41 @@ export class mainfs {
     }
   }
 
-  public static getDirectoryCount() {
-    if (_mainfsCache) return _mainfsCache.length;
+  public getDirectoryCount() {
+    if (this._mainfsCache) return this._mainfsCache.length;
 
-    const buffer = romhandler.getROMBuffer()!;
-    const fsView = new DataView(buffer, mainfs.getROMOffset()!);
+    const buffer = this._rom.getBuffer();
+    const fsView = new DataView(buffer, this.getROMOffset()!);
     return fsView.getUint32(0);
   }
 
-  public static getFileCount(dir: number): number {
-    if (_mainfsCache && _mainfsCache[dir]) return _mainfsCache[dir].length;
+  public getFileCount(dir: number): number {
+    if (this._mainfsCache && this._mainfsCache[dir])
+      return this._mainfsCache[dir].length;
 
-    const buffer = romhandler.getROMBuffer()!;
-    const fs_offset = mainfs.getROMOffset()!;
+    const buffer = this._rom.getBuffer();
+    const fs_offset = this.getROMOffset()!;
     const fsView = new DataView(buffer, fs_offset);
     const dir_offset = fs_offset + fsView.getUint32(4 * (1 + dir));
     const dirView = new DataView(buffer, dir_offset);
     return dirView.getUint32(0);
   }
 
-  public static getByteLength(writeDecompressed: boolean): number {
-    const dirCount = _mainfsCache!.length;
+  public getByteLength(writeDecompressed: boolean): number {
+    const dirCount = this._mainfsCache!.length;
 
     let byteLen = 0;
     byteLen += 4; // Count of directories
     byteLen += 4 * dirCount; // Directory offsets
 
     for (let d = 0; d < dirCount; d++) {
-      const fileCount = _mainfsCache![d].length;
+      const fileCount = this._mainfsCache![d].length;
 
       byteLen += 4; // Count of files
       byteLen += 4 * fileCount; // File offsets
 
       for (let f = 0; f < fileCount; f++) {
-        const fileData = _mainfsCache![d][f];
+        const fileData = this._mainfsCache![d][f];
 
         if (!fileData) {
           // Happens if we write a new file at a specific place and leave gaps.
@@ -378,19 +375,19 @@ export class mainfs {
   }
 
   /** Returns the current compressed size of a file. */
-  public static getCompressedSize(dir: number, file: number): number {
-    if (_mainfsCache && _mainfsCache[dir][file]) {
-      if (_mainfsCache[dir][file].compressed) {
-        return _mainfsCache[dir][file].compressed!.byteLength;
+  public getCompressedSize(dir: number, file: number): number {
+    if (this._mainfsCache && this._mainfsCache[dir][file]) {
+      if (this._mainfsCache[dir][file].compressed) {
+        return this._mainfsCache[dir][file].compressed!.byteLength;
       }
     }
     return 0;
   }
 
-  public static getFileHeaderSize(dir: number, file: number): number {
-    if (_mainfsCache && _mainfsCache[dir][file]) {
-      if (typeof _mainfsCache[dir][file].compressionType === "number") {
-        return _getFileHeaderSize(_mainfsCache[dir][file].compressionType);
+  public getFileHeaderSize(dir: number, file: number): number {
+    if (this._mainfsCache && this._mainfsCache[dir][file]) {
+      if (typeof this._mainfsCache[dir][file].compressionType === "number") {
+        return _getFileHeaderSize(this._mainfsCache[dir][file].compressionType);
       }
     }
     return 8;

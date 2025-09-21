@@ -1,6 +1,6 @@
 import { Game, GameVersion } from "./types";
 import { Scenes } from "./fs/scenes";
-import { mainfs } from "./fs/mainfs";
+import { MainFS } from "./fs/mainfs";
 import { strings } from "./fs/strings";
 import { strings3 } from "./fs/strings3";
 import { hvqfs } from "./fs/hvqfs";
@@ -20,6 +20,7 @@ export class ROM {
   private _u8array: Uint8Array;
 
   private _scenes: Scenes | null = null;
+  private _mainfs: MainFS | null = null;
 
   private _gameId: Game | null = null;
   private _gameVersion: GameVersion | null = null;
@@ -112,6 +113,13 @@ export class ROM {
     return this._scenes;
   }
 
+  public getMainFS(): MainFS {
+    if (!this._mainfs) {
+      throw new Error("ROM was not loaded");
+    }
+    return this._mainfs;
+  }
+
   public async loadAsync(): Promise<boolean> {
     const gameVersion = this.getGameVersion();
 
@@ -119,7 +127,8 @@ export class ROM {
     const promises = [];
     this._scenes = new Scenes(this);
     promises.push(this._scenes.extractAsync());
-    promises.push(mainfs.extractAsync());
+    this._mainfs = new MainFS(this);
+    promises.push(this._mainfs.extractAsync());
     if (gameVersion === 3) {
       promises.push(strings3.extractAsync());
     } else promises.push(strings.extractAsync());
@@ -202,7 +211,6 @@ class RomHandler {
   public clear(): void {
     this._rom = null;
 
-    mainfs.clearCache();
     strings.clear();
     strings3.clear();
     hvqfs.clearCache();
@@ -250,7 +258,7 @@ class RomHandler {
     // Grab all the sizes of the different sections.
     const sceneLen = makeDivisibleBy(rom.getScenes().getByteLength(), 16);
     const mainLen = makeDivisibleBy(
-      mainfs.getByteLength(writeDecompressed),
+      rom.getMainFS().getByteLength(writeDecompressed),
       16,
     );
     let strsLen;
@@ -282,6 +290,7 @@ class RomHandler {
 
     applyHook(newROMBuffer); // Before main fs is packed
 
+    const mainfs = rom.getMainFS();
     mainfs.pack(newROMBuffer, writeDecompressed, initialLen + sceneLen);
     mainfs.setROMOffset(initialLen + sceneLen, newROMBuffer);
 

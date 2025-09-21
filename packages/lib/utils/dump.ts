@@ -8,7 +8,6 @@ import {
   imgInfoSrcToDataView,
 } from "./img/ImgPack";
 import { fromTiles } from "./img/tiler";
-import { mainfs } from "../fs/mainfs";
 import { strings3 } from "../fs/strings3";
 import { strings } from "../fs/strings";
 import { romhandler } from "../romhandler";
@@ -26,6 +25,7 @@ export function create(callback: (blob: Blob) => any) {
   const zip = new JSZip();
 
   const mainfsfolder = zip.folder("mainfs")!;
+  const mainfs = romhandler.getRom()?.getMainFS()!;
   const mainfsDirCount = mainfs.getDirectoryCount();
   for (let d = 0; d < mainfsDirCount; d++) {
     const dirFolder = mainfsfolder.folder(d.toString())!;
@@ -56,6 +56,7 @@ export function load(buffer: ArrayBuffer, onError: (error: unknown) => void) {
         if (isNaN(d) || isNaN(f)) return;
         file.async("arraybuffer").then((content: ArrayBuffer) => {
           $$log(`Overwriting MainFS ${d}/${f}`);
+          const mainfs = romhandler.getRom()?.getMainFS()!;
           mainfs.write(d, f, content);
         });
       });
@@ -73,6 +74,7 @@ export function images() {
   const game = romhandler.getROMGame()!;
 
   const mainfsfolder = zip.folder("mainfs")!;
+  const mainfs = romhandler.getRom()?.getMainFS()!;
   const mainfsDirCount = mainfs.getDirectoryCount();
   for (let d = 0; d < mainfsDirCount; d++) {
     const dirFolder = mainfsfolder.folder(d.toString())!;
@@ -225,6 +227,7 @@ export function images() {
 
 // Dump out all the FORM bitmaps.
 export function formImages() {
+  const mainfs = romhandler.getRom()?.getMainFS()!;
   const mainfsDirCount = mainfs.getDirectoryCount();
   for (let d = 0; d < mainfsDirCount; d++) {
     const dirFileCount = mainfs.getFileCount(d);
@@ -283,6 +286,7 @@ export function saveWaluigi() {
 
   (window as any).waluigiParts = [];
   for (let f = 0; f < 163; f++) {
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     (window as any).waluigiParts.push(mainfs.get(8, f));
   }
 
@@ -302,6 +306,7 @@ export function writeWaluigi(character = 1) {
   }
 
   for (let i = 0; i < (window as any).waluigiParts.length; i++) {
+    const mainfs = romhandler.getRom()?.getMainFS()!;
     mainfs.write(character, i, (window as any).waluigiParts[i]);
   }
 }
@@ -310,6 +315,7 @@ export function saveDaisy() {
   if (romhandler.getGameVersion() !== 3)
     throw new Error(`Daisy is not in game ${romhandler.getGameVersion()}`);
 
+  const mainfs = romhandler.getRom()?.getMainFS()!;
   (window as any).daisyParts = [];
   (window as any).daisyParts.push(mainfs.get(9, 1));
   (window as any).daisyParts.push(mainfs.get(9, 3));
@@ -324,6 +330,7 @@ export function writeDaisy(character = 6) {
   if (!(window as any).daisyParts)
     throw new Error("Need to call saveDaisy first!");
 
+  const mainfs = romhandler.getRom()?.getMainFS()!;
   mainfs.write(character, 158, (window as any).daisyParts[0]);
   mainfs.write(character, 159, (window as any).daisyParts[1]);
 }
