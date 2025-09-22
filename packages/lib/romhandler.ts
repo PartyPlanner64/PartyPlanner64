@@ -3,7 +3,7 @@ import { Scenes } from "./fs/scenes";
 import { MainFS } from "./fs/mainfs";
 import { strings } from "./fs/strings";
 import { strings3 } from "./fs/strings3";
-import { hvqfs } from "./fs/hvqfs";
+import { HVQFS } from "./fs/hvqfs";
 import { audio } from "./fs/audio";
 import { animationfs } from "./fs/animationfs";
 import { makeDivisibleBy } from "./utils/number";
@@ -21,6 +21,7 @@ export class ROM {
 
   private _scenes: Scenes | null = null;
   private _mainfs: MainFS | null = null;
+  private _hvqfs: HVQFS | null = null;
 
   private _gameId: Game | null = null;
   private _gameVersion: GameVersion | null = null;
@@ -120,6 +121,13 @@ export class ROM {
     return this._mainfs;
   }
 
+  public getHVQFS(): HVQFS {
+    if (!this._hvqfs) {
+      throw new Error("ROM was not loaded");
+    }
+    return this._hvqfs;
+  }
+
   public async loadAsync(): Promise<boolean> {
     const gameVersion = this.getGameVersion();
 
@@ -132,7 +140,8 @@ export class ROM {
     if (gameVersion === 3) {
       promises.push(strings3.extractAsync());
     } else promises.push(strings.extractAsync());
-    promises.push(hvqfs.extractAsync());
+    this._hvqfs = new HVQFS(this);
+    promises.push(this._hvqfs.extractAsync());
     promises.push(audio.extractAsync());
     if (gameVersion === 2) {
       promises.push(animationfs.extractAsync());
@@ -213,7 +222,6 @@ class RomHandler {
 
     strings.clear();
     strings3.clear();
-    hvqfs.clearCache();
     audio.clearCache();
     animationfs.clearCache();
   }
@@ -265,7 +273,7 @@ class RomHandler {
     if (gameVersion === 3)
       strsLen = makeDivisibleBy(strings3.getByteLength(), 16);
     else strsLen = makeDivisibleBy(strings.getByteLength(), 16);
-    const hvqLen = makeDivisibleBy(hvqfs.getByteLength(), 16);
+    const hvqLen = makeDivisibleBy(rom.getHVQFS().getByteLength(), 16);
     const audioLen = makeDivisibleBy(audio.getByteLength(), 16);
     let animationLen = 0;
     if (gameVersion === 2)
@@ -302,6 +310,7 @@ class RomHandler {
       strings.setROMOffset(initialLen + sceneLen + mainLen, newROMBuffer);
     }
 
+    const hvqfs = rom.getHVQFS();
     hvqfs.pack(newROMBuffer, initialLen + sceneLen + mainLen + strsLen);
     hvqfs.setROMOffset(initialLen + mainLen + sceneLen + strsLen, newROMBuffer);
 

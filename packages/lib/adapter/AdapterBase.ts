@@ -1,6 +1,5 @@
 import { romhandler } from "../romhandler";
 import { getBoardInfos, getBoardInfoByIndex } from "./boardinfo";
-import { hvqfs } from "../fs/hvqfs";
 import { audio } from "../fs/audio";
 import {
   IBoard,
@@ -132,6 +131,7 @@ export abstract class AdapterBase {
 
       const boardInfo = boardInfos[i];
       const bgDir = boardInfo.bgDir;
+      const hvqfs = romhandler.getRom()!.getHVQFS();
       const background = hvqfs.readBackground(bgDir);
 
       let newBoard: IBoard;
@@ -253,6 +253,7 @@ export abstract class AdapterBase {
     this._clearOtherBoardNames(boardIndex);
     this._stashBoardIntoRom(board, boardInfo); // Don't use the boardCopy here
 
+    const hvqfs = romhandler.getRom()!.getHVQFS();
     hvqfs.updateMetadata(boardInfo.bgDir, boardCopy.bg);
 
     if (boardInfo.onAfterOverwrite) boardInfo.onAfterOverwrite(boardCopy);
@@ -1482,6 +1483,7 @@ ${eventAsmCombinedString}
     height: number,
   ): Promise<void> {
     const imgData = await getImageData(src, width, height);
+    const hvqfs = romhandler.getRom()!.getHVQFS();
     hvqfs.writeBackground(bgIndex, imgData, width, height);
   }
 
@@ -1508,6 +1510,7 @@ ${eventAsmCombinedString}
 
     await Promise.all(bgPromises);
 
+    const hvqfs = romhandler.getRom()!.getHVQFS();
     for (const imgData of bgImgData) {
       // Append each one to the end of the hvq fs.
       hvqfs.writeBackground(

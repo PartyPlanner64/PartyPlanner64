@@ -13,7 +13,6 @@ import {
   arrayBufferToDataURL,
   arrayBufferToImageData,
 } from "../utils/arrays";
-import { hvqfs } from "../fs/hvqfs";
 import { createContext, createImage } from "../utils/canvas";
 import { $$log } from "../utils/debug";
 import { toArrayBuffer, cutFromWhole } from "../utils/image";
@@ -517,6 +516,7 @@ export class MP2Adapter extends AdapterBase {
     if (typeof boardInfo.animBgSet !== "number" || !boardInfo.bgDir) return;
 
     // Perf: This is a bit redundant because we read the data URI previously.
+    const hvqfs = romhandler.getRom()!.getHVQFS();
     const mainBgImgData = hvqfs.readBackgroundImgData(boardInfo.bgDir);
 
     const animBgs = animationfs.readAnimationBackgrounds(
@@ -870,6 +870,7 @@ export class MP2Adapter extends AdapterBase {
     canvasCtx.putImageData(imgData, 0, -10);
 
     const imgDataShifted = canvasCtx.getImageData(0, 0, 320, 240);
+    const hvqfs = romhandler.getRom()!.getHVQFS();
     hvqfs.writeBackground(bgIndex, imgDataShifted, 320, 240);
     clearTimeout(failTimer);
   }

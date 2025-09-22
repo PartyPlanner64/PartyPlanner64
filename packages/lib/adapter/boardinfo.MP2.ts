@@ -1,6 +1,5 @@
 import { createBoardInfo } from "./boardinfobase";
 import { IBoard } from "../../../apps/partyplanner64/boards";
-import { hvqfs } from "../fs/hvqfs";
 import { strings } from "../fs/strings";
 import { arrayToArrayBuffer } from "../utils/arrays";
 import { toPack } from "../utils/img/ImgPack";
@@ -58,6 +57,7 @@ const MP2_WESTERN = createBoardInfo("MP2_WESTERN", {
   audioIndexOffset: 0x33aa, // 0x0029AE7A; // 0x80105BAA
 
   onLoad: function (board: IBoard) {
+    const hvqfs = romhandler.getRom()!.getHVQFS();
     board.otherbg.largescene = hvqfs.readBackground(MP2_WESTERN.bgDir + 2).src;
   },
 

@@ -1,7 +1,7 @@
 import { createBoardInfo } from "./boardinfobase";
 import { IBoard } from "../../../apps/partyplanner64/boards";
-import { hvqfs } from "../fs/hvqfs";
 import { BoardType } from "../types";
+import { romhandler } from "../romhandler";
 
 // Chilly Waters - (U) ROM
 const MP3_CHILLY = createBoardInfo("MP3_CHILLY", {
@@ -65,6 +65,7 @@ const MP3_CHILLY = createBoardInfo("MP3_CHILLY", {
   audioIndexOffset: 0x2682, // 0x0031DB92 // 0x80108022
 
   onLoad: function (board: IBoard) {
+    const hvqfs = romhandler.getRom()!.getHVQFS();
     board.otherbg.largescene = hvqfs.readBackground(MP3_CHILLY.bgDir + 1).src;
   },
 });
@@ -102,6 +103,7 @@ const MP3_BLOOBER = createBoardInfo("MP3_BLOOBER", {
   mainfsBoardFile: [19, 621],
 
   onLoad: function (board: IBoard) {
+    const hvqfs = romhandler.getRom()!.getHVQFS();
     board.otherbg.largescene = hvqfs.readBackground(MP3_BLOOBER.bgDir + 1).src;
   },
 });
@@ -148,6 +150,7 @@ const MP3_SPINY = createBoardInfo("MP3_SPINY", {
   mainfsBoardFile: [19, 623],
 
   onLoad: function (board: IBoard) {
+    const hvqfs = romhandler.getRom()!.getHVQFS();
     board.otherbg.largescene = hvqfs.readBackground(MP3_SPINY.bgDir + 1).src;
   },
 });
@@ -186,6 +189,7 @@ const MP3_WOODY = createBoardInfo("MP3_WOODY", {
   mainfsBoardFile: [19, 625],
 
   onLoad: function (board: IBoard) {
+    const hvqfs = romhandler.getRom()!.getHVQFS();
     board.otherbg.largescene = hvqfs.readBackground(MP3_WOODY.bgDir + 1).src;
   },
 });
@@ -224,6 +228,7 @@ const MP3_CAVERN = createBoardInfo("MP3_CAVERN", {
   mainfsBoardFile: [19, 627],
 
   onLoad: function (board: IBoard) {
+    const hvqfs = romhandler.getRom()!.getHVQFS();
     board.otherbg.largescene = hvqfs.readBackground(MP3_CAVERN.bgDir + 1).src;
   },
 });
@@ -262,6 +267,7 @@ const MP3_WALUIGI = createBoardInfo("MP3_WALUIGI", {
   mainfsBoardFile: [19, 629],
 
   onLoad: function (board: IBoard) {
+    const hvqfs = romhandler.getRom()!.getHVQFS();
     board.otherbg.largescene = hvqfs.readBackground(MP3_WALUIGI.bgDir + 1).src;
   },
 });

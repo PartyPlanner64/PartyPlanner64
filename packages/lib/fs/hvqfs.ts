@@ -6,7 +6,7 @@ import { RGBA5551toRGBA32, RGBA5551fromRGBA32 } from "../utils/img/RGBA5551";
 import { createContext } from "../utils/canvas";
 import { copyRange } from "../utils/arrays";
 import { Game } from "../types";
-import { romhandler } from "../romhandler";
+import { ROM } from "../romhandler";
 import { getRegSetAddress, getRegSetUpperAndLower } from "../utils/MIPS";
 import { isDebug } from "../../../apps/partyplanner64/debug";
 
@@ -17,9 +17,6 @@ interface IOffsetInfo {
 }
 
 const _HVQFSOffsets: { [game: string]: IOffsetInfo[] } = {};
-
-let _hvqCache: ArrayBuffer[][] | null;
-let _hvqMetadata: IHVQMetadata[] | null;
 
 _HVQFSOffsets[Game.MP1_USA] = [
   // Default at 0x00FE2310
@@ -198,9 +195,19 @@ interface IHVQMetadata {
   cameraUpVecZ: number;
 }
 
-export const hvqfs = {
-  getROMOffset() {
-    const rom = romhandler.getRom();
+export class HVQFS {
+  private _rom: ROM;
+  private _hvqCache: ArrayBuffer[][] | null;
+  private _hvqMetadata: IHVQMetadata[] | null;
+
+  public constructor(rom: ROM) {
+    this._rom = rom;
+    this._hvqCache = null;
+    this._hvqMetadata = null;
+  }
+
+  public getROMOffset(): number | null {
+    const rom = this._rom;
     const scenes = rom?.getScenes();
     if (!scenes) return null;
 
@@ -216,7 +223,7 @@ export const hvqfs = {
       upper = sceneView.getUint16(upperReadOffset);
       lower = sceneView.getUint16(lowerReadOffset);
     } else {
-      const romView = romhandler.getDataView();
+      const romView = rom.getDataView();
       upper = romView.getUint16(upperReadOffset);
       lower = romView.getUint16(lowerReadOffset);
     }
@@ -237,7 +244,7 @@ export const hvqfs = {
           anotherUpper = sceneView.getUint16(anotherUpperReadOffset);
           anotherLower = sceneView.getUint16(anotherLowerReadOffset);
         } else {
-          const romView = romhandler.getDataView();
+          const romView = rom.getDataView();
           anotherUpper = romView.getUint16(anotherUpperReadOffset);
           anotherLower = romView.getUint16(anotherLowerReadOffset);
         }
@@ -254,11 +261,11 @@ export const hvqfs = {
     }
 
     return offset;
-  },
+  }
 
-  setROMOffset(newOffset: number, buffer: ArrayBuffer) {
+  public setROMOffset(newOffset: number, buffer: ArrayBuffer) {
     $$log(`HVQFS.setROMOffset(${$$hex(newOffset)})`);
-    const rom = romhandler.getRom();
+    const rom = this._rom;
     const scenes = rom?.getScenes()!;
     const patchOffsets = this.getPatchOffsets()!;
     const [upper, lower] = getRegSetUpperAndLower(newOffset);
@@ -277,10 +284,10 @@ export const hvqfs = {
       }
     }
     $$log(`HVQFS.setROMOffset -> ${$$hex((upper << 16) | lower)}`);
-  },
+  }
 
-  getPatchOffsets() {
-    const gameOffsets = _HVQFSOffsets[romhandler.getROMGame()!];
+  public getPatchOffsets() {
+    const gameOffsets = _HVQFSOffsets[this._rom.getGame()!];
     if (!gameOffsets) {
       return null;
     }
@@ -300,14 +307,14 @@ export const hvqfs = {
         ovl: offset.ovl,
       };
     });
-  },
+  }
 
-  get(dir: number, file: number) {
-    return _hvqCache![dir][file];
-  },
+  public get(dir: number, file: number) {
+    return this._hvqCache![dir][file];
+  }
 
-  read(dir: number, file: number) {
-    const buffer = romhandler.getROMBuffer()!;
+  public read(dir: number, file: number) {
+    const buffer = this._rom.getBuffer();
 
     const fsOffset = this.getROMOffset()!;
     const fsView = new DataView(buffer, fsOffset);
@@ -319,31 +326,26 @@ export const hvqfs = {
     const nextFileOffset = bgOffset + bgView.getUint32(4 * (1 + file + 1));
 
     return buffer.slice(fileOffset, nextFileOffset);
-  },
+  }
 
-  write(dir: number, file: number, content: ArrayBuffer) {
-    _hvqCache![dir][file] = content.slice(0);
-  },
+  public write(dir: number, file: number, content: ArrayBuffer) {
+    this._hvqCache![dir][file] = content.slice(0);
+  }
 
-  clearCache() {
-    _hvqCache = null;
-    _hvqMetadata = null;
-  },
-
-  extract() {
+  public extract() {
     let t0, t1;
     if (isDebug() && typeof performance !== "undefined") {
       t0 = performance.now();
     }
 
     const bgCount = this.getDirectoryCount();
-    _hvqCache = new Array(bgCount);
-    _hvqMetadata = new Array(bgCount);
+    this._hvqCache = new Array(bgCount);
+    this._hvqMetadata = new Array(bgCount);
     for (let b = 0; b < bgCount; b++) {
       const fileCount = this.getHVQFileCount(b);
-      _hvqCache[b] = new Array(fileCount);
+      this._hvqCache[b] = new Array(fileCount);
       for (let f = 0; f < fileCount; f++) {
-        _hvqCache[b][f] = this.read(b, f);
+        this._hvqCache[b][f] = this.read(b, f);
       }
 
       this._readMetadata(b);
@@ -373,17 +375,17 @@ export const hvqfs = {
     //       }
     //     }
 
-    return _hvqCache;
-  },
+    return this._hvqCache;
+  }
 
-  extractAsync(): Promise<void> {
+  public extractAsync(): Promise<void> {
     return new Promise((resolve) => {
       this.extract();
       resolve();
     });
-  },
+  }
 
-  pack(buffer: ArrayBuffer, offset = 0) {
+  public pack(buffer: ArrayBuffer, offset = 0) {
     const view = new DataView(buffer, offset);
 
     const bgCount = this.getDirectoryCount();
@@ -401,9 +403,9 @@ export const hvqfs = {
     view.setUint32(curBgIndexOffset, curBgWriteOffset);
 
     return curBgWriteOffset;
-  },
+  }
 
-  _writeBg(b: number, view: DataView, offset: number) {
+  private _writeBg(b: number, view: DataView, offset: number) {
     const fileCount = this.getHVQFileCount(b);
     view.setUint32(offset, fileCount + 1);
 
@@ -421,16 +423,16 @@ export const hvqfs = {
     view.setUint32(curFileIndexOffset, curFileWriteOffset - offset);
 
     return curFileWriteOffset;
-  },
+  }
 
-  _writeFile(b: number, f: number, view: DataView, offset: number) {
-    const fileBytes = _hvqCache![b][f];
+  private _writeFile(b: number, f: number, view: DataView, offset: number) {
+    const fileBytes = this._hvqCache![b][f];
     copyRange(view, fileBytes, offset, 0, fileBytes.byteLength);
     return offset + fileBytes.byteLength;
-  },
+  }
 
-  _readMetadata(dir: number): void {
-    const infoView = new DataView(_hvqCache![dir][0], 0);
+  private _readMetadata(dir: number): void {
+    const infoView = new DataView(this._hvqCache![dir][0], 0);
     const metadata: IHVQMetadata = {
       tileWidth: infoView.getUint32(0),
       tileHeight: infoView.getUint32(4),
@@ -453,10 +455,10 @@ export const hvqfs = {
       cameraUpVecY: infoView.getFloat32(56),
     };
     this._setMetadata(dir, metadata);
-  },
+  }
 
-  _writeMetadata(dir: number): void {
-    const infoView = new DataView(_hvqCache![dir][0], 0);
+  private _writeMetadata(dir: number): void {
+    const infoView = new DataView(this._hvqCache![dir][0], 0);
     const metadata = this.getMetadata(dir);
 
     infoView.setUint32(0, metadata.tileWidth);
@@ -478,29 +480,29 @@ export const hvqfs = {
     infoView.setFloat32(48, metadata.cameraUpVecX);
     infoView.setFloat32(52, metadata.cameraUpVecZ);
     infoView.setFloat32(56, metadata.cameraUpVecY);
-  },
+  }
 
-  _getBgDimensions(dir: number) {
-    const metadata = _hvqMetadata![dir];
+  private _getBgDimensions(dir: number) {
+    const metadata = this._hvqMetadata![dir];
 
     const width = metadata.tileWidth * metadata.tileCountX;
     const height = metadata.tileHeight * metadata.tileCountY;
     return [width, height];
-  },
+  }
 
-  getMetadata(dir: number): IHVQMetadata {
-    return _hvqMetadata![dir];
-  },
+  public getMetadata(dir: number): IHVQMetadata {
+    return this._hvqMetadata![dir];
+  }
 
   _setMetadata(dir: number, metadata: IHVQMetadata): void {
-    _hvqMetadata![dir] = metadata;
-  },
+    this._hvqMetadata![dir] = metadata;
+  }
 
   /**
    * Updates the HVQ metadata to reflect new values.
    * Need to be careful, old boards may not have all or some values.
    */
-  updateMetadata(dir: number, values: Partial<IHVQMetadata>): void {
+  public updateMetadata(dir: number, values: Partial<IHVQMetadata>): void {
     const metadata = this.getMetadata(dir);
 
     if ("tileWidth" in values) metadata["tileWidth"] = values["tileWidth"]!;
@@ -534,10 +536,10 @@ export const hvqfs = {
       metadata["cameraUpVecY"] = values["cameraUpVecY"]!;
 
     this._setMetadata(dir, metadata);
-  },
+  }
 
-  readBackgroundImgData(dir: number): ImageData {
-    const tileCount = _hvqCache![dir].length - 1;
+  public readBackgroundImgData(dir: number): ImageData {
+    const tileCount = this._hvqCache![dir].length - 1;
 
     const metadata = this.getMetadata(dir);
     const tile_width = metadata.tileWidth;
@@ -560,10 +562,10 @@ export const hvqfs = {
 
     // Grab DataViews of all of the tiles.
     const hvqTiles = [];
-    const game = romhandler.getGameVersion();
+    const game = this._rom.getGameVersion();
     const adjust = game === 1 ? 1 : 2; // Skip HVQ-MPS in newer games
-    for (let i = adjust; i < _hvqCache![dir].length; i++) {
-      hvqTiles.push(new DataView(_hvqCache![dir][i]));
+    for (let i = adjust; i < this._hvqCache![dir].length; i++) {
+      hvqTiles.push(new DataView(this._hvqCache![dir][i]));
     }
     const rgba16Tiles = hvqTiles.map(decode);
     const rgba16Views = rgba16Tiles.map((tile) => {
@@ -593,9 +595,9 @@ export const hvqfs = {
     }
 
     return bgImageData;
-  },
+  }
 
-  readBackground(dir: number) {
+  public readBackground(dir: number) {
     const metadata = this.getMetadata(dir);
     const [width, height] = this._getBgDimensions(dir);
     const canvasCtx = createContext(width, height);
@@ -606,9 +608,9 @@ export const hvqfs = {
       height,
       src: canvasCtx.canvas.toDataURL(),
     });
-  },
+  }
 
-  writeBackground(
+  public writeBackground(
     dir: number,
     imgData: ImageData,
     width: number,
@@ -642,23 +644,23 @@ export const hvqfs = {
       }
     }
 
-    const game = romhandler.getGameVersion()!;
+    const game = this._rom.getGameVersion()!;
 
-    if (!_hvqCache![dir]) {
+    if (!this._hvqCache![dir]) {
       if (!metadata) {
         throw new Error("Cannot write a new HVQ background without metadata");
       }
 
-      _hvqCache![dir] = [];
+      this._hvqCache![dir] = [];
 
       // TODO: Hard coding these seems bad.
       if (game > 1) {
-        _hvqCache![dir][0] = _hvqCache![3][0];
+        this._hvqCache![dir][0] = this._hvqCache![3][0];
 
         // Well... we probably need HVQ-MPS, but for now it doesn't matter which.
-        _hvqCache![dir][1] = _hvqCache![3][1];
+        this._hvqCache![dir][1] = this._hvqCache![3][1];
       } else {
-        _hvqCache![dir][0] = _hvqCache![0][0];
+        this._hvqCache![dir][0] = this._hvqCache![0][0];
       }
       this._readMetadata(dir);
     }
@@ -669,30 +671,31 @@ export const hvqfs = {
 
     if (game === 1) {
       for (let i = 1; i <= tileCount; i++) {
-        _hvqCache![dir][i] = orderedHVQTiles[i - 1];
+        this._hvqCache![dir][i] = orderedHVQTiles[i - 1];
       }
     } else {
       // MP2/3 also has the HVQ-MPS to skip
       for (let i = 2; i <= tileCount + 1; i++) {
-        _hvqCache![dir][i] = orderedHVQTiles[i - 2];
+        this._hvqCache![dir][i] = orderedHVQTiles[i - 2];
       }
     }
-  },
+  }
 
-  getDirectoryCount() {
-    if (_hvqCache) return _hvqCache.length;
+  public getDirectoryCount() {
+    if (this._hvqCache) return this._hvqCache.length;
 
-    const buffer = romhandler.getROMBuffer()!;
+    const buffer = this._rom.getBuffer();
     const hvqFsOffset = this.getROMOffset();
     if (hvqFsOffset === null) return 0;
     const hvqFsView = new DataView(buffer, hvqFsOffset);
     return hvqFsView.getUint32(0) - 1; // The last dir is a fake.
-  },
+  }
 
-  getHVQFileCount(dir: number) {
-    if (_hvqCache && _hvqCache[dir]) return _hvqCache[dir].length;
+  public getHVQFileCount(dir: number): number {
+    if (this._hvqCache && this._hvqCache[dir])
+      return this._hvqCache[dir].length;
 
-    const buffer = romhandler.getROMBuffer()!;
+    const buffer = this._rom.getBuffer();
     const hvqFsOffset = this.getROMOffset();
     if (hvqFsOffset === null) return 0;
     const hvqFsView = new DataView(buffer, hvqFsOffset);
@@ -700,28 +703,28 @@ export const hvqfs = {
     const hvqFileOffset = hvqFsOffset + hvqFsView.getUint32(4 * (1 + dir));
     const hvqFileView = new DataView(buffer, hvqFileOffset);
     return hvqFileView.getUint32(0) - 1; // The last file is a lie.
-  },
+  }
 
-  getByteLength() {
+  public getByteLength(): number {
     let byteLen = 0;
 
-    const bgCount = _hvqCache!.length;
+    const bgCount = this._hvqCache!.length;
 
     byteLen += 4; // Count of backgrounds
     byteLen += 4 * (bgCount + 1); // Background offsets + the extra offset
 
     for (let b = 0; b < bgCount; b++) {
-      const fileCount = _hvqCache![b].length;
+      const fileCount = this._hvqCache![b].length;
 
       byteLen += 4; // Count of files
       byteLen += 4 * (fileCount + 1); // File offsets + the extra offset
 
       for (let f = 0; f < fileCount; f++) {
-        byteLen += _hvqCache![b][f].byteLength;
+        byteLen += this._hvqCache![b][f].byteLength;
         byteLen = makeDivisibleBy(byteLen, 4);
       }
     }
 
     return byteLen;
-  },
-};
+  }
+}

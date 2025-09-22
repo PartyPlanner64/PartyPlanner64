@@ -1,6 +1,5 @@
 import { createBoardInfo } from "./boardinfobase";
 import { IBoard } from "../../../apps/partyplanner64/boards";
-import { hvqfs } from "../fs/hvqfs";
 import { strings } from "../fs/strings";
 import { arrayToArrayBuffer } from "../utils/arrays";
 import { toPack } from "../utils/img/ImgPack";
@@ -40,6 +39,7 @@ const MP1_USA_DK = createBoardInfo("MP1_USA_DK", {
   },
 
   onLoad: function (board: IBoard) {
+    const hvqfs = romhandler.getRom()!.getHVQFS();
     board.otherbg.largescene = hvqfs.readBackground(MP1_USA_DK.bgDir + 1).src;
     board.otherbg.conversation = hvqfs.readBackground(MP1_USA_DK.bgDir + 2).src;
     board.otherbg.splashscreen = hvqfs.readBackground(MP1_USA_DK.bgDir + 6).src;
@@ -107,6 +107,7 @@ const MP1_USA_PEACH = createBoardInfo("MP1_USA_PEACH", {
   goombaSpaceInst: 0x900, // 0x00245EC0
 
   onLoad: function (board: IBoard) {
+    const hvqfs = romhandler.getRom()!.getHVQFS();
     board.otherbg.largescene = hvqfs.readBackground(
       MP1_USA_PEACH.bgDir + 1,
     ).src;
@@ -158,6 +159,7 @@ const MP1_USA_YOSHI = createBoardInfo("MP1_USA_YOSHI", {
   // spaceEventsEndOffset: 0x00248EE4;
 
   onLoad: function (board: IBoard) {
+    const hvqfs = romhandler.getRom()!.getHVQFS();
     board.otherbg.largescene = hvqfs.readBackground(
       MP1_USA_YOSHI.bgDir + 1,
     ).src;
@@ -217,6 +219,7 @@ const MP1_USA_WARIO = createBoardInfo("MP1_USA_WARIO", {
   toadSpaceArrOffset: [0x3250, 0x3270], // [0x0024C150, 0x0024C170]
 
   onLoad: function (board: IBoard) {
+    const hvqfs = romhandler.getRom()!.getHVQFS();
     board.otherbg.largescene = hvqfs.readBackground(
       MP1_USA_WARIO.bgDir + 1,
     ).src;

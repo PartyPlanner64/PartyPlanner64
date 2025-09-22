@@ -10,7 +10,6 @@ import {
   IBoard,
 } from "../../../apps/partyplanner64/boards";
 import { romhandler } from "../romhandler";
-import { hvqfs } from "../fs/hvqfs";
 
 /** Default assembly code used for background selection. */
 export const defaultAdditionalBgAsm = `; Customize the background used each turn!
@@ -247,6 +246,7 @@ export function getBoardAdditionalBgHvqIndices(
   if (board?.additionalbg) {
     return board.additionalbg.map((bg, i) => {
       if (romhandler.romIsLoaded()) {
+        const hvqfs = romhandler.getRom()!.getHVQFS();
         return hvqfs.getDirectoryCount() + i;
       }
       return i; // Must be a test compile.
