@@ -1,6 +1,7 @@
 import { getAdapter } from "./adapter/adapters";
 import { IDecisionTreeNode } from "./ai/aitrees";
 import { ICustomEvent } from "./events/customevents";
+import { getEventsInLibrary } from "./events/EventLibrary";
 import {
   EventMap,
   EventParameterValues,
@@ -490,6 +491,28 @@ export function addSpaceInternal(
 
   board.spaces.push(newSpace);
   return board.spaces.length - 1;
+}
+
+/** Gets the index of the "dead space." The space is created if it hasn't been already. */
+export function getDeadSpaceIndex(board: IBoard): number {
+  if (typeof board._deadSpace === "number") {
+    return board._deadSpace;
+  }
+  const deadSpaceIndex = addSpaceInternal(
+    board.bg.width + 150,
+    board.bg.height + 100,
+    Space.OTHER,
+    undefined,
+    board,
+    getEventsInLibrary(),
+  );
+  board._deadSpace = deadSpaceIndex;
+  return deadSpaceIndex;
+}
+
+/** Gets the "dead space." The space is created if it hasn't been already. */
+export function getDeadSpace(board: IBoard): ISpace {
+  return board.spaces[getDeadSpaceIndex(board)];
 }
 
 export function getSpacesOfSubType(

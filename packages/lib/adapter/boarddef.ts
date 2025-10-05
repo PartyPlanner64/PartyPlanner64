@@ -1,4 +1,3 @@
-import { addSpace } from "../../../apps/partyplanner64/boards";
 import { Space } from "../types";
 import { midpoint, distance } from "../utils/number";
 import { $$log, $$hex } from "../utils/debug";
@@ -10,7 +9,9 @@ import {
   hasConnection,
   getStartSpaceIndex,
   getConnections,
+  addSpaceInternal,
 } from "../boards";
+import { getEventsInLibrary } from "../events/EventLibrary";
 
 export function parse(buffer: ArrayBufferLike, board: Partial<IBoard>): IBoard {
   const header = _parseHeader(buffer);
@@ -396,7 +397,14 @@ export function padChains(board: IBoard, chains: number[][]) {
       }
 
       if (typeof padX === "number" && typeof padY === "number") {
-        const newLink = addSpace(padX, padY, Space.OTHER, undefined, board);
+        const newLink = addSpaceInternal(
+          padX,
+          padY,
+          Space.OTHER,
+          undefined,
+          board,
+          getEventsInLibrary(),
+        );
         chain.push(newLink);
 
         // CS classic, insert into linkedish list.

@@ -1,4 +1,3 @@
-import { getDeadSpaceIndex } from "../../../apps/partyplanner64/boards";
 import { IBoardInfo } from "./boardinfobase";
 import { SpaceSubtype, Game, Space } from "../types";
 import { distance, getRawFloat32Format } from "../utils/number";
@@ -10,7 +9,7 @@ import { $$hex } from "../utils/debug";
 import { getAdditionalBgAsmForOverlay, getBoardAdditionalBgHvqIndices } from "../events/additionalbg";
 import { getShuffleSeedData } from "./overlayutils";
 import { getAudioIndexAsmForOverlay } from "../events/getaudiochoice";
-import { forEachEvent, IBoard, getSpacesOfSubType, getSpacesWithEvent } from "../boards";
+import { forEachEvent, IBoard, getSpacesOfSubType, getSpacesWithEvent, getDeadSpaceIndex } from "../boards";
 
 export async function createBoardOverlay(board: IBoard, boardInfo: IBoardInfo, boardIndex: number, audioIndices: number[]): Promise<string> {
   const [mainFsEventDir, mainFsEventFile] = boardInfo.mainfsEventFile!;

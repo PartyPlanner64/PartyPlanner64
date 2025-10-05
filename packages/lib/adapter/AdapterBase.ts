@@ -1,10 +1,6 @@
 import { romhandler } from "../romhandler";
 import { getBoardInfos, getBoardInfoByIndex } from "./boardinfo";
-import {
-  addEventByIndex,
-  getDeadSpace,
-  getDeadSpaceIndex,
-} from "../../../apps/partyplanner64/boards";
+import { addEventByIndex } from "../../../apps/partyplanner64/boards";
 import { copyObject } from "../utils/obj";
 import {
   determineChains,
@@ -76,6 +72,8 @@ import {
   IBoard,
   IEventInstance,
   ISpace,
+  getDeadSpace,
+  getDeadSpaceIndex,
 } from "../boards";
 
 export interface IAdapterOptions {

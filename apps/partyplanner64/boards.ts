@@ -473,41 +473,14 @@ export function addSpace(
   y: number,
   type: Space,
   subtype?: SpaceSubtype,
-  board?: IBoard,
 ): number {
-  // Hack for callers not editing redux state.
-  if (board) {
-    return addSpaceInternal(x, y, type, subtype, board, getEventsInLibrary());
-  } else {
-    const newIndex = getCurrentBoard().spaces.length;
-    store.dispatch(addSpaceAction({ x, y, type, subtype }));
-    return newIndex;
-  }
+  const newIndex = getCurrentBoard().spaces.length;
+  store.dispatch(addSpaceAction({ x, y, type, subtype }));
+  return newIndex;
 }
 
 export function removeSpace(index: number) {
   store.dispatch(removeSpaceAction({ index }));
-}
-
-/** Gets the index of the "dead space." The space is created if it hasn't been already. */
-export function getDeadSpaceIndex(board: IBoard): number {
-  if (typeof board._deadSpace === "number") {
-    return board._deadSpace;
-  }
-  const deadSpaceIndex = addSpace(
-    board.bg.width + 150,
-    board.bg.height + 100,
-    Space.OTHER,
-    undefined,
-    board,
-  );
-  board._deadSpace = deadSpaceIndex;
-  return deadSpaceIndex;
-}
-
-/** Gets the "dead space." The space is created if it hasn't been already. */
-export function getDeadSpace(board: IBoard): ISpace {
-  return board.spaces[getDeadSpaceIndex(board)];
 }
 
 export function addConnection(startSpaceIndex: number, endSpaceIndex: number) {

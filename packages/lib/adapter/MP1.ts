@@ -1,5 +1,4 @@
 import { AdapterBase } from "./AdapterBase";
-import { getDeadSpaceIndex } from "../../../apps/partyplanner64/boards";
 import { Space, SpaceSubtype, GameVersion } from "../types";
 import { createEventInstance, EventMap } from "../events/events";
 import { parse as parseInst } from "mips-inst";
@@ -21,7 +20,12 @@ import { getAudioMapMP1 } from "./MP1.U.audio";
 import { createImage } from "../utils/canvas";
 import { romhandler } from "../romhandler";
 import { strToBytes } from "../fs/strings";
-import { IBoard, ISpace, addEventToSpaceInternal } from "../boards";
+import {
+  IBoard,
+  ISpace,
+  addEventToSpaceInternal,
+  getDeadSpaceIndex,
+} from "../boards";
 
 export class MP1Adapter extends AdapterBase {
   public gameVersion: GameVersion = 1;
