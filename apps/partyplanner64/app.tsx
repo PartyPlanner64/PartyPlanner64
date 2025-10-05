@@ -31,7 +31,7 @@ import { ToolWindow } from "./toolwindow";
 import { Toolbar } from "./toolbar";
 import { SpaceProperties } from "./spaceproperties";
 import { BoardProperties } from "./boardproperties";
-import "../../packages/lib/utils/onbeforeunload";
+import "./utils/onbeforeunload";
 import "../../packages/lib/events/builtin/events.include";
 import "file-saver";
 import { DebugView } from "./views/debug";

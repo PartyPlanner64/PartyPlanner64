@@ -1,5 +1,5 @@
-import { getCustomEvents } from "../events/events";
-import { getBoards } from "../../../apps/partyplanner64/boards";
+import { getCustomEvents } from "../../../packages/lib/events/events";
+import { getBoards } from "../boards";
 
 /**
  * Saves off data when the user is about to close the window.
