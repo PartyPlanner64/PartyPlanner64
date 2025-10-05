@@ -6,8 +6,7 @@ import {
   EventParameterType,
 } from "../../../../types";
 import { hashEqual } from "../../../../utils/arrays";
-import { addConnection } from "../../../../../../apps/partyplanner64/boards";
-import { IEventInstance } from "../../../../boards";
+import { addConnectionInternal, IEventInstance } from "../../../../boards";
 import { addEventToLibrary } from "../../../EventLibrary";
 
 // Represents the "event" that takes the player from one chain to another.
@@ -63,7 +62,7 @@ export const ChainMerge3: IEvent = {
           return false;
         }
 
-        addConnection(info.curSpace, nextSpace, info.board);
+        addConnectionInternal(info.curSpace, nextSpace, info.board);
       }
 
       return true;

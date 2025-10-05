@@ -6,8 +6,7 @@ import {
   EventParameterType,
 } from "../../../../types";
 import { hashEqual } from "../../../../utils/arrays";
-import { addConnection } from "../../../../../../apps/partyplanner64/boards";
-import { IEventInstance } from "../../../../boards";
+import { addConnectionInternal, IEventInstance } from "../../../../boards";
 import { addEventToLibrary } from "../../../EventLibrary";
 
 // Represents the "event" where the player decides between two paths.
@@ -50,8 +49,8 @@ export const ChainSplit2: IEvent = {
       const leftSpace = info.chains[leftChain][0]; // Technically, we should check if A2 is really R0.
       const rightSpace = info.chains[rightChain][0];
 
-      addConnection(info.curSpace, leftSpace, info.board);
-      addConnection(info.curSpace, rightSpace, info.board);
+      addConnectionInternal(info.curSpace, leftSpace, info.board);
+      addConnectionInternal(info.curSpace, rightSpace, info.board);
       return true;
     }
 

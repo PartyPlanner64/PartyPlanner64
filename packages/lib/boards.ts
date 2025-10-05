@@ -274,6 +274,29 @@ export function getConnections(spaceIndex: number, board: IBoard) {
   return [];
 }
 
+/** Adds a connection, no redux state modification. */
+export function addConnectionInternal(
+  startSpaceIndex: number,
+  endSpaceIndex: number,
+  board: IBoard,
+): void {
+  if (
+    startSpaceIndex === endSpaceIndex ||
+    hasConnection(startSpaceIndex, endSpaceIndex, board)
+  )
+    return;
+
+  board.links = board.links || {};
+  if (Array.isArray(board.links[startSpaceIndex]))
+    (board.links[startSpaceIndex] as number[]).push(endSpaceIndex);
+  else if (typeof board.links[startSpaceIndex] === "number")
+    board.links[startSpaceIndex] = [
+      board.links[startSpaceIndex] as number,
+      endSpaceIndex,
+    ];
+  else if (endSpaceIndex >= 0) board.links[startSpaceIndex] = endSpaceIndex;
+}
+
 export function getBoardEvent(
   board: IBoard,
   eventId: string,

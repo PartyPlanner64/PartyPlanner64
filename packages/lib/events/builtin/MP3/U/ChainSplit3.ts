@@ -6,8 +6,7 @@ import {
   EventParameterType,
 } from "../../../../types";
 import { hashEqual } from "../../../../utils/arrays";
-import { addConnection } from "../../../../../../apps/partyplanner64/boards";
-import { IEventInstance } from "../../../../boards";
+import { addConnectionInternal, IEventInstance } from "../../../../boards";
 import { addEventToLibrary } from "../../../EventLibrary";
 
 // Represents the "event" where the player decides between two paths.
@@ -50,7 +49,7 @@ export const ChainSplit3: IEvent = {
 
       let destinationSpace = dataView.getUint16(spacesOffset);
       while (destinationSpace !== 0xffff) {
-        addConnection(info.curSpace, destinationSpace, info.board);
+        addConnectionInternal(info.curSpace, destinationSpace, info.board);
         spacesOffset += 2;
         destinationSpace = dataView.getUint16(spacesOffset);
       }

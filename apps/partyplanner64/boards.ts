@@ -510,39 +510,8 @@ export function getDeadSpace(board: IBoard): ISpace {
   return board.spaces[getDeadSpaceIndex(board)];
 }
 
-export function addConnectionInternal(
-  startSpaceIndex: number,
-  endSpaceIndex: number,
-  board: IBoard,
-): void {
-  if (
-    startSpaceIndex === endSpaceIndex ||
-    hasConnection(startSpaceIndex, endSpaceIndex, board)
-  )
-    return;
-
-  board.links = board.links || {};
-  if (Array.isArray(board.links[startSpaceIndex]))
-    (board.links[startSpaceIndex] as number[]).push(endSpaceIndex);
-  else if (typeof board.links[startSpaceIndex] === "number")
-    board.links[startSpaceIndex] = [
-      board.links[startSpaceIndex] as number,
-      endSpaceIndex,
-    ];
-  else if (endSpaceIndex >= 0) board.links[startSpaceIndex] = endSpaceIndex;
-}
-
-export function addConnection(
-  startSpaceIndex: number,
-  endSpaceIndex: number,
-  board?: IBoard,
-) {
-  if (board) {
-    // Hack: the places that do pass a board aren't modifying the redux store.
-    addConnectionInternal(startSpaceIndex, endSpaceIndex, board);
-  } else {
-    store.dispatch(addConnectionAction({ startSpaceIndex, endSpaceIndex }));
-  }
+export function addConnection(startSpaceIndex: number, endSpaceIndex: number) {
+  store.dispatch(addConnectionAction({ startSpaceIndex, endSpaceIndex }));
 }
 
 export function setSpaceRotation(spaceIndex: number, angleYAxisDeg: number) {

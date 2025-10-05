@@ -6,9 +6,8 @@ import {
   EditorEventActivationType,
 } from "../../types";
 import { hashEqual } from "../../utils/arrays";
-import { addConnection } from "../../../../apps/partyplanner64/boards";
 import { addEventToLibrary } from "../EventLibrary";
-import { IEventInstance } from "../../boards";
+import { addConnectionInternal, IEventInstance } from "../../boards";
 
 // Represents the "event" that takes the player from one chain to another.
 // This won't be an actual event when exposed to the user.
@@ -54,7 +53,7 @@ export const ChainMerge: IEvent = {
 
         // This isn't an event really - write directly to the board links.
         if (!isNaN(nextSpace))
-          addConnection(info.curSpace, nextSpace, info.board);
+          addConnectionInternal(info.curSpace, nextSpace, info.board);
 
         return true;
       }
@@ -80,7 +79,7 @@ export const ChainMerge: IEvent = {
 
         // This isn't an event really - write directly to the board links.
         if (typeof nextSpace === "number")
-          addConnection(info.curSpace, nextSpace, info.board);
+          addConnectionInternal(info.curSpace, nextSpace, info.board);
 
         return true;
       }

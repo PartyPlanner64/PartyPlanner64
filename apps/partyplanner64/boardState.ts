@@ -1,9 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  addConnectionInternal,
-  IBoardAudioChanges,
-  _makeDefaultBoard,
-} from "./boards";
+import { IBoardAudioChanges, _makeDefaultBoard } from "./boards";
 import {
   createCustomEvent,
   ICustomEvent,
@@ -37,6 +33,7 @@ import {
   includeEventInBoardInternal,
   addEventToSpaceInternal,
   ISpace,
+  addConnectionInternal,
 } from "../../packages/lib/boards";
 
 export type SpaceIndexMap = { [index: number]: boolean };

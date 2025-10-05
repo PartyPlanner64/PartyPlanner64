@@ -6,11 +6,8 @@ import {
   EventParameterType,
 } from "../../../../types";
 import { hashEqual } from "../../../../utils/arrays";
-import {
-  addConnection,
-  addDecisionTree,
-} from "../../../../../../apps/partyplanner64/boards";
-import { IEventInstance } from "../../../../boards";
+import { addDecisionTree } from "../../../../../../apps/partyplanner64/boards";
+import { addConnectionInternal, IEventInstance } from "../../../../boards";
 import { addEventToLibrary } from "../../../EventLibrary";
 import { getSymbol } from "../../../../symbols/symbols";
 import { findCallsInFunction, getRegSetAddress } from "../../../../utils/MIPS";
@@ -56,8 +53,8 @@ export const ChainSplit1: IEvent = {
       const leftSpace = info.chains[leftChain][0]; // Technically, we should check if A2 is really R0.
       const rightSpace = info.chains[rightChain][0];
 
-      addConnection(info.curSpace, leftSpace, info.board);
-      addConnection(info.curSpace, rightSpace, info.board);
+      addConnectionInternal(info.curSpace, leftSpace, info.board);
+      addConnectionInternal(info.curSpace, rightSpace, info.board);
 
       // Locate the AI decision tree.
       const aiSymbol = getSymbol(info.game, "RunDecisionTree");
