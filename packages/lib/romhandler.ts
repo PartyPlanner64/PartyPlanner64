@@ -5,7 +5,7 @@ import { Strings } from "./fs/strings";
 import { Strings3 } from "./fs/strings3";
 import { HVQFS } from "./fs/hvqfs";
 import { audio } from "./fs/audio";
-import { animationfs } from "./fs/animationfs";
+import { Animationfs } from "./fs/animationfs";
 import { makeDivisibleBy } from "./utils/number";
 import { copyRange } from "./utils/arrays";
 import { applyHook } from "./patches/gameshark/hook";
@@ -24,6 +24,7 @@ export class ROM {
   private _hvqfs: HVQFS | null = null;
   private _strings: Strings | null = null;
   private _strings3: Strings3 | null = null;
+  private _animationFS: Animationfs | null = null;
 
   private _gameId: Game | null = null;
   private _gameVersion: GameVersion | null = null;
@@ -144,6 +145,13 @@ export class ROM {
     return this._strings3;
   }
 
+  public getAnimationFS(): Animationfs {
+    if (!this._animationFS) {
+      throw new Error("ROM was not loaded, or doesn't have animations");
+    }
+    return this._animationFS;
+  }
+
   public async loadAsync(): Promise<boolean> {
     const gameVersion = this.getGameVersion();
 
@@ -164,7 +172,8 @@ export class ROM {
     promises.push(this._hvqfs.extractAsync());
     promises.push(audio.extractAsync());
     if (gameVersion === 2) {
-      promises.push(animationfs.extractAsync());
+      this._animationFS = new Animationfs(this);
+      promises.push(this._animationFS.extractAsync());
     }
 
     await Promise.all(promises);
@@ -241,7 +250,6 @@ class RomHandler {
     this._rom = null;
 
     audio.clearCache();
-    animationfs.clearCache();
   }
 
   setROMBuffer(
@@ -294,8 +302,9 @@ class RomHandler {
     const hvqLen = makeDivisibleBy(rom.getHVQFS().getByteLength(), 16);
     const audioLen = makeDivisibleBy(audio.getByteLength(), 16);
     let animationLen = 0;
-    if (gameVersion === 2)
-      animationLen = makeDivisibleBy(animationfs.getByteLength(), 16);
+    if (gameVersion === 2) {
+      animationLen = makeDivisibleBy(rom.getAnimationFS().getByteLength(), 16);
+    }
 
     // Seems to crash unless HVQ is aligned so that the +1 ADDIU trick is not needed. Just fudge strsLen to push it up.
     while ((initialLen + sceneLen + mainLen + strsLen) & 0x8000) {
@@ -335,6 +344,7 @@ class RomHandler {
     hvqfs.setROMOffset(initialLen + mainLen + sceneLen + strsLen, newROMBuffer);
 
     if (gameVersion === 2) {
+      const animationfs = rom.getAnimationFS();
       animationfs.pack(
         newROMBuffer,
         initialLen + sceneLen + mainLen + strsLen + hvqLen,

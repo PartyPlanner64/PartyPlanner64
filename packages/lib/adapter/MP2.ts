@@ -4,7 +4,6 @@ import {
   ISpace,
   addEventToSpaceInternal,
 } from "../../../apps/partyplanner64/boards";
-import { animationfs } from "../fs/animationfs";
 import { CostumeType, Space } from "../types";
 import { createEventInstance, EventMap } from "../events/events";
 import {
@@ -72,6 +71,7 @@ export class MP2Adapter extends AdapterBase {
 
     // Remove the animations (we might add our own after this though).
     if (typeof boardInfo.animBgSet === "number") {
+      const animationfs = romhandler.getRom()!.getAnimationFS();
       animationfs.setSetEntryCount(boardInfo.animBgSet, 0);
     }
   }
@@ -517,6 +517,7 @@ export class MP2Adapter extends AdapterBase {
     const hvqfs = romhandler.getRom()!.getHVQFS();
     const mainBgImgData = hvqfs.readBackgroundImgData(boardInfo.bgDir);
 
+    const animationfs = romhandler.getRom()!.getAnimationFS();
     const animBgs = animationfs.readAnimationBackgrounds(
       boardInfo.animBgSet,
       mainBgImgData,
@@ -565,6 +566,7 @@ export class MP2Adapter extends AdapterBase {
 
     await Promise.all(animPromises);
 
+    const animationfs = romhandler.getRom()!.getAnimationFS();
     for (let i = 0; i < animImgData.length; i++) {
       animationfs.writeAnimationBackground(
         setIndex,

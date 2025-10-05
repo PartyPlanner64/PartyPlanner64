@@ -6,7 +6,7 @@ import { arrayBuffersEqual, copyRange } from "../utils/arrays";
 import { createContext } from "../utils/canvas";
 import { makeDivisibleBy } from "../utils/number";
 import { Game } from "../types";
-import { romhandler } from "../romhandler";
+import { ROM } from "../romhandler";
 
 interface IOffsetInfo {
   upper: number;
@@ -25,12 +25,18 @@ _animFSOffsets[Game.MP2_USA] = [
   { upper: 0x000546c6, lower: 0x000546ca },
 ];
 
-let _animfsCache: { [index: number]: IAnimationFsReadInfo }[][] | null;
+export class Animationfs {
+  private _rom: ROM;
+  private _animfsCache: { [index: number]: IAnimationFsReadInfo }[][] | null =
+    null;
 
-export const animationfs = {
-  getROMOffset() {
-    const romView = romhandler.getDataView();
-    const patchOffsets = animationfs.getPatchOffsets();
+  public constructor(rom: ROM) {
+    this._rom = rom;
+  }
+
+  public getROMOffset() {
+    const romView = this._rom.getDataView();
+    const patchOffsets = this.getPatchOffsets();
     if (!patchOffsets) return null;
     const romOffset = patchOffsets[0];
     const upper = romView.getUint16(romOffset.upper) << 16;
@@ -39,11 +45,11 @@ export const animationfs = {
     if (lower & 0x8000) offset = offset - 0x00010000; // Account for signed addition workaround.
     $$log(`AnimationFS.getROMOffset -> ${$$hex(offset)}`);
     return offset;
-  },
+  }
 
-  setROMOffset(newOffset: number, buffer: ArrayBuffer) {
+  public setROMOffset(newOffset: number, buffer: ArrayBuffer) {
     const romView = new DataView(buffer);
-    const patchOffsets = animationfs.getPatchOffsets();
+    const patchOffsets = this.getPatchOffsets();
     if (!patchOffsets) return;
     let upper = (newOffset & 0xffff0000) >>> 16;
     const lower = newOffset & 0x0000ffff;
@@ -53,27 +59,32 @@ export const animationfs = {
       romView.setUint16(patchOffsets[i].lower, lower);
     }
     $$log(`AnimationFS.setROMOffset -> ${$$hex((upper << 16) | lower)}`);
-  },
+  }
 
-  getPatchOffsets() {
-    return _animFSOffsets[romhandler.getROMGame()!];
-  },
+  public getPatchOffsets() {
+    return _animFSOffsets[this._rom.getGame()!];
+  }
 
-  get(set: number, entry: number, index: number) {
-    return _animfsCache![set][entry][index].decompressed;
-  },
+  public get(set: number, entry: number, index: number) {
+    return this._animfsCache![set][entry][index].decompressed;
+  }
 
-  write(set: number, entry: number, tileBuffer: ArrayBuffer, index: number) {
+  public write(
+    set: number,
+    entry: number,
+    tileBuffer: ArrayBuffer,
+    index: number,
+  ) {
     const compressed = compress(3, new DataView(tileBuffer));
 
-    if (!_animfsCache![set]) _animfsCache![set] = [];
-    if (!_animfsCache![set][entry]) _animfsCache![set][entry] = {};
-    _animfsCache![set][entry][index] = {
+    if (!this._animfsCache![set]) this._animfsCache![set] = [];
+    if (!this._animfsCache![set][entry]) this._animfsCache![set][entry] = {};
+    this._animfsCache![set][entry][index] = {
       compressionType: 3,
       decompressed: tileBuffer,
       compressed,
     };
-  },
+  }
 
   _createOrderedTiles(imgData: ImageData, width: number, height: number) {
     const tileXCount = width / 64;
@@ -90,9 +101,9 @@ export const animationfs = {
       }
     }
     return orderedTiles;
-  },
+  }
 
-  writeAnimationBackground(
+  public writeAnimationBackground(
     set: number,
     entry: number,
     mainImgData: ImageData,
@@ -104,25 +115,25 @@ export const animationfs = {
       `AnimationFS.writeAnimationBackground, set: ${set}, entry: ${entry}, img is ${width}x${height}`,
     );
 
-    const orderedMainTiles = animationfs._createOrderedTiles(
+    const orderedMainTiles = this._createOrderedTiles(
       mainImgData,
       width,
       height,
     );
-    const orderedAnimTiles = animationfs._createOrderedTiles(
+    const orderedAnimTiles = this._createOrderedTiles(
       animImgData,
       width,
       height,
     );
 
-    animationfs.clearSetEntry(set, entry);
+    this.clearSetEntry(set, entry);
 
     // Write the tiles that are different to the sparse tree.
     for (let i = 0; i < orderedAnimTiles.length; i++) {
       if (!arrayBuffersEqual(orderedMainTiles[i], orderedAnimTiles[i]))
-        animationfs.write(set, entry, orderedAnimTiles[i], i + 1);
+        this.write(set, entry, orderedAnimTiles[i], i + 1);
     }
-  },
+  }
 
   _unorderTiles(tiles: any[], tileXCount: number, tileYCount: number) {
     const unordered = [];
@@ -132,7 +143,7 @@ export const animationfs = {
       }
     }
     return unordered;
-  },
+  }
 
   _readAnimationBackground(
     set: number,
@@ -143,9 +154,9 @@ export const animationfs = {
   ) {
     let orderedAnimBgTiles = [];
     for (let i = 0; i < orderedMainTiles.length; i++) {
-      if (_animfsCache![set][entry].hasOwnProperty(i + 1))
+      if (this._animfsCache![set][entry].hasOwnProperty(i + 1))
         orderedAnimBgTiles.push(
-          new DataView(_animfsCache![set][entry][i + 1].decompressed),
+          new DataView(this._animfsCache![set][entry][i + 1].decompressed),
         );
       else orderedAnimBgTiles.push(new DataView(orderedMainTiles[i]));
     }
@@ -155,7 +166,7 @@ export const animationfs = {
     const tileXCount = width / 64;
     const tileYCount = height / 48;
 
-    orderedAnimBgTiles = animationfs._unorderTiles(
+    orderedAnimBgTiles = this._unorderTiles(
       orderedAnimBgTiles,
       tileXCount,
       tileYCount,
@@ -180,17 +191,17 @@ export const animationfs = {
 
     canvasCtx.putImageData(bgImageData, 0, 0);
     return canvasCtx.canvas.toDataURL();
-  },
+  }
 
-  readAnimationBackgrounds(
+  public readAnimationBackgrounds(
     set: number,
     mainImgData: ImageData,
     width: number,
     height: number,
   ) {
-    const entries = animationfs.getSetEntryCount(set);
+    const entries = this.getSetEntryCount(set);
 
-    const orderedMainTiles = animationfs._createOrderedTiles(
+    const orderedMainTiles = this._createOrderedTiles(
       mainImgData,
       width,
       height,
@@ -199,7 +210,7 @@ export const animationfs = {
     const bgs = [];
     for (let entry = 0; entry < entries; entry++) {
       bgs.push(
-        animationfs._readAnimationBackground(
+        this._readAnimationBackground(
           set,
           entry,
           orderedMainTiles,
@@ -210,55 +221,51 @@ export const animationfs = {
     }
 
     return bgs;
-  },
+  }
 
-  clearCache() {
-    _animfsCache = null;
-  },
-
-  extract() {
-    const startingOffset = animationfs.getROMOffset();
+  public extract() {
+    const startingOffset = this.getROMOffset();
     if (startingOffset === null) {
       return null;
     }
-    const view = romhandler.getDataView();
-    _animfsCache = animationfs._extractSets(view, startingOffset);
-    return _animfsCache;
-  },
+    const view = this._rom.getDataView();
+    this._animfsCache = this._extractSets(view, startingOffset);
+    return this._animfsCache;
+  }
 
-  extractAsync(): Promise<void> {
+  public extractAsync(): Promise<void> {
     return new Promise((resolve, reject) => {
-      animationfs.extract();
+      this.extract();
       resolve();
     });
-  },
+  }
 
   _extractSets(view: DataView<ArrayBuffer>, offset: number) {
     const sets = [];
     const count = view.getUint32(offset) - 1; // Extra offset
     for (let i = 0; i < count; i++) {
       const setOffset = view.getUint32(offset + 4 + i * 4);
-      sets.push(animationfs._extractSetEntries(view, offset + setOffset));
+      sets.push(this._extractSetEntries(view, offset + setOffset));
     }
     return sets;
-  },
+  }
 
   _extractSetEntries(view: DataView<ArrayBuffer>, offset: number) {
     const setEntries = [];
     const count = view.getUint32(offset);
     for (let i = 0; i < count; i++) {
       const setEntryOffset = view.getUint32(offset + 4 + i * 4);
-      setEntries.push(animationfs._extractTiles(view, offset + setEntryOffset));
+      setEntries.push(this._extractTiles(view, offset + setEntryOffset));
     }
     return setEntries;
-  },
+  }
 
   _extractTiles(view: DataView<ArrayBuffer>, offset: number) {
     const tiles: { [index: number]: IAnimationFsReadInfo } = {};
     const count = view.getUint32(offset) - 1; // Extra offset
     for (let i = 0; i < count; i++) {
       const tileOffset = view.getUint32(offset + 4 + i * 4);
-      const tile = animationfs._readTile(view, offset + tileOffset);
+      const tile = this._readTile(view, offset + tileOffset);
       tiles[tile.index] = {
         compressionType: tile.compressionType,
         compressed: tile.compressed,
@@ -266,7 +273,7 @@ export const animationfs = {
       };
     }
     return tiles;
-  },
+  }
 
   _readTile(view: DataView<ArrayBuffer>, offset: number) {
     const index = view.getUint32(offset);
@@ -293,12 +300,12 @@ export const animationfs = {
         decompressedSize,
       ),
     };
-  },
+  }
 
-  pack(buffer: ArrayBuffer, offset = 0) {
+  public pack(buffer: ArrayBuffer, offset = 0) {
     const view = new DataView(buffer, offset);
 
-    const setCount = animationfs.getSetCount();
+    const setCount = this.getSetCount();
     view.setUint32(0, setCount + 1); // Extra offset
 
     let curSetIndexOffset = 4;
@@ -306,17 +313,17 @@ export const animationfs = {
     for (let s = 0; s < setCount; s++) {
       view.setUint32(curSetIndexOffset, curSetWriteOffset);
       curSetIndexOffset += 4;
-      curSetWriteOffset = animationfs._writeSet(s, view, curSetWriteOffset);
+      curSetWriteOffset = this._writeSet(s, view, curSetWriteOffset);
       curSetWriteOffset = makeDivisibleBy(curSetWriteOffset, 4);
     }
 
     view.setUint32(curSetIndexOffset, curSetWriteOffset); // Extra offset
 
     return curSetWriteOffset;
-  },
+  }
 
   _writeSet(s: number, view: DataView, offset: number) {
-    const setEntryCount = animationfs.getSetEntryCount(s);
+    const setEntryCount = this.getSetEntryCount(s);
     view.setUint32(offset, setEntryCount); // No extra offsets at middle layer
 
     let curSetEntryIndexOffset = offset + 4;
@@ -324,7 +331,7 @@ export const animationfs = {
     for (let e = 0; e < setEntryCount; e++) {
       view.setUint32(curSetEntryIndexOffset, curSetEntryWriteOffset - offset);
       curSetEntryIndexOffset += 4;
-      curSetEntryWriteOffset = animationfs._writeTiles(
+      curSetEntryWriteOffset = this._writeTiles(
         s,
         e,
         view,
@@ -334,36 +341,30 @@ export const animationfs = {
     }
 
     return curSetEntryWriteOffset;
-  },
+  }
 
   _writeTiles(s: number, e: number, view: DataView, offset: number) {
-    const tileCount = animationfs.getSetEntryTileCount(s, e);
+    const tileCount = this.getSetEntryTileCount(s, e);
     view.setUint32(offset, tileCount + 1); // Extra offset
 
     let curTileIndexOffset = offset + 4;
     let curTileWriteOffset = offset + 4 + (tileCount + 1) * 4;
-    for (const t in _animfsCache![s][e]) {
-      if (!_animfsCache![s][e].hasOwnProperty(t)) continue;
+    for (const t in this._animfsCache![s][e]) {
+      if (!this._animfsCache![s][e].hasOwnProperty(t)) continue;
 
       view.setUint32(curTileIndexOffset, curTileWriteOffset - offset);
       curTileIndexOffset += 4;
-      curTileWriteOffset = animationfs._writeTile(
-        s,
-        e,
-        t,
-        view,
-        curTileWriteOffset,
-      );
+      curTileWriteOffset = this._writeTile(s, e, t, view, curTileWriteOffset);
       curTileWriteOffset = makeDivisibleBy(curTileWriteOffset, 4);
     }
 
     view.setUint32(curTileIndexOffset, curTileWriteOffset - offset);
 
     return curTileWriteOffset;
-  },
+  }
 
   _writeTile(s: number, e: number, t: string, view: DataView, offset: number) {
-    const tile = _animfsCache![s][e][t as any];
+    const tile = this._animfsCache![s][e][t as any];
     view.setUint32(offset, parseInt(t));
     view.setUint32(offset + 4, 3); // Compression type
     view.setUint32(offset + 8, tile.decompressed.byteLength); // Decompressed size
@@ -375,50 +376,50 @@ export const animationfs = {
       tile.compressed!.byteLength,
     );
     return offset + 12 + tile.compressed!.byteLength;
-  },
+  }
 
-  getSetCount() {
-    return _animfsCache!.length;
-  },
+  public getSetCount() {
+    return this._animfsCache!.length;
+  }
 
-  getSetEntryCount(set: number) {
-    return _animfsCache![set].length;
-  },
+  public getSetEntryCount(set: number) {
+    return this._animfsCache![set].length;
+  }
 
   // This is exposed so that we can blow away animations for a stock board (count = 0)
-  setSetEntryCount(set: number, count: number) {
-    return (_animfsCache![set].length = count);
-  },
+  public setSetEntryCount(set: number, count: number) {
+    return (this._animfsCache![set].length = count);
+  }
 
-  clearSetEntry(set: number, entry: number) {
-    return (_animfsCache![set][entry] = {});
-  },
+  public clearSetEntry(set: number, entry: number) {
+    return (this._animfsCache![set][entry] = {});
+  }
 
-  getSetEntryTileCount(set: number, entry: number) {
-    return Object.keys(_animfsCache![set][entry]).length;
-  },
+  public getSetEntryTileCount(set: number, entry: number) {
+    return Object.keys(this._animfsCache![set][entry]).length;
+  }
 
-  getByteLength() {
+  public getByteLength() {
     let byteLen = 0;
 
-    const setCount = animationfs.getSetCount();
+    const setCount = this.getSetCount();
     byteLen += 4; // Count of sets
     byteLen += 4 * (setCount + 1); // Set offsets + the extra offset
 
     for (let s = 0; s < setCount; s++) {
-      const setEntryCount = animationfs.getSetEntryCount(s);
+      const setEntryCount = this.getSetEntryCount(s);
 
       byteLen += 4; // Count of set entries
       byteLen += 4 * setEntryCount; // Set entry offsets (no extra offset)
 
       for (let e = 0; e < setEntryCount; e++) {
-        const tileCount = animationfs.getSetEntryTileCount(s, e);
+        const tileCount = this.getSetEntryTileCount(s, e);
         byteLen += 4; // Count of tiles
         byteLen += 4 * (tileCount + 1); // Tile offsets + the extra offset
 
-        for (const t in _animfsCache![s][e]) {
-          if (!_animfsCache![s][e].hasOwnProperty(t)) continue;
-          const tile = _animfsCache![s][e][t];
+        for (const t in this._animfsCache![s][e]) {
+          if (!this._animfsCache![s][e].hasOwnProperty(t)) continue;
+          const tile = this._animfsCache![s][e][t];
           byteLen += 4; // Index
           byteLen += 4; // Compression type
           byteLen += 4; // Decompressed size
@@ -429,5 +430,5 @@ export const animationfs = {
     }
 
     return byteLen;
-  },
-};
+  }
+}
