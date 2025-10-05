@@ -1,6 +1,5 @@
 import { romhandler } from "../romhandler";
 import { getBoardInfos, getBoardInfoByIndex } from "./boardinfo";
-import { audio } from "../fs/audio";
 import {
   IBoard,
   addEventByIndex,
@@ -119,7 +118,8 @@ export abstract class AdapterBase {
 
   public loadBoards(): IBoard[] {
     const boards = [];
-    const game = romhandler.getROMGame()!;
+    const rom = romhandler.getRom()!;
+    const game = rom.getGame()!;
     const boardInfos = getBoardInfos(game);
     if (!boardInfos) {
       $$log(`Game ${game} has no board infos defined in PP64`);
@@ -131,7 +131,7 @@ export abstract class AdapterBase {
 
       const boardInfo = boardInfos[i];
       const bgDir = boardInfo.bgDir;
-      const hvqfs = romhandler.getRom()!.getHVQFS();
+      const hvqfs = rom.getHVQFS();
       const background = hvqfs.readBackground(bgDir);
 
       let newBoard: IBoard;
@@ -148,7 +148,7 @@ export abstract class AdapterBase {
           otherbg: {},
           events: {},
         };
-        const mainfs = romhandler.getRom()?.getMainFS()!;
+        const mainfs = rom.getMainFS()!;
         const boardBuffer = mainfs.get(
           this.boardDefDirectory,
           boardInfo.boardDefFile,
@@ -187,6 +187,7 @@ export abstract class AdapterBase {
 
     if (isDebug()) {
       // Debug if audio offsets are right.
+      const audio = rom.getAudio();
       const audioSectionCount = audio.getPatchInfo().length;
       for (let i = 0; i < audioSectionCount; i++) audio.getROMOffset(i);
     }
@@ -1708,6 +1709,7 @@ ${eventAsmCombinedString}
     switch (board.audioType) {
       case BoardAudioType.Custom:
         {
+          const audio = romhandler.getRom()!.getAudio();
           const seqTable = audio.getSequenceTable(0)!;
           assert(!!seqTable);
           for (const audioEntry of board.audioData!) {

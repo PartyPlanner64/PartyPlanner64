@@ -4,7 +4,7 @@ import { MainFS } from "./fs/mainfs";
 import { Strings } from "./fs/strings";
 import { Strings3 } from "./fs/strings3";
 import { HVQFS } from "./fs/hvqfs";
-import { audio } from "./fs/audio";
+import { Audio } from "./fs/audio";
 import { Animationfs } from "./fs/animationfs";
 import { makeDivisibleBy } from "./utils/number";
 import { copyRange } from "./utils/arrays";
@@ -22,6 +22,7 @@ export class ROM {
   private _scenes: Scenes | null = null;
   private _mainfs: MainFS | null = null;
   private _hvqfs: HVQFS | null = null;
+  private _audio: Audio | null = null;
   private _strings: Strings | null = null;
   private _strings3: Strings3 | null = null;
   private _animationFS: Animationfs | null = null;
@@ -131,6 +132,13 @@ export class ROM {
     return this._hvqfs;
   }
 
+  public getAudio(): Audio {
+    if (!this._audio) {
+      throw new Error("ROM was not loaded");
+    }
+    return this._audio;
+  }
+
   public getStrings(): Strings {
     if (!this._strings) {
       throw new Error("ROM was not loaded");
@@ -170,7 +178,8 @@ export class ROM {
     }
     this._hvqfs = new HVQFS(this);
     promises.push(this._hvqfs.extractAsync());
-    promises.push(audio.extractAsync());
+    this._audio = new Audio(this);
+    promises.push(this._audio.extractAsync());
     if (gameVersion === 2) {
       this._animationFS = new Animationfs(this);
       promises.push(this._animationFS.extractAsync());
@@ -248,8 +257,6 @@ class RomHandler {
 
   public clear(): void {
     this._rom = null;
-
-    audio.clearCache();
   }
 
   setROMBuffer(
@@ -300,7 +307,7 @@ class RomHandler {
       strsLen = makeDivisibleBy(rom.getStrings3().getByteLength(), 16);
     else strsLen = makeDivisibleBy(rom.getStrings().getByteLength(), 16);
     const hvqLen = makeDivisibleBy(rom.getHVQFS().getByteLength(), 16);
-    const audioLen = makeDivisibleBy(audio.getByteLength(), 16);
+    const audioLen = makeDivisibleBy(rom.getAudio().getByteLength(), 16);
     let animationLen = 0;
     if (gameVersion === 2) {
       animationLen = makeDivisibleBy(rom.getAnimationFS().getByteLength(), 16);
@@ -355,6 +362,7 @@ class RomHandler {
       );
     }
 
+    const audio = rom.getAudio();
     audio.pack(
       newROMBuffer,
       initialLen + sceneLen + mainLen + strsLen + hvqLen + animationLen,

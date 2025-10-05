@@ -1,5 +1,4 @@
 import MidiPlayer from "midi-player-js";
-import { audio } from "../fs/audio";
 import { parseGameMidi } from "./midi";
 import { extractWavSound } from "./wav";
 import { ALKeyMap } from "./ALKeyMap";
@@ -10,6 +9,7 @@ import {
   setIsPlaying,
   AudioPlayerController,
 } from "./playershared";
+import { romhandler } from "../romhandler";
 
 export function playMidi(table: number, index: number): AudioPlayerController {
   if (getIsPlaying()) {
@@ -17,6 +17,7 @@ export function playMidi(table: number, index: number): AudioPlayerController {
   }
   const audioContext = getAudioContext();
 
+  const audio = romhandler.getRom()!.getAudio();
   const seqTable = audio.getSequenceTable(table)!;
   console.log(seqTable);
   const gameMidiBuffer = seqTable.midis[index].buffer;

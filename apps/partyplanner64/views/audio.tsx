@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { romhandler } from "../../../packages/lib/romhandler";
-import { audio } from "../../../packages/lib/fs/audio";
+import { Audio } from "../../../packages/lib/fs/audio";
 import { getAdapter } from "../../../packages/lib/adapter/adapters";
 import { playMidi } from "../../../packages/lib/audio/midiplayer";
 import { Button } from "../controls";
@@ -51,7 +51,9 @@ export class AudioViewer extends React.Component<{}, IAudioViewerState> {
       return <p>An error was encountered.</p>;
     }
 
-    const game = romhandler.getGameVersion()!;
+    const rom = romhandler.getRom()!;
+    const game = rom.getGameVersion()!;
+    const audio = rom.getAudio();
     const adapter = getAdapter(game, {})!;
 
     const advancedSetting = get($setting.uiAdvanced);
@@ -117,7 +119,12 @@ export class AudioViewer extends React.Component<{}, IAudioViewerState> {
                 <div>
                   <Button
                     onClick={() =>
-                      _exportMidi(tableIndex, midiIndex, soundName || "Unknown")
+                      _exportMidi(
+                        audio,
+                        tableIndex,
+                        midiIndex,
+                        soundName || "Unknown",
+                      )
                     }
                     css="btnAudioExport"
                   >
@@ -130,7 +137,7 @@ export class AudioViewer extends React.Component<{}, IAudioViewerState> {
                     Download midi
                   </Button>
                   <Button
-                    onClick={() => _replaceMidi(tableIndex, midiIndex)}
+                    onClick={() => _replaceMidi(audio, tableIndex, midiIndex)}
                     css="btnAudioExport"
                   >
                     <img
@@ -151,7 +158,13 @@ export class AudioViewer extends React.Component<{}, IAudioViewerState> {
                     title="Change soundbank index"
                     alt="Change soundbank index"
                     onClick={async () => {
-                      if (await _changeSoundbankIndex(tableIndex, midiIndex)) {
+                      if (
+                        await _changeSoundbankIndex(
+                          audio,
+                          tableIndex,
+                          midiIndex,
+                        )
+                      ) {
                         this.forceUpdate();
                       }
                     }}
@@ -220,7 +233,7 @@ export class AudioViewer extends React.Component<{}, IAudioViewerState> {
             onStop={this.onStop}
             expandContent={
               <Button
-                onClick={() => _exportWav(t, s, downloadName)}
+                onClick={() => _exportWav(audio, t, s, downloadName)}
                 css="btnAudioExport"
               >
                 <img src={exportImage} height="16" width="16" alt="Export" />
@@ -392,7 +405,12 @@ function AudioTrackRow(props: IAudioTrackRowProps) {
   );
 }
 
-function _exportMidi(table: number, index: number, name?: string): void {
+function _exportMidi(
+  audio: Audio,
+  table: number,
+  index: number,
+  name?: string,
+): void {
   name = name || "music";
   const seqTable = audio.getSequenceTable(table)!;
   const gameMidiBuffer = seqTable.midis[index].buffer;
@@ -403,7 +421,12 @@ function _exportMidi(table: number, index: number, name?: string): void {
   saveAs(new Blob([midi]), `${name}.mid`);
 }
 
-function _exportWav(table: number, index: number, name?: string): void {
+function _exportWav(
+  audio: Audio,
+  table: number,
+  index: number,
+  name?: string,
+): void {
   name = name || "sound";
   const soundTable = audio.getSoundTable(table)!;
   const sound = soundTable.sounds[index];
@@ -411,7 +434,7 @@ function _exportWav(table: number, index: number, name?: string): void {
   saveAs(new Blob([wav]), `${name}.wav`);
 }
 
-function _replaceMidi(table: number, index: number): void {
+function _replaceMidi(audio: Audio, table: number, index: number): void {
   const seqTable = audio.getSequenceTable(table)!;
 
   openFile("audio/midi", (event: any) => {
@@ -435,6 +458,7 @@ function _replaceMidi(table: number, index: number): void {
 }
 
 async function _changeSoundbankIndex(
+  audio: Audio,
   table: number,
   midiIndex: number,
 ): Promise<boolean> {

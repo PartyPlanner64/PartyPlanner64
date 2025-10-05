@@ -1,4 +1,4 @@
-import { audio } from "../fs/audio";
+import { romhandler } from "../romhandler";
 import {
   getAudioContext,
   getIsPlaying,
@@ -13,6 +13,7 @@ export function playSound(table: number, index: number): AudioPlayerController {
   }
   const audioContext = getAudioContext();
 
+  const audio = romhandler.getRom()!.getAudio();
   const soundTable = audio.getSoundTable(table)!;
 
   const sound = soundTable.sounds[index];

@@ -23,7 +23,6 @@ import { createRule } from "./validationrules";
 import { testAdditionalBgCodeWithGame } from "../events/additionalbg";
 import { dataUrlToArrayBuffer } from "../utils/arrays";
 import { createGameMidi } from "../audio/midi";
-import { audio } from "../fs/audio";
 import {
   makeFakeGetAudioIndices,
   testGetAudioCodeWithGame,
@@ -631,6 +630,7 @@ AudioDetailsIssue.fails = async function ({ board }, args: any = {}) {
         return "Custom audio was chosen, but a midi file was not uploaded.";
       }
 
+      const audio = romhandler.getRom()!.getAudio();
       for (const audioEntry of board.audioData) {
         const soundbankIndex = audioEntry.soundbankIndex;
         const seqTable = audio.getSequenceTable(0)!;

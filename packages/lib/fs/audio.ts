@@ -1,7 +1,7 @@
 import { $$log, $$hex, assert } from "../utils/debug";
 import { copyRange } from "../utils/arrays";
 import { Game } from "../types";
-import { romhandler } from "../romhandler";
+import { ROM } from "../romhandler";
 import { getRegSetAddress, getRegSetUpperAndLower } from "../utils/MIPS";
 import { S2 } from "../audio/S2";
 import { MBF0 } from "../audio/MBF0";
@@ -22,9 +22,6 @@ interface IOffsetObj {
   byteLength?: number;
   offsets: IOffsetInfo[];
 }
-
-let _bufferCache: (ArrayBuffer | null)[] | null;
-let _parsedCache: (S2 | T3 | MBF0 | SBF0 | FXD0 | null)[] | null;
 
 type AudioOffsetInfo = { [game in Game]: readonly IOffsetObj[] };
 const _audioOffsets: AudioOffsetInfo = {
@@ -178,10 +175,17 @@ const _audioOffsets: AudioOffsetInfo = {
   ],
 };
 
-export const audio = {
-  getROMOffset(subsection = 0) {
-    const rom = romhandler.getRom();
-    const scenes = rom?.getScenes();
+export class Audio {
+  private _rom: ROM;
+  private _bufferCache: (ArrayBuffer | null)[] | null = null;
+  private _parsedCache: (S2 | T3 | MBF0 | SBF0 | FXD0 | null)[] | null = null;
+
+  public constructor(rom: ROM) {
+    this._rom = rom;
+  }
+
+  public getROMOffset(subsection = 0) {
+    const scenes = this._rom.getScenes();
     if (!scenes) return null;
     const infos = this.getPatchInfo();
     if (!infos || !infos.length) return null;
@@ -196,7 +200,7 @@ export const audio = {
       upper = sceneView.getUint16(upperReadOffset);
       lower = sceneView.getUint16(lowerReadOffset);
     } else {
-      const romView = romhandler.getDataView();
+      const romView = this._rom.getDataView();
       upper = romView.getUint16(upperReadOffset);
       lower = romView.getUint16(lowerReadOffset);
     }
@@ -215,7 +219,7 @@ export const audio = {
           anotherUpper = sceneView.getUint16(anotherUpperReadOffset);
           anotherLower = sceneView.getUint16(anotherLowerReadOffset);
         } else {
-          const romView = romhandler.getDataView();
+          const romView = this._rom.getDataView();
           anotherUpper = romView.getUint16(anotherUpperReadOffset);
           anotherLower = romView.getUint16(anotherLowerReadOffset);
         }
@@ -231,11 +235,11 @@ export const audio = {
     }
 
     return offset;
-  },
+  }
 
-  setROMOffset(newOffset: number, outBuffer: ArrayBuffer) {
+  public setROMOffset(newOffset: number, outBuffer: ArrayBuffer) {
     $$log(`Audio.setROMOffset(${$$hex(newOffset)})`);
-    const rom = romhandler.getRom();
+    const rom = this._rom;
     const scenes = rom?.getScenes()!;
     const infos = this.getPatchInfo();
     let currentOffset = newOffset;
@@ -268,16 +272,16 @@ export const audio = {
 
         case "S2":
           {
-            assert(!!_parsedCache![i]);
-            const s2 = _parsedCache![i] as S2;
+            assert(!!this._parsedCache![i]);
+            const s2 = this._parsedCache![i] as S2;
             currentOffset += s2.getByteLength();
           }
           break;
 
         case "MBF0":
           {
-            assert(!!_parsedCache![i]);
-            const mbf0 = _parsedCache![i] as MBF0;
+            assert(!!this._parsedCache![i]);
+            const mbf0 = this._parsedCache![i] as MBF0;
             currentOffset += mbf0.getByteLength();
           }
           break;
@@ -289,35 +293,35 @@ export const audio = {
           throw new Error("Unhandled audio subsection type: " + info.type);
       }
     }
-  },
+  }
 
-  getPatchInfo() {
-    return _audioOffsets[romhandler.getROMGame()!];
-  },
+  public getPatchInfo() {
+    return _audioOffsets[this._rom.getGame()!];
+  }
 
-  read(index: number) {
+  public read(index: number) {
     throw new Error("audio.read not implemented");
-  },
+  }
 
-  write(index: number, value: any) {
+  public write(index: number, value: any) {
     throw new Error("audio.write not implemented");
-  },
+  }
 
-  getSequenceTableCount(): number {
+  public getSequenceTableCount(): number {
     let count = 0;
-    for (let i = 0; i < _parsedCache!.length; i++) {
-      const cacheEntry = _parsedCache![i];
+    for (let i = 0; i < this._parsedCache!.length; i++) {
+      const cacheEntry = this._parsedCache![i];
       if (cacheEntry && "midis" in cacheEntry) count++;
     }
     return count;
-  },
+  }
 
-  getSequenceTable(index: number): S2 | MBF0 | null {
-    if (!_parsedCache) return null;
+  public getSequenceTable(index: number): S2 | MBF0 | null {
+    if (!this._parsedCache) return null;
 
     let curIndex = -1;
-    for (let i = 0; i < _parsedCache.length; i++) {
-      const cacheEntry = _parsedCache[i];
+    for (let i = 0; i < this._parsedCache.length; i++) {
+      const cacheEntry = this._parsedCache[i];
       if (cacheEntry && "midis" in cacheEntry) {
         curIndex++;
 
@@ -327,23 +331,23 @@ export const audio = {
       }
     }
     return null;
-  },
+  }
 
-  getSoundTableCount(): number {
+  public getSoundTableCount(): number {
     let count = 0;
-    for (let i = 0; i < _parsedCache!.length; i++) {
-      const cacheEntry = _parsedCache![i];
+    for (let i = 0; i < this._parsedCache!.length; i++) {
+      const cacheEntry = this._parsedCache![i];
       if (cacheEntry && "sounds" in cacheEntry) count++;
     }
     return count;
-  },
+  }
 
-  getSoundTable(index: number): T3 | SBF0 | null {
-    if (!_parsedCache) return null;
+  public getSoundTable(index: number): T3 | SBF0 | null {
+    if (!this._parsedCache) return null;
 
     let curIndex = -1;
-    for (let i = 0; i < _parsedCache.length; i++) {
-      const cacheEntry = _parsedCache[i];
+    for (let i = 0; i < this._parsedCache.length; i++) {
+      const cacheEntry = this._parsedCache[i];
       if (cacheEntry && "sounds" in cacheEntry) {
         curIndex++;
 
@@ -353,31 +357,26 @@ export const audio = {
       }
     }
     return null;
-  },
+  }
 
-  clearCache(): void {
-    _bufferCache = null;
-    _parsedCache = null;
-  },
-
-  extract(): void {
-    const buffer = romhandler.getROMBuffer()!;
+  public extract(): void {
+    const buffer = this._rom.getBuffer()!;
     const offset = this.getROMOffset();
     if (offset === null) return;
 
     const infos = this.getPatchInfo();
-    _bufferCache = new Array(infos.length);
-    _parsedCache = new Array(infos.length);
+    this._bufferCache = new Array(infos.length);
+    this._parsedCache = new Array(infos.length);
     for (let i = 0; i < infos.length; i++) {
       const info = infos[i];
       switch (info.type) {
         case "S2":
           {
             const s2Offset = this.getROMOffset(i)!;
-            const s2 = (_parsedCache[i] = new S2(
-              romhandler.getDataView(s2Offset),
+            const s2 = (this._parsedCache[i] = new S2(
+              this._rom.getDataView(s2Offset),
             ));
-            _bufferCache[i] = buffer.slice(
+            this._bufferCache[i] = buffer.slice(
               s2Offset,
               s2Offset + s2.getByteLength(),
             );
@@ -388,21 +387,21 @@ export const audio = {
           {
             assert(typeof info.byteLength === "number");
             const t3Offset = this.getROMOffset(i)!;
-            _bufferCache[i] = buffer.slice(
+            this._bufferCache[i] = buffer.slice(
               t3Offset,
               t3Offset + info.byteLength,
             );
-            _parsedCache[i] = new T3(romhandler.getDataView(t3Offset));
+            this._parsedCache[i] = new T3(this._rom.getDataView(t3Offset));
           }
           break;
 
         case "MBF0":
           {
             const mbf0Offset = this.getROMOffset(i)!;
-            const mbf0 = (_parsedCache[i] = new MBF0(
-              romhandler.getDataView(mbf0Offset),
+            const mbf0 = (this._parsedCache[i] = new MBF0(
+              this._rom.getDataView(mbf0Offset),
             ));
-            _bufferCache[i] = buffer.slice(
+            this._bufferCache[i] = buffer.slice(
               mbf0Offset,
               mbf0Offset + mbf0.getByteLength(),
             );
@@ -413,11 +412,11 @@ export const audio = {
           {
             assert(typeof info.byteLength === "number");
             const sbf0Offset = this.getROMOffset(i)!;
-            _bufferCache[i] = buffer.slice(
+            this._bufferCache[i] = buffer.slice(
               sbf0Offset,
               sbf0Offset + info.byteLength,
             );
-            _parsedCache[i] = new SBF0(romhandler.getDataView(sbf0Offset));
+            this._parsedCache[i] = new SBF0(this._rom.getDataView(sbf0Offset));
           }
           break;
 
@@ -425,16 +424,16 @@ export const audio = {
           {
             assert(typeof info.byteLength === "number");
             const fxd0Offset = this.getROMOffset(i)!;
-            _bufferCache[i] = buffer.slice(
+            this._bufferCache[i] = buffer.slice(
               fxd0Offset,
               fxd0Offset + info.byteLength,
             );
-            _parsedCache[i] = new FXD0(romhandler.getDataView(fxd0Offset));
+            this._parsedCache[i] = new FXD0(this._rom.getDataView(fxd0Offset));
           }
           break;
 
         case "Pointer":
-          _bufferCache[i] = _parsedCache[i] = null;
+          this._bufferCache[i] = this._parsedCache[i] = null;
           break;
 
         default:
@@ -462,18 +461,18 @@ export const audio = {
     //       }
     //     });
     //   }
-  },
+  }
 
-  extractAsync(): Promise<void> {
+  public extractAsync(): Promise<void> {
     return new Promise((resolve) => {
       this.extract();
       resolve();
     });
-  },
+  }
 
-  pack(buffer: ArrayBuffer, offset = 0): number {
+  public pack(buffer: ArrayBuffer, offset = 0): number {
     const infos = this.getPatchInfo();
-    if (!infos || !infos.length || !_bufferCache) {
+    if (!infos || !infos.length || !this._bufferCache) {
       throw new Error("Unable to write audio section.");
     }
 
@@ -487,17 +486,17 @@ export const audio = {
           assert(typeof info.byteLength === "number");
           copyRange(
             buffer,
-            _bufferCache[i]!,
+            this._bufferCache[i]!,
             currentOffset,
             0,
-            _bufferCache[i]!.byteLength,
+            this._bufferCache[i]!.byteLength,
           );
           currentOffset += info.byteLength;
           break;
 
         case "S2":
           {
-            const s2 = _parsedCache![i] as S2;
+            const s2 = this._parsedCache![i] as S2;
             currentOffset += s2.pack(buffer, currentOffset);
             currentOffset = makeDivisibleBy(currentOffset, 16);
           }
@@ -505,7 +504,7 @@ export const audio = {
 
         case "MBF0":
           {
-            const mbf0 = _parsedCache![i] as MBF0;
+            const mbf0 = this._parsedCache![i] as MBF0;
             currentOffset += mbf0.pack(buffer, currentOffset);
             currentOffset = makeDivisibleBy(currentOffset, 16);
           }
@@ -522,10 +521,10 @@ export const audio = {
     const byteLengthWritten = currentOffset - offset;
     assert(byteLengthWritten % 16 === 0);
     return byteLengthWritten;
-  },
+  }
 
   // Gets the full byte length of the audio section of the ROM.
-  getByteLength() {
+  public getByteLength() {
     const infos = this.getPatchInfo();
     if (!infos || !infos.length) {
       throw new Error("Unable to determine audio section length.");
@@ -544,14 +543,14 @@ export const audio = {
 
         case "S2":
           {
-            const s2 = _parsedCache![i] as S2;
+            const s2 = this._parsedCache![i] as S2;
             byteLength += s2.getByteLength();
           }
           break;
 
         case "MBF0":
           {
-            const mbf0 = _parsedCache![i] as MBF0;
+            const mbf0 = this._parsedCache![i] as MBF0;
             byteLength += mbf0.getByteLength();
           }
           break;
@@ -565,5 +564,5 @@ export const audio = {
     }
 
     return byteLength;
-  },
-};
+  }
+}

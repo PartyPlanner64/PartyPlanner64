@@ -22,7 +22,6 @@ import { arrayBufferToDataURL } from "../../../packages/lib/utils/arrays";
 import { getAdapter } from "../../../packages/lib/adapter/adapters";
 import { changeView, promptUser, refresh, showMessage } from "../appControl";
 import { getImageData } from "../../../packages/lib/utils/img/getImageData";
-import { audio } from "../../../packages/lib/fs/audio";
 import { assert } from "../../../packages/lib/utils/debug";
 import { romhandler } from "../../../packages/lib/romhandler";
 import { $setting, get } from "./settings";
@@ -728,7 +727,7 @@ class DetailsAudio extends React.Component<IDetailsAudioProps> {
       romhandler.romIsLoaded() &&
       romhandler.getGameVersion() === getCurrentBoard().game
     ) {
-      const seqTable = audio.getSequenceTable(0)!;
+      const seqTable = romhandler.getRom()!.getAudio().getSequenceTable(0)!;
       upperBound = seqTable.soundbanks.banks.length - 1;
     }
 
