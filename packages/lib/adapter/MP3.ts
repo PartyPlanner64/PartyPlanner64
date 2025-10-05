@@ -17,7 +17,6 @@ import {
 import { $$log } from "../utils/debug";
 import { createEventInstance, EventMap } from "../events/events";
 import { arrayToArrayBuffer } from "../utils/arrays";
-import { strings3 } from "../fs/strings3";
 import { toArrayBuffer } from "../utils/image";
 import { toPack } from "../utils/img/ImgPack";
 import { BMPfromRGBA } from "../utils/img/BMP";
@@ -507,6 +506,7 @@ export class MP3Adapter extends AdapterBase {
       if (!Array.isArray(strs.boardSelect))
         throw new Error("Expected number[][]");
       const idx = strs.boardSelect[0] as number[];
+      const strings3 = romhandler.getRom()!.getStrings3();
       const str = strings3.read("en", idx[0], idx[1]) as string;
       const lines = str.split("\n");
 
@@ -530,6 +530,7 @@ export class MP3Adapter extends AdapterBase {
   onWriteStrings(board: IBoard, boardInfo: IBoardInfo) {
     const strs = boardInfo.str || {};
     const strings = romhandler.getRom()!.getStrings();
+    const strings3 = romhandler.getRom()!.getStrings3();
     const boardSelect = strs.boardSelect as number[][];
     if (boardSelect && boardSelect.length) {
       let bytes = [];

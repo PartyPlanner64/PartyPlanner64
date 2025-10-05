@@ -1,6 +1,5 @@
 import * as React from "react";
 import { romhandler } from "../../../packages/lib/romhandler";
-import { strings3 } from "../../../packages/lib/fs/strings3";
 import { arrayToArrayBuffer } from "../../../packages/lib/utils/arrays";
 import {
   MPEditor,
@@ -32,9 +31,10 @@ export class StringsViewer extends React.Component<{}, IStringsViewerState> {
     const strs = [];
     let strCount;
     const game = romhandler.getGameVersion();
-    if (game === 3)
+    if (game === 3) {
+      const strings3 = romhandler.getRom()!.getStrings3();
       strCount = strings3.getStringCount("en", 0); // TODO
-    else {
+    } else {
       const strings = romhandler.getRom()!.getStrings();
       strCount = strings.getStringCount();
     }
@@ -72,9 +72,10 @@ class StringEditWrapper extends React.Component<IStringEditWrapperProps> {
   render() {
     let str: string;
     const game = romhandler.getGameVersion();
-    if (game === 3)
+    if (game === 3) {
+      const strings3 = romhandler.getRom()!.getStrings3();
       str = strings3.read("en", 0, this.props.strIndex) as string; // TODO
-    else {
+    } else {
       const strings = romhandler.getRom()!.getStrings();
       str = strings.read(this.props.strIndex) as string;
     }

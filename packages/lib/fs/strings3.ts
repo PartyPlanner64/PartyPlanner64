@@ -4,7 +4,7 @@ import { StringTable } from "./strings";
 import { decompress } from "../utils/compression";
 import { copyRange } from "../utils/arrays";
 import { Game } from "../types";
-import { romhandler } from "../romhandler";
+import { ROM, romhandler } from "../romhandler";
 
 interface IOffsetInfo {
   upper: number;
@@ -58,8 +58,6 @@ _stringOffsets[Game.MP3_JPN] = {
   //   { upper: , lower:  }, // 0x1270D10
   // ],
 };
-
-let _strFsInstances: { [locale: string]: StringTableSet } | null;
 
 class StringTableSet {
   private dirs: StringTable[];
@@ -168,10 +166,17 @@ class StringTableSet {
   }
 }
 
-export const strings3 = {
-  getROMOffset(locale: ILocale = "en") {
+export class Strings3 {
+  private _rom: ROM;
+  private _strFsInstances: { [locale: string]: StringTableSet } | null = null;
+
+  public constructor(rom: ROM) {
+    this._rom = rom;
+  }
+
+  public getROMOffset(locale: ILocale = "en") {
     const romView = romhandler.getDataView();
-    const localeOffsets = strings3.getPatchOffsets(locale);
+    const localeOffsets = this.getPatchOffsets(locale);
     if (!localeOffsets) {
       return null;
     }
@@ -183,15 +188,15 @@ export const strings3 = {
     if (lower & 0x8000) offset = offset - 0x00010000; // Signed ASM addition workaround.
     $$log(`Strings3.getROMOffset[${locale}] -> ${$$hex(offset)}`);
     return offset;
-  },
+  }
 
-  setROMOffset(newOffset: number, buffer: ArrayBuffer) {
+  public setROMOffset(newOffset: number, buffer: ArrayBuffer) {
     const romView = new DataView(buffer);
     let curOffset = newOffset;
-    const locales = strings3.getLocales(romhandler.getROMGame()!);
+    const locales = this.getLocales(romhandler.getROMGame()!);
     for (let l = 0; l < locales.length; l++) {
       const locale = locales[l];
-      const patchOffsets = strings3.getPatchOffsets(locale)!;
+      const patchOffsets = this.getPatchOffsets(locale)!;
       let upper = (curOffset & 0xffff0000) >>> 16;
       const lower = curOffset & 0x0000ffff;
       if (lower & 0x8000) upper += 1; // Adjust for signed addition in ASM.
@@ -203,82 +208,90 @@ export const strings3 = {
         `Strings3.setROMOffset[${locale}] -> ${$$hex((upper << 16) | lower)}`,
       );
       curOffset += makeDivisibleBy(
-        _strFsInstances![locale].getByteLength(),
+        this._strFsInstances![locale].getByteLength(),
         16,
       );
     }
-  },
+  }
 
-  getPatchOffsets(locale: ILocale = "en") {
+  public getPatchOffsets(locale: ILocale = "en") {
     return _stringOffsets[romhandler.getROMGame()!]![locale];
-  },
+  }
 
-  clear() {
-    _strFsInstances = null;
-  },
+  public clear() {
+    this._strFsInstances = null;
+  }
 
-  extract() {
-    _strFsInstances = {};
-    const locales = strings3.getLocales(romhandler.getROMGame()!);
+  public extract() {
+    this._strFsInstances = {};
+    const locales = this.getLocales(romhandler.getROMGame()!);
     for (let l = 0; l < locales.length; l++) {
       const locale = locales[l];
-      const localeView = romhandler.getDataView(strings3.getROMOffset(locale)!);
-      _strFsInstances[locale] = new StringTableSet(localeView);
+      const localeView = romhandler.getDataView(this.getROMOffset(locale)!);
+      this._strFsInstances[locale] = new StringTableSet(localeView);
     }
-    return _strFsInstances;
-  },
+    return this._strFsInstances;
+  }
 
-  extractAsync(): Promise<void> {
+  public extractAsync(): Promise<void> {
     return new Promise((resolve) => {
-      strings3.extract();
+      this.extract();
       resolve();
     });
-  },
+  }
 
-  pack(buffer: ArrayBuffer, offset = 0) {
+  public pack(buffer: ArrayBuffer, offset = 0) {
     let nextOffset = offset;
-    const locales = strings3.getLocales(romhandler.getROMGame()!);
+    const locales = this.getLocales(romhandler.getROMGame()!);
     for (let l = 0; l < locales.length; l++) {
       const locale = locales[l];
-      const instance = _strFsInstances![locale];
+      const instance = this._strFsInstances![locale];
       nextOffset = nextOffset + instance.pack(buffer, nextOffset);
       nextOffset = makeDivisibleBy(nextOffset, 16);
     }
     return nextOffset;
-  },
+  }
 
   //read(locale: ILocale, dir: number, index: number, raw: true): ArrayBuffer;
   //read(locale: ILocale, dir: number, index: number, raw?: false): string;
   //read(locale: ILocale, dir: number, index: number, raw: boolean): ArrayBuffer | string;
-  read(locale: ILocale, dir: number, index: number, raw = false) {
-    return _strFsInstances![locale].read(dir, index, raw);
-  },
+  public read(locale: ILocale, dir: number, index: number, raw = false) {
+    return this._strFsInstances![locale].read(dir, index, raw);
+  }
 
   // Writes a pre-made buffer for now.
-  write(locale: ILocale, dir: number, index: number, content: ArrayBuffer) {
-    _strFsInstances![locale].write(dir, index, content);
-  },
+  public write(
+    locale: ILocale,
+    dir: number,
+    index: number,
+    content: ArrayBuffer,
+  ) {
+    this._strFsInstances![locale].write(dir, index, content);
+  }
 
-  getLocales(game: Game): ILocale[] {
+  public getLocales(game: Game): ILocale[] {
     return Object.keys(_stringOffsets[game]!) as ILocale[];
-  },
+  }
 
-  getDirectoryCount(locale: ILocale) {
-    return _strFsInstances![locale].getDirectoryCount();
-  },
+  public getDirectoryCount(locale: ILocale) {
+    return this._strFsInstances![locale].getDirectoryCount();
+  }
 
-  getStringCount(locale: ILocale, dir: number) {
-    return _strFsInstances![locale].getStringCount(dir);
-  },
+  public getStringCount(locale: ILocale, dir: number) {
+    return this._strFsInstances![locale].getStringCount(dir);
+  }
 
   // Gets the required byte length of the string section of the ROM.
-  getByteLength() {
+  public getByteLength() {
     let byteLen = 0;
-    const locales = strings3.getLocales(romhandler.getROMGame()!);
+    const locales = this.getLocales(romhandler.getROMGame()!);
     for (let l = 0; l < locales.length; l++) {
       const locale = locales[l];
-      byteLen += makeDivisibleBy(_strFsInstances![locale].getByteLength(), 16);
+      byteLen += makeDivisibleBy(
+        this._strFsInstances![locale].getByteLength(),
+        16,
+      );
     }
     return byteLen;
-  },
-};
+  }
+}

@@ -8,7 +8,6 @@ import {
   imgInfoSrcToDataView,
 } from "./img/ImgPack";
 import { fromTiles } from "./img/tiler";
-import { strings3 } from "../fs/strings3";
 import { romhandler } from "../romhandler";
 import { FORM } from "../models/FORM";
 import { MTNX } from "../models/MTNX";
@@ -253,6 +252,7 @@ export function formImages() {
 }
 
 export function findStrings3(searchStr = "", raw = false) {
+  const strings3 = romhandler.getRom()!.getStrings3();
   const dirCount = strings3.getDirectoryCount("en");
   for (let d = 0; d < dirCount; d++) {
     const strCount = strings3.getStringCount("en", d);
