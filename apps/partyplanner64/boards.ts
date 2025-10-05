@@ -491,17 +491,6 @@ export function setSpaceRotation(spaceIndex: number, angleYAxisDeg: number) {
   store.dispatch(setSpaceRotationAction({ spaceIndex, angleYAxisDeg }));
 }
 
-export function addEventByIndex(
-  board: IBoard,
-  spaceIdx: number,
-  event: any,
-  toStart: boolean,
-  eventLibrary: EventMap,
-) {
-  const space = board.spaces[spaceIdx];
-  addEventToSpaceInternal(board, space, event, toStart, eventLibrary);
-}
-
 export function loadBoardsFromROM() {
   const adapter = getROMAdapter({});
   if (!adapter) return;

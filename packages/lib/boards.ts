@@ -539,6 +539,17 @@ export function getSpacesWithEvent(eventName: string, board: IBoard): number[] {
   return eventSpaces;
 }
 
+export function addEventByIndex(
+  board: IBoard,
+  spaceIdx: number,
+  event: any,
+  toStart: boolean,
+  eventLibrary: EventMap,
+) {
+  const space = board.spaces[spaceIdx];
+  addEventToSpaceInternal(board, space, event, toStart, eventLibrary);
+}
+
 interface ForEachEventCallback {
   (
     event: IEventInstance,

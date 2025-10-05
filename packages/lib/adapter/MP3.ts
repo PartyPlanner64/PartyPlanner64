@@ -1,5 +1,4 @@
 import { AdapterBase } from "./AdapterBase";
-import { addEventByIndex } from "../../../apps/partyplanner64/boards";
 import {
   Space,
   BoardType,
@@ -33,6 +32,7 @@ import {
   ISpace,
   getConnections,
   addEventToSpaceInternal,
+  addEventByIndex,
 } from "../boards";
 
 import genericgateImage from "../img/genericgate.png";
