@@ -735,10 +735,10 @@ class EventAdd extends React.Component<IEventAddProps, IEventAddState> {
 }
 
 function _getEventsForAddList() {
-  let libraryEvents = getAvailableEvents();
+  const board = getCurrentBoard();
+  let libraryEvents = getAvailableEvents(board);
 
   const boardEvents = [];
-  const board = getCurrentBoard();
   for (const eventName in board.events) {
     const boardEvent = getBoardEvent(board, eventName)!;
     boardEvents.push(createCustomEvent(boardEvent.language, boardEvent.code));
