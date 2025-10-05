@@ -2,8 +2,6 @@ import { romhandler } from "../romhandler";
 import { getBoardInfos, getBoardInfoByIndex } from "./boardinfo";
 import {
   addEventByIndex,
-  getConnections,
-  getSpacesOfSubType,
   getDeadSpace,
   getDeadSpaceIndex,
   addEventToSpaceInternal,
@@ -71,7 +69,14 @@ import {
 import { makeAudioSymbolLabels } from "../events/getaudiochoice";
 
 import bootsplashImage from "../../../apps/partyplanner64/img/bootsplash.png";
-import { BoardAudioType, IBoard, IEventInstance, ISpace } from "../boards";
+import {
+  BoardAudioType,
+  getConnections,
+  getSpacesOfSubType,
+  IBoard,
+  IEventInstance,
+  ISpace,
+} from "../boards";
 
 export interface IAdapterOptions {
   writeBranding?: boolean;

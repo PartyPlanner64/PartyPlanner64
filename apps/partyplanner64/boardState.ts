@@ -2,10 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   addConnectionInternal,
   addEventToSpaceInternal,
-  addSpaceInternal,
-  getBoardEvent,
   IBoardAudioChanges,
-  includeEventInBoardInternal,
   _makeDefaultBoard,
 } from "./boards";
 import {
@@ -31,11 +28,14 @@ import { lineDistance } from "../../packages/lib/utils/number";
 import { copyObject } from "../../packages/lib/utils/obj";
 import { RootState } from "./store";
 import {
+  addSpaceInternal,
   BoardAudioType,
   forEachEvent,
   forEachEventParameter,
+  getBoardEvent,
   IBoard,
   IEventInstance,
+  includeEventInBoardInternal,
   ISpace,
 } from "../../packages/lib/boards";
 

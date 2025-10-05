@@ -1,15 +1,16 @@
-import {
-  addSpace,
-  hasConnection,
-  getStartSpaceIndex,
-  getConnections,
-} from "../../../apps/partyplanner64/boards";
+import { addSpace } from "../../../apps/partyplanner64/boards";
 import { Space } from "../types";
 import { midpoint, distance } from "../utils/number";
 import { $$log, $$hex } from "../utils/debug";
 import { copyObject } from "../utils/obj";
 import { romhandler } from "../romhandler";
-import { IBoard, ISpace } from "../boards";
+import {
+  IBoard,
+  ISpace,
+  hasConnection,
+  getStartSpaceIndex,
+  getConnections,
+} from "../boards";
 
 export function parse(buffer: ArrayBufferLike, board: Partial<IBoard>): IBoard {
   const header = _parseHeader(buffer);

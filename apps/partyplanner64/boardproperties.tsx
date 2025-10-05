@@ -5,9 +5,6 @@ import {
   addAnimBG,
   removeAnimBG,
   setBG,
-  getDeadEnds,
-  supportsAnimationBackgrounds,
-  supportsAdditionalBackgrounds,
   addAdditionalBG,
   removeAdditionalBG,
   boardIsROM,
@@ -46,7 +43,13 @@ import {
   setBoardEventEventParameterAction,
 } from "./boardState";
 import { useAppSelector, useCurrentBoard } from "./hooks";
-import { IBoard, IEventInstance } from "../../packages/lib/boards";
+import {
+  getDeadEnds,
+  IBoard,
+  IEventInstance,
+  supportsAdditionalBackgrounds,
+  supportsAnimationBackgrounds,
+} from "../../packages/lib/boards";
 
 interface IBoardPropertiesProps {
   currentBoard: IBoard;

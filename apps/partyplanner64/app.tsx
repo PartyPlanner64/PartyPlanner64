@@ -2,9 +2,7 @@
 
 import { View, Action, EventCodeLanguage } from "../../packages/lib/types";
 import {
-  getAdditionalBackgroundCode,
   setAdditionalBackgroundCode,
-  getAudioSelectCode,
   setAudioSelectCode,
   _makeDefaultBoard,
 } from "./boards";
@@ -106,7 +104,12 @@ import {
 } from "../../packages/lib/events/customevents";
 import { setEventLibraryImplementation } from "../../packages/lib/events/EventLibrary";
 import { ReduxEventLibrary } from "./events/ReduxEventLibrary";
-import { fixPotentiallyOldBoard, IBoard } from "../../packages/lib/boards";
+import {
+  fixPotentiallyOldBoard,
+  getAdditionalBackgroundCode,
+  getAudioSelectCode,
+  IBoard,
+} from "../../packages/lib/boards";
 
 /* eslint-disable jsx-a11y/anchor-is-valid */
 

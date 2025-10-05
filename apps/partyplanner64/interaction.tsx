@@ -7,10 +7,8 @@ import {
 import {
   getCurrentBoard,
   addSpace,
-  getSpacesOfType,
   currentBoardIsROM,
   removeSpace,
-  getSpaceIndex,
   addConnection,
   setSpaceRotation,
   copyCurrentBoard,
@@ -43,7 +41,12 @@ import {
 } from "./boardState";
 import { store } from "./store";
 import { isEmpty } from "../../packages/lib/utils/obj";
-import { IBoard, ISpace } from "../../packages/lib/boards";
+import {
+  getSpaceIndex,
+  getSpacesOfType,
+  IBoard,
+  ISpace,
+} from "../../packages/lib/boards";
 
 let spaceWasMouseDownedOn = false;
 let startX = -1;

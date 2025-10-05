@@ -10,7 +10,7 @@ import {
   useContext,
   useLayoutEffect,
 } from "react";
-import { getConnections, getCurrentBoard } from "./boards";
+import { getCurrentBoard } from "./boards";
 import {
   BoardType,
   Space,
@@ -46,6 +46,7 @@ import { isEmpty } from "../../packages/lib/utils/obj";
 import { getEventsInLibrary } from "../../packages/lib/events/EventLibrary";
 import {
   forEachEventParameter,
+  getConnections,
   IBoard,
   IEventInstance,
   ISpace,

@@ -1,4 +1,4 @@
-import { getSpacesOfSubType, getDeadSpaceIndex } from "../../../apps/partyplanner64/boards";
+import { getDeadSpaceIndex } from "../../../apps/partyplanner64/boards";
 import { SpaceSubtype, Game } from "../types";
 import { distance } from "../utils/number";
 import { IBoardInfo } from "./boardinfobase";
@@ -6,7 +6,7 @@ import { getSymbol } from "../symbols/symbols";
 import { getShuffleSeedData } from "./overlayutils";
 import { getAdditionalBgAsmForOverlay, getBoardAdditionalBgHvqIndices } from "../events/additionalbg";
 import { getAudioIndexAsmForOverlay } from "../events/getaudiochoice";
-import { IBoard } from "../boards";
+import { getSpacesOfSubType, IBoard } from "../boards";
 
 export async function createBoardOverlay(board: IBoard, boardInfo: IBoardInfo, boardIndex: number, audioIndices: number[]): Promise<string> {
   const [mainFsEventDir, mainFsEventFile] = boardInfo.mainfsEventFile!;

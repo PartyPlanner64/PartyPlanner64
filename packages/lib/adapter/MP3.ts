@@ -1,6 +1,5 @@
 import { AdapterBase } from "./AdapterBase";
 import {
-  getConnections,
   addEventByIndex,
   addEventToSpaceInternal,
 } from "../../../apps/partyplanner64/boards";
@@ -29,12 +28,12 @@ import { createBoardOverlay } from "./MP3.U.boardoverlay";
 import { getSoundEffectMapMP3 } from "./MP3.U.soundeffects";
 import { getImageData } from "../utils/img/getImageData";
 import { getEventsInLibrary } from "../events/EventLibrary";
-
-import genericgateImage from "../../../apps/partyplanner64/img/assets/genericgate.png";
 import { createImage } from "../utils/canvas";
 import { romhandler } from "../romhandler";
 import { strToBytes } from "../fs/strings";
-import { IBoard, ISpace } from "../boards";
+import { IBoard, ISpace, getConnections } from "../boards";
+
+import genericgateImage from "../../../apps/partyplanner64/img/assets/genericgate.png";
 
 export class MP3Adapter extends AdapterBase {
   public gameVersion: 1 | 2 | 3 = 3;
