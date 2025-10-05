@@ -35,6 +35,7 @@ import { getEventsInLibrary } from "../events/EventLibrary";
 import genericgateImage from "../../../apps/partyplanner64/img/assets/genericgate.png";
 import { createImage } from "../utils/canvas";
 import { romhandler } from "../romhandler";
+import { strToBytes } from "../fs/strings";
 
 export class MP3Adapter extends AdapterBase {
   public gameVersion: 1 | 2 | 3 = 3;
@@ -529,7 +530,6 @@ export class MP3Adapter extends AdapterBase {
 
   onWriteStrings(board: IBoard, boardInfo: IBoardInfo) {
     const strs = boardInfo.str || {};
-    const strings = romhandler.getRom()!.getStrings();
     const strings3 = romhandler.getRom()!.getStrings3();
     const boardSelect = strs.boardSelect as number[][];
     if (boardSelect && boardSelect.length) {
@@ -537,7 +537,7 @@ export class MP3Adapter extends AdapterBase {
       bytes.push(0x0b); // Clear?
       bytes.push(0x05); // Start GREEN
       bytes.push(0x0f); // ?
-      bytes = bytes.concat(strings._strToBytes(board.name || ""));
+      bytes = bytes.concat(strToBytes(board.name || ""));
       bytes.push(0x16);
       bytes.push(0x19);
       bytes.push(0x0f);
@@ -545,23 +545,21 @@ export class MP3Adapter extends AdapterBase {
       bytes.push(0x16);
       bytes.push(0x03);
       bytes.push(0x0f);
-      bytes = bytes.concat(strings._strToBytes("Difficulty: "));
+      bytes = bytes.concat(strToBytes("Difficulty: "));
       const star = 0x3b;
       if (board.difficulty > 5 || board.difficulty < 1) {
         // Hackers!
         bytes.push(star);
-        bytes = bytes.concat(strings._strToBytes(" "));
+        bytes = bytes.concat(strToBytes(" "));
         bytes.push(0x3e); // Little x
-        bytes = bytes.concat(
-          strings._strToBytes(" " + board.difficulty.toString()),
-        );
+        bytes = bytes.concat(strToBytes(" " + board.difficulty.toString()));
       } else {
         for (let i = 0; i < board.difficulty; i++) bytes.push(star);
       }
       bytes.push(0x16);
       bytes.push(0x19);
       bytes.push(0x0a); // \n
-      bytes = bytes.concat(strings._strToBytes(board.description || "")); // Assumes \n's are correct within.
+      bytes = bytes.concat(strToBytes(board.description || "")); // Assumes \n's are correct within.
       bytes.push(0x00); // Null byte
 
       let strBuffer = arrayToArrayBuffer(bytes);
@@ -584,12 +582,12 @@ export class MP3Adapter extends AdapterBase {
     if (strs.boardGreeting) {
       let bytes = [];
       bytes.push(0x0b);
-      bytes = bytes.concat(strings._strToBytes("You're all here!"));
+      bytes = bytes.concat(strToBytes("You're all here!"));
       bytes.push(0x0a); // \n
       bytes = bytes.concat(this._createBoardGreetingBase(board.name));
       bytes.push(0x0b); // ?
       bytes = bytes.concat(
-        strings._strToBytes(
+        strToBytes(
           "Now, before we begin, we need\nto determine the turn order.",
         ),
       );
@@ -609,14 +607,14 @@ export class MP3Adapter extends AdapterBase {
     if (strs.boardGreetingDuel) {
       let bytes = [];
       bytes.push(0x0b);
-      bytes = bytes.concat(strings._strToBytes("I've been waiting for you, "));
+      bytes = bytes.concat(strToBytes("I've been waiting for you, "));
       bytes.push(0x11); // ?
       bytes.push(0xc2); // ?
       bytes.push(0x0a); // \n
       bytes = bytes.concat(this._createBoardGreetingBase(board.name));
       bytes.push(0x0b); // ?
       bytes = bytes.concat(
-        strings._strToBytes("And just as promised, if you win here..."),
+        strToBytes("And just as promised, if you win here..."),
       );
       bytes.push(0x19); // ?
       bytes.push(0xff); // ?
@@ -634,7 +632,7 @@ export class MP3Adapter extends AdapterBase {
     if (strs.boardNames && strs.boardNames.length) {
       let bytes = [];
       bytes.push(0x0b);
-      bytes = bytes.concat(strings._strToBytes(board.name));
+      bytes = bytes.concat(strToBytes(board.name));
       bytes.push(0x00); // Null byte
       const strBuffer = arrayToArrayBuffer(bytes);
 
@@ -647,10 +645,10 @@ export class MP3Adapter extends AdapterBase {
 
   _createBoardGreetingBase(boardName: string) {
     const strings = romhandler.getRom()!.getStrings();
-    let bytes = strings._strToBytes("Welcome to the legendary ");
+    let bytes = strToBytes("Welcome to the legendary ");
     bytes.push(0x05); // Start GREEN
     bytes.push(0x0f); // ?
-    bytes = bytes.concat(strings._strToBytes(boardName));
+    bytes = bytes.concat(strToBytes(boardName));
     bytes.push(0x16); // ?
     bytes.push(0x19); // ?
     bytes.push(0xc2); // ?
@@ -658,7 +656,7 @@ export class MP3Adapter extends AdapterBase {
     bytes.push(0xff); // ?
     bytes.push(0x0b); // ?
     bytes = bytes.concat(
-      strings._strToBytes("Here, you'll battle to become\nthe Superstar."),
+      strToBytes("Here, you'll battle to become\nthe Superstar."),
     );
     bytes.push(0x19); // ?
     bytes.push(0xff); // ?

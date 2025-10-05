@@ -9,6 +9,7 @@ import {
 } from "../texteditor";
 
 import "../css/strings.scss";
+import { strToBytes } from "../../../packages/lib/fs/strings";
 
 interface IStringsViewerState {
   hasError: boolean;
@@ -108,8 +109,8 @@ class StringEditWrapper extends React.Component<IStringEditWrapperProps> {
     const game = romhandler.getGameVersion()!;
     if (game === 3) return;
     else {
+      const strBuffer = arrayToArrayBuffer(strToBytes(val));
       const strings = romhandler.getRom()!.getStrings();
-      const strBuffer = arrayToArrayBuffer(strings._strToBytes(val));
       strings.write(this.props.strIndex, strBuffer);
     }
   };

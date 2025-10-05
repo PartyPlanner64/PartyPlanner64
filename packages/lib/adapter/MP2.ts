@@ -23,6 +23,7 @@ import { createBoardOverlay } from "./MP2.U.boardoverlay";
 
 import mp2boardselectblank1Image from "../../../apps/partyplanner64/img/details/mp2boardselectblank1.png";
 import { romhandler } from "../romhandler";
+import { strToBytes } from "../fs/strings";
 
 export class MP2Adapter extends AdapterBase {
   public gameVersion: 1 | 2 | 3 = 2;
@@ -157,27 +158,25 @@ export class MP2Adapter extends AdapterBase {
       let bytes = [];
       bytes.push(0x0b); // Clear?
       bytes.push(0x06); // Start BLUE
-      bytes = bytes.concat(strings._strToBytes(board.name || ""));
+      bytes = bytes.concat(strToBytes(board.name || ""));
       bytes.push(0x19);
       bytes.push(0x04); // Start Purple?
       bytes = bytes.concat([0x0e, 0x0e]); // Tabs
-      bytes = bytes.concat(strings._strToBytes("Difficulty"));
+      bytes = bytes.concat(strToBytes("Difficulty"));
       bytes.push(0x19);
-      bytes = bytes.concat(strings._strToBytes(" : "));
+      bytes = bytes.concat(strToBytes(" : "));
       const star = 0x3b;
       if (board.difficulty > 5 || board.difficulty < 1) {
         // Hackers!
         bytes.push(star);
-        bytes = bytes.concat(strings._strToBytes(" "));
+        bytes = bytes.concat(strToBytes(" "));
         bytes.push(0x3e); // Little x
-        bytes = bytes.concat(
-          strings._strToBytes(" " + board.difficulty.toString()),
-        );
+        bytes = bytes.concat(strToBytes(" " + board.difficulty.toString()));
       } else {
         for (let i = 0; i < board.difficulty; i++) bytes.push(star);
       }
       bytes.push(0x0a); // \n
-      bytes = bytes.concat(strings._strToBytes(board.description || "")); // Assumes \n's are correct within.
+      bytes = bytes.concat(strToBytes(board.description || "")); // Assumes \n's are correct within.
       bytes.push(0x00); // Null byte
 
       const strBuffer = arrayToArrayBuffer(bytes);
@@ -191,7 +190,7 @@ export class MP2Adapter extends AdapterBase {
       let bytes = [];
       bytes.push(0x0b);
       bytes.push(0x06);
-      bytes = bytes.concat(strings._strToBytes(board.name || ""));
+      bytes = bytes.concat(strToBytes(board.name || ""));
       bytes.push(0x19);
       bytes.push(0x00); // Null byte
       const strBuffer = arrayToArrayBuffer(bytes);
@@ -207,17 +206,17 @@ export class MP2Adapter extends AdapterBase {
     if (strs.boardGreeting && strs.boardGreeting.length) {
       let bytes = [];
       bytes.push(0x0b);
-      bytes = bytes.concat(strings._strToBytes("We're here, everyone!"));
+      bytes = bytes.concat(strToBytes("We're here, everyone!"));
       bytes.push(0x0a); // \n
-      bytes = bytes.concat(strings._strToBytes("This is "));
+      bytes = bytes.concat(strToBytes("This is "));
       bytes.push(0x06); // Blue
       bytes.push(0x0f);
-      bytes = bytes.concat(strings._strToBytes((board.name || "") + "!!!"));
+      bytes = bytes.concat(strToBytes((board.name || "") + "!!!"));
       bytes.push(0x16);
       bytes.push(0x19);
       bytes.push(0xff);
       // bytes.push(0x0B);
-      // bytes = bytes.concat(strings._strToBytes("Your objective this time,"));
+      // bytes = bytes.concat(strToBytes("Your objective this time,"));
       bytes.push(0x00); // Null byte
 
       let strBuffer = arrayToArrayBuffer(bytes);
@@ -225,11 +224,9 @@ export class MP2Adapter extends AdapterBase {
 
       bytes = [];
       bytes.push(0x0b);
-      bytes = bytes.concat(
-        strings._strToBytes("Now, before this adventure begins,"),
-      );
+      bytes = bytes.concat(strToBytes("Now, before this adventure begins,"));
       bytes.push(0x0a); // \n
-      bytes = bytes.concat(strings._strToBytes("we must decide turn order."));
+      bytes = bytes.concat(strToBytes("we must decide turn order."));
       bytes.push(0xff);
       bytes.push(0x00); // Null byte
 
@@ -241,21 +238,21 @@ export class MP2Adapter extends AdapterBase {
     if (strs.boardWinner) {
       let bytes = [];
       bytes.push(0x0b);
-      bytes = bytes.concat(strings._strToBytes("Well done, "));
+      bytes = bytes.concat(strToBytes("Well done, "));
       bytes.push(0x11); // Player
-      bytes = bytes.concat(strings._strToBytes("!"));
+      bytes = bytes.concat(strToBytes("!"));
       bytes.push(0x0a); // \n
-      bytes = bytes.concat(strings._strToBytes("You are the "));
+      bytes = bytes.concat(strToBytes("You are the "));
       bytes.push(0x07); // Yellow
       bytes.push(0x0f);
-      bytes = bytes.concat(strings._strToBytes("Super Star"));
+      bytes = bytes.concat(strToBytes("Super Star"));
       bytes.push(0x16);
       bytes.push(0x19);
       bytes.push(0x0a); // \n
-      bytes = bytes.concat(strings._strToBytes("of "));
+      bytes = bytes.concat(strToBytes("of "));
       bytes.push(0x06); // Blue
       bytes.push(0x0f);
-      bytes = bytes.concat(strings._strToBytes((board.name || "") + "!!!"));
+      bytes = bytes.concat(strToBytes((board.name || "") + "!!!"));
       bytes.push(0x16);
       bytes.push(0x19);
       bytes.push(0x00); // Null byte
@@ -268,10 +265,10 @@ export class MP2Adapter extends AdapterBase {
     if (strs.boardPlayCount) {
       let bytes = [];
       bytes.push(0x0b);
-      bytes = bytes.concat(strings._strToBytes(board.name || ""));
+      bytes = bytes.concat(strToBytes(board.name || ""));
       bytes = bytes.concat([0x0e, 0x0e, 0x0e, 0x0e, 0x0e, 0x0e]); // Tabs
       bytes.push(0x11); // Play count
-      bytes = bytes.concat(strings._strToBytes(" Time(s)"));
+      bytes = bytes.concat(strToBytes(" Time(s)"));
       bytes.push(0x00); // Null byte
 
       const strBuffer = arrayToArrayBuffer(bytes);

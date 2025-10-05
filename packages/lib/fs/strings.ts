@@ -188,40 +188,6 @@ export class Strings {
     return _stringOffsets[romhandler.getROMGame()!];
   }
 
-  public _strToBytes(str: string): number[] {
-    const map = getROMAdapter({})!.getCharacterMap();
-    const result = [];
-    let curIdx = 0;
-    const len = str.length;
-    while (curIdx < len) {
-      let lastMatchLen = 0;
-      let lastMatch: string | number;
-      for (const byte in map) {
-        if (!map.hasOwnProperty(byte)) continue;
-
-        const chars = map[byte];
-        if (str.substr(curIdx, chars.length) === chars) {
-          if (chars.length > lastMatchLen) {
-            lastMatchLen = chars.length;
-            lastMatch = byte;
-          }
-        }
-      }
-
-      if (lastMatchLen === 0) {
-        lastMatchLen = 1;
-        lastMatch = str.charCodeAt(curIdx);
-      }
-
-      if (typeof lastMatch! === "string") lastMatch = parseInt(lastMatch);
-
-      result.push(lastMatch!);
-      curIdx += lastMatchLen;
-    }
-
-    return result;
-  }
-
   public extract() {
     const romOffset = this.getROMOffset();
     if (romOffset === null) {
@@ -266,4 +232,38 @@ export class Strings {
   public getByteLength() {
     return this._strFsInstance!.getByteLength();
   }
+}
+
+export function strToBytes(str: string): number[] {
+  const map = getROMAdapter({})!.getCharacterMap();
+  const result = [];
+  let curIdx = 0;
+  const len = str.length;
+  while (curIdx < len) {
+    let lastMatchLen = 0;
+    let lastMatch: string | number;
+    for (const byte in map) {
+      if (!map.hasOwnProperty(byte)) continue;
+
+      const chars = map[byte];
+      if (str.substr(curIdx, chars.length) === chars) {
+        if (chars.length > lastMatchLen) {
+          lastMatchLen = chars.length;
+          lastMatch = byte;
+        }
+      }
+    }
+
+    if (lastMatchLen === 0) {
+      lastMatchLen = 1;
+      lastMatch = str.charCodeAt(curIdx);
+    }
+
+    if (typeof lastMatch! === "string") lastMatch = parseInt(lastMatch);
+
+    result.push(lastMatch!);
+    curIdx += lastMatchLen;
+  }
+
+  return result;
 }

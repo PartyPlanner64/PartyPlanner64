@@ -4,6 +4,7 @@ import { arrayToArrayBuffer } from "../utils/arrays";
 import { toPack } from "../utils/img/ImgPack";
 import { CostumeType } from "../types";
 import { romhandler } from "../romhandler";
+import { strToBytes } from "../fs/strings";
 
 // Western Land - (U) ROM
 const MP2_WESTERN = createBoardInfo("MP2_WESTERN", {
@@ -73,11 +74,9 @@ const MP2_WESTERN = createBoardInfo("MP2_WESTERN", {
     const strings = romhandler.getRom()!.getStrings();
     let bytes: number[] = [];
     bytes.push(0x0b);
-    bytes = bytes.concat(strings._strToBytes("Don't listen to Toad!"));
+    bytes = bytes.concat(strToBytes("Don't listen to Toad!"));
     bytes.push(0x0a); // \n
-    bytes = bytes.concat(
-      strings._strToBytes("I've got the results. Follow me!"),
-    );
+    bytes = bytes.concat(strToBytes("I've got the results. Follow me!"));
     bytes.push(0x00); // Null byte
     strings.write(697, arrayToArrayBuffer(bytes));
 

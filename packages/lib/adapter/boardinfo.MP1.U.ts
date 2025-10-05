@@ -3,6 +3,7 @@ import { IBoard } from "../../../apps/partyplanner64/boards";
 import { arrayToArrayBuffer } from "../utils/arrays";
 import { toPack } from "../utils/img/ImgPack";
 import { romhandler } from "../romhandler";
+import { strToBytes } from "../fs/strings";
 
 // DK's Jungle Adventure - (U) ROM
 const MP1_USA_DK = createBoardInfo("MP1_USA_DK", {
@@ -56,9 +57,7 @@ const MP1_USA_DK = createBoardInfo("MP1_USA_DK", {
     let bytes: number[] = [];
     const strings = romhandler.getRom()!.getStrings();
     bytes = bytes.concat(
-      strings._strToBytes(
-        "You're looking for Stars?\nHow about this instead...",
-      ),
+      strToBytes("You're looking for Stars?\nHow about this instead..."),
     );
     bytes.push(0xff); // PAUSE
     bytes.push(0x00); // Null byte

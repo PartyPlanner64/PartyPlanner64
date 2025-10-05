@@ -25,6 +25,7 @@ import { getEventsInLibrary } from "../events/EventLibrary";
 import { getAudioMapMP1 } from "./MP1.U.audio";
 import { createImage } from "../utils/canvas";
 import { romhandler } from "../romhandler";
+import { strToBytes } from "../fs/strings";
 
 export class MP1Adapter extends AdapterBase {
   public gameVersion: GameVersion = 1;
@@ -398,23 +399,21 @@ export class MP1Adapter extends AdapterBase {
       let bytes = [];
       bytes.push(0x0b); // Clear?
       bytes.push(0x05); // Start GREEN
-      bytes = bytes.concat(strings._strToBytes(board.name || ""));
+      bytes = bytes.concat(strToBytes(board.name || ""));
       bytes.push(0x02); // Start DEFAULT
       bytes.push(0x0a); // \n
-      bytes = bytes.concat(strings._strToBytes(board.description || "")); // Assumes \n's are correct within.
+      bytes = bytes.concat(strToBytes(board.description || "")); // Assumes \n's are correct within.
       bytes.push(0x0a); // \n
       bytes = bytes.concat([0x10, 0x10, 0x10, 0x10, 0x10, 0x10]); // Spaces
       bytes.push(0x06); // Start BLUE
-      bytes = bytes.concat(strings._strToBytes("Map Difficulty  "));
+      bytes = bytes.concat(strToBytes("Map Difficulty  "));
       const star = 0x2a;
       if (board.difficulty > 5 || board.difficulty < 1) {
         // Hackers!
         bytes.push(star);
-        bytes = bytes.concat(strings._strToBytes(" "));
+        bytes = bytes.concat(strToBytes(" "));
         bytes.push(0x3e); // Little x
-        bytes = bytes.concat(
-          strings._strToBytes(" " + board.difficulty.toString()),
-        );
+        bytes = bytes.concat(strToBytes(" " + board.difficulty.toString()));
       } else {
         for (let i = 0; i < board.difficulty; i++) bytes.push(star);
       }
@@ -437,15 +436,11 @@ export class MP1Adapter extends AdapterBase {
     if (strs.koopaIntro) {
       let bytes: number[] = [];
       bytes = bytes.concat(
-        strings._strToBytes(
-          "Welcome, everybody!\nI am your guide,\nKoopa Troopa.",
-        ),
+        strToBytes("Welcome, everybody!\nI am your guide,\nKoopa Troopa."),
       );
       bytes.push(0xff); // PAUSE
       bytes.push(0x0b); // Clear?
-      bytes = bytes.concat(
-        strings._strToBytes("Now then,\nlet's decide turn order."),
-      );
+      bytes = bytes.concat(strToBytes("Now then,\nlet's decide turn order."));
       bytes.push(0xff); // PAUSE
       bytes.push(0x00); // Null byte
 
@@ -457,7 +452,7 @@ export class MP1Adapter extends AdapterBase {
     if (strs.starComments) {
       let bytes: number[] = [];
       bytes = bytes.concat(
-        strings._strToBytes(
+        strToBytes(
           "Good luck!\nWith enough stars, you\ncould be the superstar!",
         ),
       );
