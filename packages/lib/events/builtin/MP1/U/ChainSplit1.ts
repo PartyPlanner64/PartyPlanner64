@@ -6,7 +6,6 @@ import {
   EventParameterType,
 } from "../../../../types";
 import { hashEqual } from "../../../../utils/arrays";
-import { addDecisionTree } from "../../../../../../apps/partyplanner64/boards";
 import { addConnectionInternal, IEventInstance } from "../../../../boards";
 import { addEventToLibrary } from "../../../EventLibrary";
 import { getSymbol } from "../../../../symbols/symbols";
@@ -74,7 +73,7 @@ export const ChainSplit1: IEvent = {
           addrBase,
           info.gameVersion,
         );
-        addDecisionTree(info.board, info.curSpaceIndex, tree);
+        //addDecisionTree(info.board, info.curSpaceIndex, tree);
       }
 
       return true;

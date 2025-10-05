@@ -408,13 +408,13 @@ export function removeAdditionalBG(index: number) {
   store.dispatch(removeAdditionalBackgroundAction({ index }));
 }
 
-export function addDecisionTree(
-  board: IBoard,
-  spaceIndex: number,
-  tree: IDecisionTreeNode[],
-): void {
-  // board.spaces[spaceIndex].aiTree = tree;
-}
+// export function addDecisionTree(
+//   board: IBoard,
+//   spaceIndex: number,
+//   tree: IDecisionTreeNode[],
+// ): void {
+//   board.spaces[spaceIndex].aiTree = tree;
+// }
 
 export function deleteBoard(boardIndex: number) {
   store.dispatch(deleteBoardAction({ boardIndex }));
