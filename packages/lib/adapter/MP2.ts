@@ -15,11 +15,11 @@ import { IBoardInfo } from "./boardinfobase";
 import { BankEvent } from "../events/builtin/events.common";
 import { getImageData } from "../utils/img/getImageData";
 import { createBoardOverlay } from "./MP2.U.boardoverlay";
-
-import mp2boardselectblank1Image from "../../../apps/partyplanner64/img/details/mp2boardselectblank1.png";
 import { romhandler } from "../romhandler";
 import { strToBytes } from "../fs/strings";
 import { IBoard, ISpace } from "../boards";
+
+import mp2boardselectblank1Image from "../img/detail/mp2boardselectblank1.png";
 
 export class MP2Adapter extends AdapterBase {
   public gameVersion: 1 | 2 | 3 = 2;

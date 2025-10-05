@@ -33,7 +33,7 @@ import { romhandler } from "../romhandler";
 import { strToBytes } from "../fs/strings";
 import { IBoard, ISpace, getConnections } from "../boards";
 
-import genericgateImage from "../../../apps/partyplanner64/img/assets/genericgate.png";
+import genericgateImage from "../img/genericgate.png";
 
 export class MP3Adapter extends AdapterBase {
   public gameVersion: 1 | 2 | 3 = 3;

@@ -68,7 +68,7 @@ import {
 } from "../events/additionalbg";
 import { makeAudioSymbolLabels } from "../events/getaudiochoice";
 
-import bootsplashImage from "../../../apps/partyplanner64/img/bootsplash.png";
+import bootsplashImage from "../img/bootsplash.png";
 import {
   BoardAudioType,
   getConnections,
