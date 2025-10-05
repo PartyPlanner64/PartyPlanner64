@@ -6,11 +6,9 @@ import {
   EditorEventActivationType,
 } from "../../types";
 import { hashEqual } from "../../utils/arrays";
-import {
-  addConnection,
-  IEventInstance,
-} from "../../../../apps/partyplanner64/boards";
+import { addConnection } from "../../../../apps/partyplanner64/boards";
 import { addEventToLibrary } from "../EventLibrary";
+import { IEventInstance } from "../../boards";
 
 // Represents the "event" that takes the player from one chain to another.
 // This won't be an actual event when exposed to the user.

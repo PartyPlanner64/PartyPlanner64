@@ -16,7 +16,6 @@ import {
   getCurrentBoard,
   loadBoardsFromROM,
   indexOfBoard,
-  IBoard,
   boardIsROM,
   setBG,
   copyCurrentBoard,
@@ -93,6 +92,7 @@ import boarderrorImage from "./img/header/boarderror.png";
 import loadingSquaresImage from "./img/assets/loadingsquares.gif";
 
 import "./css/header.scss";
+import { IBoard } from "../../packages/lib/boards";
 
 interface IHeaderActionItem {
   name: string;
@@ -457,7 +457,7 @@ async function _handleAction(action: Action) {
       setTimeout(() => {
         const writeDecompressed = !!get($setting.writeDecompressed);
         const newROMBuffer = romhandler.saveROM(writeDecompressed);
-        const romBlob = new Blob([newROMBuffer]);
+        const romBlob = new Blob([newROMBuffer as ArrayBuffer]);
         saveAs(romBlob, `MyMarioParty${romhandler.getGameVersion()}.z64`);
         blockUI(false);
         _showEmulatorInstructionsNotification();

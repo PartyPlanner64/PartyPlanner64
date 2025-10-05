@@ -45,8 +45,8 @@ _mainFSOffsets[Game.MP3_JPN] = [
 export interface IMainFsReadInfo {
   compressionType: number;
   decompressedSize?: number;
-  decompressed: ArrayBuffer;
-  compressed?: ArrayBuffer;
+  decompressed: ArrayBufferLike;
+  compressed?: ArrayBufferLike;
 }
 
 function _getFileHeaderSize(compressionType: number) {
@@ -162,7 +162,7 @@ export class MainFS {
     return result;
   }
 
-  public write(dir: number, file: number, content: ArrayBuffer) {
+  public write(dir: number, file: number, content: ArrayBufferLike) {
     let fileData = this._mainfsCache![dir][file];
     if (!fileData) {
       $$log(`Adding new file to MainFS: ${dir}/${file}`);

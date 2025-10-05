@@ -1,9 +1,9 @@
 import { createBoardInfo } from "./boardinfobase";
-import { IBoard } from "../../../apps/partyplanner64/boards";
 import { arrayToArrayBuffer } from "../utils/arrays";
 import { toPack } from "../utils/img/ImgPack";
 import { romhandler } from "../romhandler";
 import { strToBytes } from "../fs/strings";
+import { IBoard } from "../boards";
 
 // DK's Jungle Adventure - (U) ROM
 const MP1_USA_DK = createBoardInfo("MP1_USA_DK", {

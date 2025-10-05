@@ -1,13 +1,10 @@
 import {
-  IBoard,
   getConnections,
   getSpacesOfSubType,
   getStartSpaceIndex,
   getDeadEnds,
   getBoardEvent,
   getAdditionalBackgroundCode,
-  IEventInstance,
-  BoardAudioType,
   getAudioSelectCode,
 } from "../../../apps/partyplanner64/boards";
 import {
@@ -28,6 +25,7 @@ import {
   testGetAudioCodeWithGame,
 } from "../events/getaudiochoice";
 import { getEventsInLibrary } from "../events/EventLibrary";
+import { BoardAudioType, IBoard, IEventInstance } from "../boards";
 
 const HasStart = createRule(
   "HASSTART",

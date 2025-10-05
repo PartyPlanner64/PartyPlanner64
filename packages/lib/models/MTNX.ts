@@ -1,6 +1,6 @@
 /** Animation file handling */
 export class MTNX {
-  static isMtnx(viewOrBuffer: ArrayBuffer | DataView): boolean {
+  static isMtnx(viewOrBuffer: ArrayBufferLike | DataView): boolean {
     if (!viewOrBuffer) return false;
 
     if (!(viewOrBuffer instanceof DataView))
@@ -9,7 +9,7 @@ export class MTNX {
     return viewOrBuffer.getUint32(0) === 0x4d544e58; // "MTNX"
   }
 
-  static unpack(mtnxView: ArrayBuffer | DataView) {
+  static unpack(mtnxView: ArrayBufferLike | DataView) {
     if (!(mtnxView instanceof DataView)) mtnxView = new DataView(mtnxView);
 
     if (!MTNX.isMtnx(mtnxView)) return null;

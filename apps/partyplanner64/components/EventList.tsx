@@ -7,12 +7,7 @@ import {
   IEventParameter,
 } from "../../../packages/lib/events/events";
 import { createCustomEvent } from "../../../packages/lib/events/customevents";
-import {
-  getBoardEvent,
-  getCurrentBoard,
-  IEventInstance,
-  IBoard,
-} from "../boards";
+import { getBoardEvent, getCurrentBoard } from "../boards";
 import { copyObject } from "../../../packages/lib/utils/obj";
 import {
   EventParameterType,
@@ -39,6 +34,7 @@ import { useCallback } from "react";
 import { useAppSelector } from "../hooks";
 import { selectEventLibrary } from "../boardState";
 import { isDebug } from "../debug";
+import { IBoard, IEventInstance } from "../../../packages/lib/boards";
 
 interface IEventsListProps {
   events?: IEventInstance[];

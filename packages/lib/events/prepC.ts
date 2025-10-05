@@ -1,5 +1,4 @@
 import { IEvent, IEventWriteInfo } from "./events";
-import { IEventInstance } from "../../../apps/partyplanner64/boards";
 import { EventParameterType, Game } from "../types";
 import { getChainIndexValuesFromAbsoluteIndex } from "../adapter/boarddef";
 import {
@@ -7,6 +6,7 @@ import {
   makeAdditionalBgDefines,
 } from "./additionalbg";
 import { makeAudioDefines } from "./getaudiochoice";
+import { IEventInstance } from "../boards";
 
 /**
  * Takes event C code, and makes it able to compile (in isolation)

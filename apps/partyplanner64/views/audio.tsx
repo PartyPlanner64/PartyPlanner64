@@ -431,7 +431,7 @@ function _exportWav(
   const soundTable = audio.getSoundTable(table)!;
   const sound = soundTable.sounds[index];
   const wav = extractWavFromSound(soundTable.tbl, sound, sound.sampleRate);
-  saveAs(new Blob([wav]), `${name}.wav`);
+  saveAs(new Blob([wav as ArrayBuffer]), `${name}.wav`);
 }
 
 function _replaceMidi(audio: Audio, table: number, index: number): void {

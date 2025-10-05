@@ -5,11 +5,9 @@ import { $$log } from "../utils/debug";
 import { assemble } from "mips-assembler";
 import { prepGenericAsm } from "./prepAsm";
 import { scopeLabelsStaticByDefault } from "./prepAsm";
-import {
-  getAdditionalBackgroundCode,
-  IBoard,
-} from "../../../apps/partyplanner64/boards";
+import { getAdditionalBackgroundCode } from "../../../apps/partyplanner64/boards";
 import { romhandler } from "../romhandler";
+import { IBoard } from "../boards";
 
 /** Default assembly code used for background selection. */
 export const defaultAdditionalBgAsm = `; Customize the background used each turn!

@@ -7,7 +7,6 @@ import {
   getAudioSelectCode,
   setAudioSelectCode,
   _makeDefaultBoard,
-  IBoard,
 } from "./boards";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
@@ -107,7 +106,7 @@ import {
 } from "../../packages/lib/events/customevents";
 import { setEventLibraryImplementation } from "../../packages/lib/events/EventLibrary";
 import { ReduxEventLibrary } from "./events/ReduxEventLibrary";
-import { fixPotentiallyOldBoard } from "../../packages/lib/boards";
+import { fixPotentiallyOldBoard, IBoard } from "../../packages/lib/boards";
 
 /* eslint-disable jsx-a11y/anchor-is-valid */
 

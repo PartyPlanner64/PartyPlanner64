@@ -55,10 +55,10 @@ import { isDebug } from "../../../apps/partyplanner64/debug";
 export class SBF0 {
   private __type = "SBF0";
 
-  public tbl!: ArrayBuffer;
+  public tbl!: ArrayBufferLike;
   public sounds: ALSoundSimple[] = [];
 
-  constructor(dataView: DataView<ArrayBuffer>) {
+  constructor(dataView: DataView) {
     if (dataView.getUint32(0) !== 0x53424630)
       // "SBF0"
       throw new Error("SBF0 constructor encountered non-SBF0 structure");
@@ -66,7 +66,7 @@ export class SBF0 {
     this._extract(dataView);
   }
 
-  _extract(view: DataView<ArrayBuffer>) {
+  _extract(view: DataView) {
     const soundCount = view.getUint32(0x44);
     const tableEntriesOffset = 0x74;
 

@@ -12,10 +12,10 @@ import {
 } from "../types";
 import { assemble } from "mips-assembler";
 import { prepAsm } from "./prepAsm";
-import { IEventInstance } from "../../../apps/partyplanner64/boards";
 import { compile } from "../utils/c-compiler";
 import { prepC } from "./prepC";
 import { dummyBoardInfo } from "../adapter/boardinfobase";
+import { IEventInstance } from "../boards";
 
 export interface ICustomEvent extends IEvent {
   asm: string;

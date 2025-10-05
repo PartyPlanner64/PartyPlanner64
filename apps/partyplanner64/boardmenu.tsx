@@ -1,13 +1,13 @@
 import { get, $setting } from "./views/settings";
 import {
   getROMBoards,
-  IBoard,
   boardIsROM,
   setCurrentBoard,
   deleteBoard,
   copyCurrentBoard,
   getCurrentBoard,
 } from "./boards";
+import { IBoard } from "../../packages/lib/boards";
 import * as React from "react";
 import {
   showDragZone,

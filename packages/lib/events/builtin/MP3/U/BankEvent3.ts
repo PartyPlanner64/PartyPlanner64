@@ -1,6 +1,6 @@
 import { IEvent, IEventParseInfo, IEventWriteInfo } from "../../../events";
 import { hashEqual } from "../../../../utils/arrays";
-import { IEventInstance } from "../../../../../../apps/partyplanner64/boards";
+import { IEventInstance } from "../../../../boards";
 
 export const BankEvent3: Partial<IEvent> = {
   parse(dataView: DataView, info: IEventParseInfo) {

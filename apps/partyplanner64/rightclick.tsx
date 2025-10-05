@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ISpace, getCurrentBoard } from "./boards";
+import { getCurrentBoard } from "./boards";
 import { Space, SpaceSubtype, BoardType } from "../../packages/lib/types";
 import { updateRightClickMenu } from "./renderer";
 import { $setting, get } from "./views/settings";
@@ -17,6 +17,7 @@ import { setSpacePositionsAction, setSpaceTypeAction } from "./boardState";
 import { store } from "./store";
 
 import { ToolbarImages } from "./images";
+import { ISpace } from "../../packages/lib/boards";
 
 const {
   blueImage,

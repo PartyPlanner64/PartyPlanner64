@@ -20,7 +20,7 @@ const SIZEOF_SCENE_TABLE_ENTRY = 9 * 4;
 export class Scenes {
   private _rom: ROM;
   private _overlayTableRomOffset: number | null;
-  private _overlays: ArrayBuffer[];
+  private _overlays: ArrayBufferLike[];
   private _sceneInfo: ISceneInfo[];
 
   constructor(rom: ROM) {
@@ -38,7 +38,7 @@ export class Scenes {
     return this._sceneInfo![index] || null;
   }
 
-  getDataView(index: number): DataView<ArrayBuffer> {
+  getDataView(index: number): DataView {
     const buffer = this._overlays[index];
     if (!buffer) {
       if (!this._overlays.length) {

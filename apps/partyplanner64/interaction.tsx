@@ -6,10 +6,8 @@ import {
 } from "../../packages/lib/utils/number";
 import {
   getCurrentBoard,
-  ISpace,
   addSpace,
   getSpacesOfType,
-  IBoard,
   currentBoardIsROM,
   removeSpace,
   getSpaceIndex,
@@ -45,6 +43,7 @@ import {
 } from "./boardState";
 import { store } from "./store";
 import { isEmpty } from "../../packages/lib/utils/obj";
+import { IBoard, ISpace } from "../../packages/lib/boards";
 
 let spaceWasMouseDownedOn = false;
 let startX = -1;

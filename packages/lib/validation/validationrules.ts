@@ -1,6 +1,6 @@
 import { ValidationLevel } from "../types";
-import { IBoard } from "../../../apps/partyplanner64/boards";
 import { IBoardInfo } from "../adapter/boardinfobase";
+import { IBoard } from "../boards";
 
 const _rules: { [name: string]: IValidationRule } = Object.create(null);
 

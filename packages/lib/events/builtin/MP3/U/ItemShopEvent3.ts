@@ -1,5 +1,5 @@
+import { IEventInstance } from "../../../../boards";
 import { IEvent, IEventParseInfo, IEventWriteInfo } from "../../../events";
-import { IEventInstance } from "../../../../../../apps/partyplanner64/boards";
 
 export const ItemShopEvent3: Partial<IEvent> = {
   parse(dataView: DataView, info: IEventParseInfo) {

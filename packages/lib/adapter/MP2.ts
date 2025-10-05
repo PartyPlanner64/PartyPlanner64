@@ -1,9 +1,5 @@
 import { AdapterBase } from "./AdapterBase";
-import {
-  IBoard,
-  ISpace,
-  addEventToSpaceInternal,
-} from "../../../apps/partyplanner64/boards";
+import { addEventToSpaceInternal } from "../../../apps/partyplanner64/boards";
 import { CostumeType, Space } from "../types";
 import { createEventInstance, EventMap } from "../events/events";
 import {
@@ -23,6 +19,7 @@ import { createBoardOverlay } from "./MP2.U.boardoverlay";
 import mp2boardselectblank1Image from "../../../apps/partyplanner64/img/details/mp2boardselectblank1.png";
 import { romhandler } from "../romhandler";
 import { strToBytes } from "../fs/strings";
+import { IBoard, ISpace } from "../boards";
 
 export class MP2Adapter extends AdapterBase {
   public gameVersion: 1 | 2 | 3 = 2;

@@ -20,15 +20,15 @@ export class S2 {
   private __type = "S2";
 
   public midis: IMidiInfo[] = [];
-  public tbl!: ArrayBuffer;
+  public tbl!: ArrayBufferLike;
   public soundbanks!: B1;
-  private _rawB1!: ArrayBuffer;
+  private _rawB1!: ArrayBufferLike;
 
-  constructor(dataView: DataView<ArrayBuffer>) {
+  constructor(dataView: DataView) {
     this._extract(dataView);
   }
 
-  _extract(view: DataView<ArrayBuffer>) {
+  _extract(view: DataView) {
     if (view.getUint16(0) !== S2_MAGIC)
       // "S2"
       throw new Error("S2 constructor encountered non-S2 structure");
@@ -159,7 +159,7 @@ export class S2 {
 }
 
 interface IMidiInfo {
-  buffer: ArrayBuffer;
+  buffer: ArrayBufferLike;
   soundbankIndex: number;
 }
 

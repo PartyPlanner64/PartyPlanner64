@@ -33,7 +33,7 @@ export function create(callback: (blob: Blob) => any) {
       let name = f.toString();
       if (FORM.isForm(file)) name += ".form";
       else if (MTNX.isMtnx(file)) name += ".mtnx";
-      dirFolder.file(name, file);
+      dirFolder.file(name, file as ArrayBuffer);
     }
   }
 

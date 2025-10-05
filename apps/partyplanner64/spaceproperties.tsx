@@ -7,11 +7,9 @@ import {
   GameVersion,
 } from "../../packages/lib/types";
 import {
-  ISpace,
   addEventToSpace,
   removeEventFromSpace,
   getCurrentBoard,
-  IEventInstance,
   setHostsStar,
   addEventToSpaces,
   removeEventsFromSpaces,
@@ -23,6 +21,7 @@ import { IEvent, createEventInstance } from "../../packages/lib/events/events";
 import { changeDecisionTree, getValidSelectedSpaceIndices } from "./appControl";
 import { Button } from "./controls";
 import { $$log, assert } from "../../packages/lib/utils/debug";
+import { IEventInstance, ISpace } from "../../packages/lib/boards";
 
 import blueImage from "./img/toolbar/blue.png";
 import blue3Image from "./img/toolbar/blue3.png";

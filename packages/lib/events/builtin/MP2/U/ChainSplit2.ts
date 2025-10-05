@@ -6,10 +6,8 @@ import {
   EventParameterType,
 } from "../../../../types";
 import { hashEqual } from "../../../../utils/arrays";
-import {
-  addConnection,
-  IEventInstance,
-} from "../../../../../../apps/partyplanner64/boards";
+import { addConnection } from "../../../../../../apps/partyplanner64/boards";
+import { IEventInstance } from "../../../../boards";
 import { addEventToLibrary } from "../../../EventLibrary";
 
 // Represents the "event" where the player decides between two paths.

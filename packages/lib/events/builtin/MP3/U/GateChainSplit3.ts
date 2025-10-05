@@ -1,7 +1,4 @@
-import {
-  IEventInstance,
-  addConnection,
-} from "../../../../../../apps/partyplanner64/boards";
+import { addConnection } from "../../../../../../apps/partyplanner64/boards";
 import { IEventParseInfo, IEventWriteInfo, IEvent } from "../../../events";
 import {
   EditorEventActivationType,
@@ -10,6 +7,7 @@ import {
 } from "../../../../types";
 import { hashEqual } from "../../../../utils/arrays";
 import { addEventToLibrary } from "../../../EventLibrary";
+import { IEventInstance } from "../../../../boards";
 
 // Oh look, more ChainSplits!
 // This is a ChainSplit where one path leads to a gate.

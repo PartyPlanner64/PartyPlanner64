@@ -197,7 +197,7 @@ interface IHVQMetadata {
 
 export class HVQFS {
   private _rom: ROM;
-  private _hvqCache: ArrayBuffer[][] | null;
+  private _hvqCache: ArrayBufferLike[][] | null;
   private _hvqMetadata: IHVQMetadata[] | null;
 
   public constructor(rom: ROM) {

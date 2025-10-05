@@ -4,7 +4,7 @@ import { romhandler } from "../../romhandler";
 
 let _blackRGB16: ArrayBuffer | null = null;
 
-export function decode(hvqView: DataView<ArrayBuffer>) {
+export function decode(hvqView: DataView) {
   const firstWord = hvqView.getUint32(0);
   const isHVQ = (firstWord & 0xffffff00) === 0x48565100; // "HVQ"
   // $$log(`HVQ.decode, isHVQ: ${isHVQ}, len: ${$$hex(hvqView.byteLength)})`);

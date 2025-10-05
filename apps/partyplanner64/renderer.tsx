@@ -10,13 +10,7 @@ import {
   useContext,
   useLayoutEffect,
 } from "react";
-import {
-  ISpace,
-  IBoard,
-  getConnections,
-  getCurrentBoard,
-  IEventInstance,
-} from "./boards";
+import { getConnections, getCurrentBoard } from "./boards";
 import {
   BoardType,
   Space,
@@ -50,7 +44,12 @@ import {
 } from "./boardState";
 import { isEmpty } from "../../packages/lib/utils/obj";
 import { getEventsInLibrary } from "../../packages/lib/events/EventLibrary";
-import { forEachEventParameter } from "../../packages/lib/boards";
+import {
+  forEachEventParameter,
+  IBoard,
+  IEventInstance,
+  ISpace,
+} from "../../packages/lib/boards";
 
 type Canvas = HTMLCanvasElement;
 type CanvasContext = CanvasRenderingContext2D;

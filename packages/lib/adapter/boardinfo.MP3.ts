@@ -1,7 +1,7 @@
 import { createBoardInfo } from "./boardinfobase";
-import { IBoard } from "../../../apps/partyplanner64/boards";
 import { BoardType } from "../types";
 import { romhandler } from "../romhandler";
+import { IBoard } from "../boards";
 
 // Chilly Waters - (U) ROM
 const MP3_CHILLY = createBoardInfo("MP3_CHILLY", {

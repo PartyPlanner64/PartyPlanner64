@@ -177,7 +177,7 @@ const _audioOffsets: AudioOffsetInfo = {
 
 export class Audio {
   private _rom: ROM;
-  private _bufferCache: (ArrayBuffer | null)[] | null = null;
+  private _bufferCache: (ArrayBufferLike | null)[] | null = null;
   private _parsedCache: (S2 | T3 | MBF0 | SBF0 | FXD0 | null)[] | null = null;
 
   public constructor(rom: ROM) {

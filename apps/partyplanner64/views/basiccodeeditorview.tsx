@@ -2,7 +2,7 @@ import * as React from "react";
 import { CodeMirrorWrapper } from "../components/codemirrorwrapper";
 import { ToggleGroup } from "../controls";
 import { showMessage, confirmFromUser } from "../appControl";
-import { IBoard, IBoardEvent } from "../boards";
+import { IBoard, IBoardEvent } from "../../../packages/lib/boards";
 import { EventCodeLanguage } from "../../../packages/lib/types";
 
 import "../css/basiccodeeditor.scss";

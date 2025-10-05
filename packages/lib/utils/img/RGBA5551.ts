@@ -1,7 +1,7 @@
 // 5 bits each for RGB, 1 for alpha.
 
 export function RGBA5551toRGBA32(
-  buffer: ArrayBuffer,
+  buffer: ArrayBufferLike,
   width: number,
   height: number,
 ) {
@@ -23,14 +23,14 @@ export function RGBA5551toRGBA32(
 }
 
 export function RGBA5551fromRGBA32(
-  buffer: ArrayBuffer | ImageDataArray,
+  buffer: ArrayBufferLike | ImageDataArray,
   width: number,
   height: number,
 ) {
   const outBuffer = new ArrayBuffer(width * height * 2);
   const outView = new DataView(outBuffer);
 
-  const inView = new Uint8Array(buffer);
+  const inView = new Uint8Array(buffer as ArrayBuffer);
   let inIdx = 0;
   for (let i = 0; i < width * height; i++) {
     let red = inView[inIdx] / 8;

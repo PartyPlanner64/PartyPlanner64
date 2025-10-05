@@ -1,5 +1,5 @@
 export function GrayscaleToRGBA32(
-  buffer: ArrayBuffer,
+  buffer: ArrayBufferLike,
   width: number,
   height: number,
   bpp: number,
@@ -31,7 +31,7 @@ export function GrayscaleToRGBA32(
 }
 
 export function GrayscaleFromRGBA32(
-  buffer: ArrayBuffer,
+  buffer: ArrayBufferLike,
   width: number,
   height: number,
   bpp: number,

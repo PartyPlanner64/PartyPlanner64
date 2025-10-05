@@ -5,7 +5,7 @@ import {
   EventExecutionType,
   Game,
 } from "../../../../types";
-import { IEventInstance } from "../../../../../../apps/partyplanner64/boards";
+import { IEventInstance } from "../../../../boards";
 import { addEventToLibrary } from "../../../EventLibrary";
 
 export const PassStart: IEvent = {

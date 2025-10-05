@@ -41,14 +41,16 @@ export function playMidi(table: number, index: number): AudioPlayerController {
       middt.push(null);
       const insertIndex = middt.length - 1;
       const instrumentVolume = instrument.volume;
-      const prom = audioContext.decodeAudioData(wav).then((value) => {
-        middt[insertIndex] = {
-          audioBuffer: value,
-          keymap: sound.keymap,
-          instrumentVolume,
-          soundVolume: sound.sampleVolume,
-        };
-      });
+      const prom = audioContext
+        .decodeAudioData(wav as ArrayBuffer)
+        .then((value) => {
+          middt[insertIndex] = {
+            audioBuffer: value,
+            keymap: sound.keymap,
+            instrumentVolume,
+            soundVolume: sound.sampleVolume,
+          };
+        });
       promises.push(prom);
     }
   }

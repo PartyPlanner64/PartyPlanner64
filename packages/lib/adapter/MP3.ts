@@ -1,7 +1,5 @@
 import { AdapterBase } from "./AdapterBase";
 import {
-  IBoard,
-  ISpace,
   getConnections,
   addEventByIndex,
   addEventToSpaceInternal,
@@ -36,6 +34,7 @@ import genericgateImage from "../../../apps/partyplanner64/img/assets/genericgat
 import { createImage } from "../utils/canvas";
 import { romhandler } from "../romhandler";
 import { strToBytes } from "../fs/strings";
+import { IBoard, ISpace } from "../boards";
 
 export class MP3Adapter extends AdapterBase {
   public gameVersion: 1 | 2 | 3 = 3;

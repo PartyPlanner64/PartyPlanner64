@@ -15,8 +15,8 @@ interface IOffsetInfo {
 
 interface IAnimationFsReadInfo {
   compressionType: number;
-  decompressed: ArrayBuffer;
-  compressed?: ArrayBuffer;
+  decompressed: ArrayBufferLike;
+  compressed?: ArrayBufferLike;
 }
 
 const _animFSOffsets: { [game: string]: IOffsetInfo[] } = {};
@@ -72,7 +72,7 @@ export class Animationfs {
   public write(
     set: number,
     entry: number,
-    tileBuffer: ArrayBuffer,
+    tileBuffer: ArrayBufferLike,
     index: number,
   ) {
     const compressed = compress(3, new DataView(tileBuffer));
@@ -240,7 +240,7 @@ export class Animationfs {
     });
   }
 
-  _extractSets(view: DataView<ArrayBuffer>, offset: number) {
+  _extractSets(view: DataView, offset: number) {
     const sets = [];
     const count = view.getUint32(offset) - 1; // Extra offset
     for (let i = 0; i < count; i++) {
@@ -250,7 +250,7 @@ export class Animationfs {
     return sets;
   }
 
-  _extractSetEntries(view: DataView<ArrayBuffer>, offset: number) {
+  _extractSetEntries(view: DataView, offset: number) {
     const setEntries = [];
     const count = view.getUint32(offset);
     for (let i = 0; i < count; i++) {
@@ -260,7 +260,7 @@ export class Animationfs {
     return setEntries;
   }
 
-  _extractTiles(view: DataView<ArrayBuffer>, offset: number) {
+  _extractTiles(view: DataView, offset: number) {
     const tiles: { [index: number]: IAnimationFsReadInfo } = {};
     const count = view.getUint32(offset) - 1; // Extra offset
     for (let i = 0; i < count; i++) {
@@ -275,7 +275,7 @@ export class Animationfs {
     return tiles;
   }
 
-  _readTile(view: DataView<ArrayBuffer>, offset: number) {
+  _readTile(view: DataView, offset: number) {
     const index = view.getUint32(offset);
     const compressionType = view.getUint32(offset + 4); // 3
     const decompressedSize = view.getUint32(offset + 8); // 0x1800

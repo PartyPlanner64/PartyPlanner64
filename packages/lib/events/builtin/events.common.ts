@@ -5,7 +5,6 @@ import {
   EventParameterType,
   EditorEventActivationType,
 } from "../../types";
-import { IEventInstance } from "../../../../apps/partyplanner64/boards";
 
 import "./ChainMergeEvent";
 
@@ -22,6 +21,7 @@ import { BankEvent3 } from "./MP3/U/BankEvent3";
 import { ItemShopEvent2 } from "./MP2/U/ItemShopEvent2";
 import { ItemShopEvent3 } from "./MP3/U/ItemShopEvent3";
 import { addEventToLibrary } from "../EventLibrary";
+import { IEventInstance } from "../../boards";
 
 export const BooEvent: IEvent = {
   id: "BOO",

@@ -44,17 +44,17 @@ export class MBF0 {
   private __type = "MBF0";
 
   public midis: IMidiInfo[] = [];
-  public tbl!: ArrayBuffer;
+  public tbl!: ArrayBufferLike;
   public soundbanks!: B1;
-  public _soundbackBuffer!: ArrayBuffer;
+  public _soundbackBuffer!: ArrayBufferLike;
 
-  public _headerContents!: ArrayBuffer;
+  public _headerContents!: ArrayBufferLike;
 
-  constructor(dataView: DataView<ArrayBuffer>) {
+  constructor(dataView: DataView) {
     this._extract(dataView);
   }
 
-  private _extract(view: DataView<ArrayBuffer>) {
+  private _extract(view: DataView) {
     if (view.getUint32(0) !== MBF0_MAGIC)
       // "MBF0"
       throw new Error("MBF0 constructor encountered non-MBF0 structure");
@@ -77,7 +77,7 @@ export class MBF0 {
     // If we've read a buffer already, we'll record so in this map.
     // We'll rely on referential equality during write back to recognize
     // equal entries, and avoid duplicating them.
-    const buffersMap = new Map<number, ArrayBuffer>();
+    const buffersMap = new Map<number, ArrayBufferLike>();
 
     // Extract midi buffers
     for (let i = 0; i < midiCount; i++) {
@@ -85,7 +85,7 @@ export class MBF0 {
       const midiOffset = view.getUint32(tableEntryOffset + 8);
       const midiSize = view.getUint32(tableEntryOffset + 12);
 
-      let buffer: ArrayBuffer;
+      let buffer: ArrayBufferLike;
       if (buffersMap.has(midiOffset)) {
         buffer = buffersMap.get(midiOffset)!;
       } else {
@@ -158,7 +158,7 @@ export class MBF0 {
     currentOffset += 16; // Skip over B1 and tbl offsets.
 
     // Write the midis.
-    const buffersMap = new Map<ArrayBuffer, number>();
+    const buffersMap = new Map<ArrayBufferLike, number>();
     for (const midiInfo of this.midis) {
       if (buffersMap.has(midiInfo.buffer)) {
         continue; // Already written.
@@ -238,7 +238,7 @@ export class MBF0 {
 
     assert(byteLength % 16 === 0); // Should be true at this point.
 
-    const seenBuffers = new Set<ArrayBuffer>();
+    const seenBuffers = new Set<ArrayBufferLike>();
     for (const midiInfo of this.midis) {
       if (seenBuffers.has(midiInfo.buffer)) {
         continue; // Already counted.
@@ -262,7 +262,7 @@ export class MBF0 {
 }
 
 interface IMidiInfo {
-  buffer: ArrayBuffer;
+  buffer: ArrayBufferLike;
   mystery0?: number;
   mystery1?: number;
   mystery4?: number;

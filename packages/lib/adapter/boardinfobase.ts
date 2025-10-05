@@ -1,4 +1,4 @@
-import { IBoard } from "../../../apps/partyplanner64/boards";
+import { IBoard } from "../boards";
 import { BoardType, CostumeType } from "../types";
 
 // BoardInfos are a PP64-specific object that represents known info about each game board.

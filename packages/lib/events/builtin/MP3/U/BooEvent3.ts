@@ -1,6 +1,6 @@
 import { IEvent, IEventParseInfo, IEventWriteInfo } from "../../../events";
 import { getFunctionLength } from "../../../../utils/MIPS";
-import { IEventInstance } from "../../../../../../apps/partyplanner64/boards";
+import { IEventInstance } from "../../../../boards";
 
 export const BooEvent3: Partial<IEvent> = {
   parse(dataView: DataView, info: IEventParseInfo) {

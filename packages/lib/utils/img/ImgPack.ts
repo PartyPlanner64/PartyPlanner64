@@ -1,6 +1,6 @@
 import { BMPtoRGBA, BMPfromRGBA } from "./BMP";
 import { GrayscaleToRGBA32 } from "./Grayscale";
-import { copyRange } from "../arrays";
+import { copyRange, isArrayBufferLike } from "../arrays";
 import { RGBA5551toRGBA32, RGBA5551fromRGBA32 } from "./RGBA5551";
 
 // Aside from raw RGB5551, there is also a format with a header followed by
@@ -36,7 +36,7 @@ import { RGBA5551toRGBA32, RGBA5551fromRGBA32 } from "./RGBA5551";
 //   s16 origin_y;
 // }
 
-type ImgInfoSrc = ArrayBuffer | ImageDataArray;
+type ImgInfoSrc = ArrayBufferLike | ImageDataArray;
 
 export interface IImgInfo {
   width: number;
@@ -46,8 +46,10 @@ export interface IImgInfo {
   bpp?: number;
 }
 
-export function imgInfoSrcToArrayBuffer(imgInfoSrc: ImgInfoSrc): ArrayBuffer {
-  if (imgInfoSrc instanceof ArrayBuffer) {
+export function imgInfoSrcToArrayBuffer(
+  imgInfoSrc: ImgInfoSrc,
+): ArrayBufferLike {
+  if (isArrayBufferLike(imgInfoSrc)) {
     return imgInfoSrc;
   } else {
     return imgInfoSrc.buffer.slice(
@@ -57,10 +59,8 @@ export function imgInfoSrcToArrayBuffer(imgInfoSrc: ImgInfoSrc): ArrayBuffer {
   }
 }
 
-export function imgInfoSrcToDataView(
-  imgInfoSrc: ImgInfoSrc,
-): DataView<ArrayBuffer> {
-  if (imgInfoSrc instanceof ArrayBuffer) {
+export function imgInfoSrcToDataView(imgInfoSrc: ImgInfoSrc): DataView {
+  if (isArrayBufferLike(imgInfoSrc)) {
     return new DataView(imgInfoSrc);
   } else {
     return new DataView(
@@ -72,7 +72,7 @@ export function imgInfoSrcToDataView(
 }
 
 // Rips each image from a ImgPack and returns an array of RGBA32.
-export function fromPack(buffer: ArrayBuffer) {
+export function fromPack(buffer: ArrayBufferLike) {
   // Read useful header values
   const inView = new DataView(buffer);
   const entryOffset = inView.getUint32(0);
@@ -143,7 +143,7 @@ export function toPack(
   imgInfoArr: IImgInfo[],
   outBpp: number,
   bmpBpp: number,
-  oldPack?: ArrayBuffer,
+  oldPack?: ArrayBufferLike,
 ) {
   let newPackSize = getByteLength(imgInfoArr, outBpp);
 
@@ -248,7 +248,7 @@ function _writeEntry(
     srcView = new DataView(imgInfo._bmpData);
   } else if (imgInfo.bpp === outBpp) {
     const src = imgInfo.src!;
-    if (src instanceof ArrayBuffer) {
+    if (isArrayBufferLike(src)) {
       srcView = new DataView(src);
     } else {
       srcView = new DataView(src.buffer, src.byteOffset, src.byteLength);

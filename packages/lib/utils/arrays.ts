@@ -2,15 +2,28 @@ import { createContext } from "./canvas";
 import { $$hex } from "./debug";
 import SparkMD5 from "../lib/js-spark-md5/spark-md5";
 
+export function isArrayBufferLike(value: any): value is ArrayBufferLike {
+  if (value instanceof ArrayBuffer) {
+    return true;
+  }
+  if (
+    typeof SharedArrayBuffer !== "undefined" &&
+    value instanceof SharedArrayBuffer
+  ) {
+    return true;
+  }
+  return false;
+}
+
 export function copyRange(
-  outArr: ArrayBuffer | DataView,
-  inArr: ArrayBuffer | DataView | number[],
+  outArr: ArrayBufferLike | DataView,
+  inArr: ArrayBufferLike | DataView | number[],
   outOffset: number,
   inOffset: number,
   len: number,
 ) {
-  if (outArr instanceof ArrayBuffer) outArr = new DataView(outArr);
-  if (inArr instanceof ArrayBuffer) inArr = new DataView(inArr);
+  if (isArrayBufferLike(outArr)) outArr = new DataView(outArr);
+  if (isArrayBufferLike(inArr)) inArr = new DataView(inArr);
 
   if (Array.isArray(inArr)) {
     for (let i = 0; i < len; i++) {
@@ -43,13 +56,13 @@ export function hashEqual(hashArgs: any, expected: string) {
 }
 
 export function toHexString(
-  buffer: ArrayBuffer | DataView,
+  buffer: ArrayBufferLike | DataView,
   len: number = buffer.byteLength,
   lineLen: number = 0,
 ) {
   let output = "";
   let view: DataView;
-  if (buffer instanceof ArrayBuffer) view = new DataView(buffer);
+  if (isArrayBufferLike(buffer)) view = new DataView(buffer);
   else view = buffer;
   for (let i = 0; i < len; i++) {
     output +=
@@ -60,7 +73,7 @@ export function toHexString(
 }
 
 export function print(
-  buffer: ArrayBuffer | DataView,
+  buffer: ArrayBufferLike | DataView,
   len = buffer.byteLength,
   lineLen = 0,
 ) {
@@ -72,7 +85,7 @@ export function readBitAtOffset(
   bitOffset: number,
 ) {
   let bufView = buffer;
-  if (bufView instanceof ArrayBuffer) bufView = new DataView(bufView);
+  if (isArrayBufferLike(bufView)) bufView = new DataView(bufView);
   const byteOffset = Math.floor(bitOffset / 8);
   const inByteOffset = bitOffset % 8;
   const mask = 0x80 >>> inByteOffset;
@@ -85,7 +98,7 @@ export function readByteAtBitOffset(
   bitOffset: number,
 ) {
   let bufView = buffer;
-  if (bufView instanceof ArrayBuffer) bufView = new DataView(bufView);
+  if (isArrayBufferLike(bufView)) bufView = new DataView(bufView);
   const shortOffset = Math.floor(bitOffset / 8);
   const inShortOffset = bitOffset % 8;
   const mask = 0xff00 >>> inShortOffset;
@@ -94,7 +107,7 @@ export function readByteAtBitOffset(
 }
 
 export function arrayBufferToImageData(
-  buffer: ArrayBuffer,
+  buffer: ArrayBufferLike,
   width: number,
   height: number,
 ) {
@@ -110,7 +123,7 @@ export function arrayBufferToImageData(
 }
 
 export function arrayBufferToDataURL(
-  buffer: ArrayBuffer,
+  buffer: ArrayBufferLike,
   width: number,
   height: number,
 ) {
@@ -134,7 +147,10 @@ export function dataUrlToArrayBuffer(dataUrl: string): ArrayBuffer {
   return buffer;
 }
 
-export function arrayBuffersEqual(first: ArrayBuffer, second: ArrayBuffer) {
+export function arrayBuffersEqual(
+  first: ArrayBufferLike,
+  second: ArrayBufferLike,
+) {
   if (first.byteLength !== second.byteLength) return false;
   const firstArr = new Uint8Array(first);
   const secondArr = new Uint8Array(second);
@@ -145,7 +161,10 @@ export function arrayBuffersEqual(first: ArrayBuffer, second: ArrayBuffer) {
 }
 
 // Joins two ArrayBuffers
-export function join(buffer1: ArrayBuffer, buffer2: ArrayBuffer): ArrayBuffer {
+export function join(
+  buffer1: ArrayBufferLike,
+  buffer2: ArrayBufferLike,
+): ArrayBufferLike {
   if (!buffer1 || !buffer2) {
     return buffer1 || buffer2;
   }
@@ -153,7 +172,7 @@ export function join(buffer1: ArrayBuffer, buffer2: ArrayBuffer): ArrayBuffer {
   const tmp = new Uint8Array(buffer1.byteLength + buffer2.byteLength);
   tmp.set(new Uint8Array(buffer1), 0);
   tmp.set(new Uint8Array(buffer2), buffer1.byteLength);
-  return tmp.buffer as ArrayBuffer;
+  return tmp.buffer;
 }
 
 /**

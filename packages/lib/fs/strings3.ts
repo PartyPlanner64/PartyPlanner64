@@ -62,11 +62,11 @@ _stringOffsets[Game.MP3_JPN] = {
 class StringTableSet {
   private dirs: StringTable[];
 
-  constructor(dataView: DataView<ArrayBuffer>) {
+  constructor(dataView: DataView) {
     this.dirs = this._extract(dataView);
   }
 
-  _extract(view: DataView<ArrayBuffer>) {
+  _extract(view: DataView) {
     const dirCount = this._getDirectoryCountFromView(view);
     const dirs = new Array(dirCount);
     for (let d = 0; d < dirCount; d++) {
@@ -75,18 +75,18 @@ class StringTableSet {
     return dirs;
   }
 
-  _getDirectoryCountFromView(view: DataView<ArrayBuffer>) {
+  _getDirectoryCountFromView(view: DataView) {
     return view.getUint32(0);
   }
 
-  _readDirFromView(view: DataView<ArrayBuffer>, dir: number) {
+  _readDirFromView(view: DataView, dir: number) {
     const entryOffset = this._getDirOffsetFromView(view, dir);
     const entryView = new DataView(view.buffer, view.byteOffset + entryOffset);
     const decompressedDir = this._decompressDir(entryView);
     return new StringTable(new DataView(decompressedDir));
   }
 
-  _decompressDir(view: DataView<ArrayBuffer>) {
+  _decompressDir(view: DataView) {
     const decompressedSize = view.getUint32(0);
     const compressionType = view.getUint32(4);
     const dirStartView = new DataView(view.buffer, view.byteOffset + 8);

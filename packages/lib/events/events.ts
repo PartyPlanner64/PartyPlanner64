@@ -7,10 +7,7 @@ import {
 } from "../types";
 import { copyObject } from "../utils/obj";
 import {
-  IBoard,
   getCurrentBoard,
-  ISpace,
-  IEventInstance,
   getBoardEvent,
 } from "../../../apps/partyplanner64/boards";
 import { romhandler } from "../romhandler";
@@ -21,6 +18,7 @@ import {
 } from "./customevents";
 import { getEventFromLibrary, getEventsInLibrary } from "./EventLibrary";
 import { IBoardInfo } from "../adapter/boardinfobase";
+import { IBoard, IEventInstance, ISpace } from "../boards";
 
 export type EventMap = { [id: string]: IEvent };
 

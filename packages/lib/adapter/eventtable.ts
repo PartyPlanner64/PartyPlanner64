@@ -1,3 +1,4 @@
+import { isArrayBufferLike } from "../utils/arrays";
 import { createSpaceEventListLabel } from "./eventlist";
 
 export class SpaceEventTable {
@@ -11,10 +12,10 @@ export class SpaceEventTable {
    * Populates this SpaceEventTable from an event table existing in the buffer.
    */
   parse(arr: DataView): void;
-  parse(arr: ArrayBuffer, offset: number): void;
-  parse(arr: ArrayBuffer | DataView, offset?: number): void {
+  parse(arr: ArrayBufferLike, offset: number): void;
+  parse(arr: ArrayBufferLike | DataView, offset?: number): void {
     let dataView: DataView;
-    if (arr instanceof ArrayBuffer) dataView = new DataView(arr, offset);
+    if (isArrayBufferLike(arr)) dataView = new DataView(arr, offset);
     else dataView = arr;
     let currentOffset = 0;
     let spaceIndex, address;

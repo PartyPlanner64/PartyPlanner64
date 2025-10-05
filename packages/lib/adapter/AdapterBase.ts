@@ -1,15 +1,11 @@
 import { romhandler } from "../romhandler";
 import { getBoardInfos, getBoardInfoByIndex } from "./boardinfo";
 import {
-  IBoard,
   addEventByIndex,
   getConnections,
   getSpacesOfSubType,
-  ISpace,
-  IEventInstance,
   getDeadSpace,
   getDeadSpaceIndex,
-  BoardAudioType,
   addEventToSpaceInternal,
 } from "../../../apps/partyplanner64/boards";
 import { copyObject } from "../utils/obj";
@@ -75,6 +71,7 @@ import {
 import { makeAudioSymbolLabels } from "../events/getaudiochoice";
 
 import bootsplashImage from "../../../apps/partyplanner64/img/bootsplash.png";
+import { BoardAudioType, IBoard, IEventInstance, ISpace } from "../boards";
 
 export interface IAdapterOptions {
   writeBranding?: boolean;
@@ -584,8 +581,8 @@ export abstract class AdapterBase {
 
     // PP64 sometimes stores board ASM in the main filesystem. We need to
     // be able to parse both that or the stock boards.
-    let buffer: ArrayBuffer | undefined;
-    let bufferView: DataView<ArrayBuffer> | undefined;
+    let buffer: ArrayBufferLike | undefined;
+    let bufferView: DataView | undefined;
     const eventTable = new SpaceEventTable();
     if (boardInfo.mainfsEventFile) {
       const [mainFsDir, mainFsFile] = boardInfo.mainfsEventFile;
@@ -1611,8 +1608,8 @@ ${eventAsmCombinedString}
     const nintendoImgInfo = fromPack(nintendoPack)[0];
     const hudsonImgInfo = fromPack(hudsonPack)[0];
 
-    const nintendoArr = new Uint8Array(nintendoImgInfo.src!);
-    const hudsonArr = new Uint8Array(hudsonImgInfo.src!);
+    const nintendoArr = new Uint8Array(nintendoImgInfo.src! as ArrayBuffer);
+    const hudsonArr = new Uint8Array(hudsonImgInfo.src! as ArrayBuffer);
 
     const comboCanvasCtx = createContext(320, 240);
     comboCanvasCtx.fillStyle = "black";

@@ -31,7 +31,7 @@ const SIZE_CONFIGS: SizeConfig[] = [
 ];
 
 /** Does the given file appear to be a font pack? */
-export function isFontPack(buffer: ArrayBuffer): boolean {
+export function isFontPack(buffer: ArrayBufferLike): boolean {
   const view = new DataView(buffer);
 
   // Sanity check size and offsets.
@@ -113,7 +113,7 @@ export interface IFontPack {
   charHeight: number;
 }
 
-export function fontPackToRGBA32(buffer: ArrayBuffer): IFontPack {
+export function fontPackToRGBA32(buffer: ArrayBufferLike): IFontPack {
   const view = new DataView(buffer);
   const paletteOffset = view.getUint32(0);
   const imagesOffset = view.getUint32(4);

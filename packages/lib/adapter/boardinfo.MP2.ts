@@ -1,10 +1,10 @@
 import { createBoardInfo } from "./boardinfobase";
-import { IBoard } from "../../../apps/partyplanner64/boards";
 import { arrayToArrayBuffer } from "../utils/arrays";
 import { toPack } from "../utils/img/ImgPack";
 import { CostumeType } from "../types";
 import { romhandler } from "../romhandler";
 import { strToBytes } from "../fs/strings";
+import { IBoard } from "../boards";
 
 // Western Land - (U) ROM
 const MP2_WESTERN = createBoardInfo("MP2_WESTERN", {

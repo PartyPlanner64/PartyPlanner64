@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import { useCurrentBoard } from "../../hooks";
-import { IBoard } from "../../boards";
 import { Space } from "../../../../packages/lib/types";
 import { ToolbarImages } from "../../images";
+import { IBoard } from "../../../../packages/lib/boards";
 
 const {
   blueImage,

@@ -3,13 +3,9 @@ import {
   addConnectionInternal,
   addEventToSpaceInternal,
   addSpaceInternal,
-  BoardAudioType,
   getBoardEvent,
-  IBoard,
   IBoardAudioChanges,
-  IEventInstance,
   includeEventInBoardInternal,
-  ISpace,
   _makeDefaultBoard,
 } from "./boards";
 import {
@@ -34,7 +30,14 @@ import { assert } from "../../packages/lib/utils/debug";
 import { lineDistance } from "../../packages/lib/utils/number";
 import { copyObject } from "../../packages/lib/utils/obj";
 import { RootState } from "./store";
-import { forEachEvent, forEachEventParameter } from "../../packages/lib/boards";
+import {
+  BoardAudioType,
+  forEachEvent,
+  forEachEventParameter,
+  IBoard,
+  IEventInstance,
+  ISpace,
+} from "../../packages/lib/boards";
 
 export type SpaceIndexMap = { [index: number]: boolean };
 

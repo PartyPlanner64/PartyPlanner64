@@ -455,7 +455,10 @@ export const DebugView = class DebugView extends React.Component<
     if (!isNaN(num)) {
       const scenes = romhandler.getRom()!.getScenes();
       const dataView = scenes.getDataView(num);
-      saveAs(new Blob([dataView]), `overlay-${num}.bin`);
+      saveAs(
+        new Blob([dataView as DataView<ArrayBuffer>]),
+        `overlay-${num}.bin`,
+      );
     }
   };
 

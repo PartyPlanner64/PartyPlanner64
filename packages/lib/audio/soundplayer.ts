@@ -21,7 +21,7 @@ export function playSound(table: number, index: number): AudioPlayerController {
 
   let onEndedCallback: () => void;
   let node: AudioBufferSourceNode;
-  audioContext.decodeAudioData(wav).then((audioBuffer) => {
+  audioContext.decodeAudioData(wav as ArrayBuffer).then((audioBuffer) => {
     node = audioContext.createBufferSource();
     node.buffer = audioBuffer;
     node.connect(audioContext.destination);

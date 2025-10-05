@@ -1,11 +1,8 @@
 import { BoardType, CostumeType, View } from "../../../packages/lib/types";
 import {
   getCurrentBoard,
-  IBoard,
   boardIsROM,
   currentBoardIsROM,
-  BoardAudioType,
-  IBoardAudioData,
   setBoardName,
   setBoardDescription,
   setBoardDifficulty,
@@ -34,6 +31,11 @@ import audioImage from "../img/details/audio.png";
 import deleteImage from "../img/details/delete.png";
 import audioConfigImage from "../img/details/audioconfig.png";
 import { IToggleItem, ToggleGroup } from "../controls";
+import {
+  BoardAudioType,
+  IBoard,
+  IBoardAudioData,
+} from "../../../packages/lib/boards";
 
 type DetailsType =
   | "image"

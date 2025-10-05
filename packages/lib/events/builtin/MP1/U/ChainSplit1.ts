@@ -8,9 +8,9 @@ import {
 import { hashEqual } from "../../../../utils/arrays";
 import {
   addConnection,
-  IEventInstance,
   addDecisionTree,
 } from "../../../../../../apps/partyplanner64/boards";
+import { IEventInstance } from "../../../../boards";
 import { addEventToLibrary } from "../../../EventLibrary";
 import { getSymbol } from "../../../../symbols/symbols";
 import { findCallsInFunction, getRegSetAddress } from "../../../../utils/MIPS";

@@ -5,7 +5,7 @@ import {
   Game,
 } from "../../../../types";
 import { hashEqual } from "../../../../utils/arrays";
-import { IEventInstance } from "../../../../../../apps/partyplanner64/boards";
+import { IEventInstance } from "../../../../boards";
 import { addEventToLibrary } from "../../../EventLibrary";
 
 export const Bowser: IEvent = {

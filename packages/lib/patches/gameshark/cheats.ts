@@ -1,6 +1,6 @@
 import { copyRange, join } from "../../utils/arrays";
 
-export let currentCheats: ArrayBuffer[] = [];
+export let currentCheats: ArrayBufferLike[] = [];
 
 export function resetCheats() {
   currentCheats = [];

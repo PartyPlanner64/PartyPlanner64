@@ -5,8 +5,8 @@ import {
   EditorEventActivationType,
 } from "../../../../types";
 import { hashEqual } from "../../../../utils/arrays";
-import { IEventInstance } from "../../../../../../apps/partyplanner64/boards";
 import { addEventToLibrary } from "../../../EventLibrary";
+import { IEventInstance } from "../../../../boards";
 
 // When going in reverse, there can be splits where there otherwise was only
 // chain merges going forward. The game basically wraps a chain split with a

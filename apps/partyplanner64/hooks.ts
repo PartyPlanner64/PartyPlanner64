@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import { IBoard, ISpace } from "./boards";
 import { EditorThemes } from "../../packages/lib/types";
 import { updateWindowTitle } from "./utils/browser";
 import {
@@ -15,6 +14,7 @@ import {
   SpaceIndexMap,
 } from "./boardState";
 import type { RootState, AppDispatch } from "./store";
+import { IBoard, ISpace } from "../../packages/lib/boards";
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

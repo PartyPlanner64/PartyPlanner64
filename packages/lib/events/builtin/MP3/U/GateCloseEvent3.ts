@@ -1,4 +1,3 @@
-import { IEventInstance } from "../../../../../../apps/partyplanner64/boards";
 import { IEventParseInfo, IEventWriteInfo, IEvent } from "../../../events";
 import {
   EditorEventActivationType,
@@ -7,6 +6,7 @@ import {
   EventParameterType,
 } from "../../../../types";
 import { getFunctionLength } from "../../../../utils/MIPS";
+import { IEventInstance } from "../../../../boards";
 
 export const GateClose3: IEvent = {
   id: "GATECLOSE3",

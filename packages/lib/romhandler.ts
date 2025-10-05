@@ -16,7 +16,7 @@ import { resetCheats } from "./patches/gameshark/cheats";
 
 /** Represents a loaded Mario Party ROM in memory. */
 export class ROM {
-  private _rom: ArrayBuffer;
+  private _rom: ArrayBufferLike;
   private _u8array: Uint8Array;
 
   private _scenes: Scenes | null = null;
@@ -30,22 +30,22 @@ export class ROM {
   private _gameId: Game | null = null;
   private _gameVersion: GameVersion | null = null;
 
-  public constructor(rom: ArrayBuffer) {
+  public constructor(rom: ArrayBufferLike) {
     this._rom = rom;
     this._u8array = new Uint8Array(this._rom);
     this.byteSwapIfNeeded();
   }
 
-  public getBuffer(): ArrayBuffer {
+  public getBuffer(): ArrayBufferLike {
     return this._rom;
   }
 
-  public setBuffer(rom: ArrayBuffer): void {
+  public setBuffer(rom: ArrayBufferLike): void {
     this._rom = rom;
     this._u8array = new Uint8Array(this._rom);
   }
 
-  public getDataView(startingOffset = 0, endOffset = 0): DataView<ArrayBuffer> {
+  public getDataView(startingOffset = 0, endOffset = 0): DataView {
     if (!this._rom) throw new Error("ROM not loaded, cannot get DataView.");
     if (endOffset) {
       return new DataView(
@@ -251,7 +251,7 @@ class RomHandler {
     return this._rom?.getGame() ?? null;
   }
 
-  public getROMBuffer(): ArrayBuffer | null {
+  public getROMBuffer(): ArrayBufferLike | null {
     return this._rom?.getBuffer() ?? null;
   }
 
@@ -260,7 +260,7 @@ class RomHandler {
   }
 
   setROMBuffer(
-    buffer: ArrayBuffer | null,
+    buffer: ArrayBufferLike | null,
     skipSupportedCheck: boolean,
     onError: (msg: string) => void,
   ): Promise<boolean> {
@@ -288,7 +288,7 @@ class RomHandler {
     return rom.loadAsync();
   }
 
-  saveROM(writeDecompressed: boolean): ArrayBuffer {
+  saveROM(writeDecompressed: boolean): ArrayBufferLike {
     const rom = this._rom;
     if (!rom) throw new Error("Cannot save ROM, buffer was not present");
 
@@ -389,7 +389,7 @@ class RomHandler {
     return !!this._rom;
   }
 
-  getDataView(startingOffset = 0, endOffset = 0): DataView<ArrayBuffer> {
+  getDataView(startingOffset = 0, endOffset = 0): DataView {
     if (!this._rom) throw new Error("ROM not loaded, cannot get DataView.");
     return this._rom.getDataView(startingOffset, endOffset);
   }

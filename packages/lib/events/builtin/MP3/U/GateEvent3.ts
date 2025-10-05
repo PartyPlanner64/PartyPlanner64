@@ -1,4 +1,3 @@
-import { IEventInstance } from "../../../../../../apps/partyplanner64/boards";
 import { IEventParseInfo, IEventWriteInfo, IEvent } from "../../../events";
 import {
   EditorEventActivationType,
@@ -7,6 +6,7 @@ import {
   SpaceSubtype,
   EventParameterType,
 } from "../../../../types";
+import { IEventInstance } from "../../../../boards";
 
 export interface GateParameterNames {
   gateEntryIndex: number;

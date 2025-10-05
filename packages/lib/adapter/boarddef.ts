@@ -1,18 +1,17 @@
 import {
-  IBoard,
   addSpace,
   hasConnection,
   getStartSpaceIndex,
   getConnections,
-  ISpace,
 } from "../../../apps/partyplanner64/boards";
 import { Space } from "../types";
 import { midpoint, distance } from "../utils/number";
 import { $$log, $$hex } from "../utils/debug";
 import { copyObject } from "../utils/obj";
 import { romhandler } from "../romhandler";
+import { IBoard, ISpace } from "../boards";
 
-export function parse(buffer: ArrayBuffer, board: Partial<IBoard>): IBoard {
+export function parse(buffer: ArrayBufferLike, board: Partial<IBoard>): IBoard {
   const header = _parseHeader(buffer);
   board.spaces = _parseSpaces(buffer, header);
   const linkResult = _parseLinks(buffer, header);
@@ -33,7 +32,7 @@ interface IHeader {
   linkStartOffset: number;
 }
 
-function _parseHeader(buffer: ArrayBuffer): IHeader {
+function _parseHeader(buffer: ArrayBufferLike): IHeader {
   const board16View = new DataView(buffer);
   const game = romhandler.getGameVersion();
   switch (game) {
@@ -57,7 +56,7 @@ function _parseHeader(buffer: ArrayBuffer): IHeader {
   throw new Error("Unrecongized game " + game);
 }
 
-function _parseSpaces(buffer: ArrayBuffer, header: IHeader) {
+function _parseSpaces(buffer: ArrayBufferLike, header: IHeader) {
   const spaceView = new DataView(buffer, header.spaceStartOffset);
   const spaces = [];
   let bufferIdx = 0;
@@ -74,7 +73,7 @@ function _parseSpaces(buffer: ArrayBuffer, header: IHeader) {
   return spaces;
 }
 
-function _parseLinks(buffer: ArrayBuffer, header: IHeader) {
+function _parseLinks(buffer: ArrayBufferLike, header: IHeader) {
   const chains = new Array(header.chainCount);
   const links: any = {};
   const linksView = new DataView(buffer, header.linkStartOffset);

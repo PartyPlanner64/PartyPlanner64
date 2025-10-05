@@ -1,5 +1,6 @@
 import { EventActivationType, EventExecutionType } from "../types";
 import { createEventInstanceLabel } from "../events/prepAsm";
+import { isArrayBufferLike } from "../utils/arrays";
 
 /** Listing of events for a space. */
 export class SpaceEventList {
@@ -15,10 +16,10 @@ export class SpaceEventList {
    * Populates this SpaceEventTable from an event table existing in the buffer.
    */
   public parse(arr: DataView): void;
-  public parse(arr: ArrayBuffer, offset: number): void;
-  public parse(arr: ArrayBuffer | DataView, offset?: number): void {
+  public parse(arr: ArrayBufferLike, offset: number): void;
+  public parse(arr: ArrayBufferLike | DataView, offset?: number): void {
     let dataView: DataView;
-    if (arr instanceof ArrayBuffer) dataView = new DataView(arr, offset);
+    if (isArrayBufferLike(arr)) dataView = new DataView(arr, offset);
     else dataView = arr;
     let currentOffset = 0;
     let activationType, executionType, address;

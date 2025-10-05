@@ -17,11 +17,11 @@ const WAV_SMPL_CHUNK_SIZE = 0x44;
  * @param sound Sound index
  */
 export function extractWavSound(
-  tbl: ArrayBuffer,
+  tbl: ArrayBufferLike,
   bank: ALBank,
   instrumentIndex: number,
   soundIndex: number,
-): ArrayBuffer {
+): ArrayBufferLike {
   if (instrumentIndex >= bank.instruments.length || !bank.instruments.length) {
     throw new Error("Invalid bank instrument index" + instrumentIndex);
   }
@@ -37,10 +37,10 @@ export function extractWavSound(
 }
 
 export function extractWavFromSound(
-  tbl: ArrayBuffer,
+  tbl: ArrayBufferLike,
   sound: ISound,
   samplingRate: number,
-): ArrayBuffer {
+): ArrayBufferLike {
   const wave = sound.wave;
   const tblView = new DataView(tbl, wave.waveBase);
 

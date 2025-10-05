@@ -2,19 +2,12 @@ import {
   BoardType,
   Space,
   SpaceSubtype,
-  EventExecutionType,
-  GameVersion,
   EventCodeLanguage,
-  EditorEventActivationType,
   CostumeType,
 } from "../../packages/lib/types";
 import { copyObject } from "../../packages/lib/utils/obj";
 import { ICustomEvent } from "../../packages/lib/events/customevents";
-import {
-  getEvent,
-  EventParameterValues,
-  EventMap,
-} from "../../packages/lib/events/events";
+import { getEvent, EventMap } from "../../packages/lib/events/events";
 import { getAdapter, getROMAdapter } from "../../packages/lib/adapter/adapters";
 import {
   boardsChanged,
@@ -77,8 +70,13 @@ import {
 } from "./boardState";
 import { getEventsInLibrary } from "../../packages/lib/events/EventLibrary";
 import {
+  BoardAudioType,
   fixPotentiallyOldBoard,
   forEachEvent,
+  IBoard,
+  IBoardEvent,
+  IEventInstance,
+  ISpace,
 } from "../../packages/lib/boards";
 
 const _themes = {
@@ -96,97 +94,6 @@ const _themes = {
     bg2: defaultThemeBg2,
   },
 };
-
-export interface IBoard {
-  name: string;
-  description: string;
-  game: GameVersion;
-  type: BoardType;
-  difficulty: number;
-  spaces: ISpace[];
-  links: { [startingSpaceIndex: number]: number | number[] };
-  events: { [name: string]: IBoardEvent | string };
-  boardevents?: IEventInstance[];
-  bg: IBoardBgDetails;
-  otherbg: {
-    boardselect?: string;
-    boardselecticon?: string;
-    boardlogo?: string;
-    boardlogotext?: string;
-    boardlogomedium?: string;
-    boardlogosmall?: string;
-    largescene?: string;
-    conversation?: string;
-    splashscreen?: string;
-  };
-  animbg?: string[];
-  additionalbg?: string[];
-  additionalbgcode?: IBoardEvent | string;
-  audioType?: BoardAudioType;
-  audioIndex?: number;
-  audioData?: IBoardAudioData[];
-  audioSelectCode?: IBoardEvent;
-  costumeTypeIndex?: CostumeType;
-  _rom?: boolean;
-  _deadSpace?: number;
-}
-
-/** Type of board audio. */
-export enum BoardAudioType {
-  /** Song from the original game. */
-  InGame = 0,
-  /** Song provided by the user. */
-  Custom = 1,
-}
-
-export interface IBoardAudioData {
-  name: string;
-  data: string;
-  soundbankIndex: number;
-}
-
-export interface IBoardEvent {
-  language: EventCodeLanguage;
-  code: string;
-}
-
-interface IBoardImage {
-  width: number;
-  height: number;
-  src: string; // sometimes boolean inside this file.
-}
-
-interface IBoardBgDetails extends IBoardImage {
-  fov: number;
-  scaleFactor: number;
-  cameraEyePosX: number;
-  cameraEyePosY: number;
-  cameraEyePosZ: number;
-  lookatPointX: number;
-  lookatPointY: number;
-  lookatPointZ: number;
-}
-
-export interface ISpace {
-  x: number;
-  y: number;
-  z: number;
-  rotation?: number;
-  type: Space;
-  subtype?: SpaceSubtype;
-  events?: IEventInstance[];
-  star?: boolean;
-  aiTree?: IDecisionTreeNode[];
-}
-
-/** The subset of an IEvent that is kept on a space in the board. */
-export interface IEventInstance {
-  id: string;
-  activationType: EditorEventActivationType;
-  executionType: EventExecutionType;
-  parameterValues?: EventParameterValues;
-  custom?: boolean;
-}
 
 export function _makeDefaultBoard(
   gameVersion: 1 | 2 | 3 = 1,

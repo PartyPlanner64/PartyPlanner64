@@ -3,12 +3,12 @@ import { getSymbols } from "../symbols/symbols";
 import { getChainIndexValuesFromAbsoluteIndex } from "../adapter/boarddef";
 import { Game, EventParameterType } from "../types";
 import { $$hex } from "../utils/debug";
-import { IEventInstance } from "../../../apps/partyplanner64/boards";
 import { makeAudioSymbolLabels } from "./getaudiochoice";
 import {
   getBoardAdditionalBgHvqIndices,
   makeBgSymbolLabels,
 } from "./additionalbg";
+import { IEventInstance } from "../boards";
 
 /**
  * Takes event asm, and makes it assemble (in isolation)

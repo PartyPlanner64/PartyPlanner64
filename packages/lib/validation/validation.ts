@@ -1,5 +1,4 @@
 import {
-  IBoard,
   getROMBoards,
   getCurrentBoard,
 } from "../../../apps/partyplanner64/boards";
@@ -15,6 +14,7 @@ import { getRule, IValidationRule } from "./validationrules";
 import { getBoardInfos } from "../adapter/boardinfo";
 import { dummyBoardInfo, IBoardInfo } from "../adapter/boardinfobase";
 import { isPromiseLike } from "../utils/promise";
+import { IBoard } from "../boards";
 
 function _overwriteAvailable(boardInfo: IBoardInfo) {
   if (boardInfo.canOverwrite) return true;

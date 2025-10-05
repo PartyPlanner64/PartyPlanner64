@@ -1,4 +1,4 @@
-import { IBoard } from "../../../apps/partyplanner64/boards";
+import { IBoard } from "../boards";
 import { IEvent } from "../events/events";
 
 /** Get boards that were saved the last time the browser window closed. */

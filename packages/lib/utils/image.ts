@@ -4,7 +4,7 @@ import resizeImageData from "resize-image-data";
 // Cuts an image from a bigger image at x,y coordinates.
 // A mystery: why didn't I use canvas?
 export function cutFromWhole(
-  srcBuffer: ArrayBuffer,
+  srcBuffer: ArrayBufferLike,
   srcWidth: number,
   srcHeight: number,
   bpp: number,
