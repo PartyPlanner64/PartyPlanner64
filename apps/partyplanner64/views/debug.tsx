@@ -18,7 +18,6 @@ import {
 import { ISceneInfo } from "../../../packages/lib/fs/scenes";
 import { $$hex } from "../../../packages/lib/utils/debug";
 import { strings3 } from "../../../packages/lib/fs/strings3";
-import { strings } from "../../../packages/lib/fs/strings";
 import { saveAs } from "file-saver";
 import { makeDivisibleBy } from "../../../packages/lib/utils/number";
 import { romToRAM } from "../../../packages/lib/utils/offsets";
@@ -285,6 +284,7 @@ export const DebugView = class DebugView extends React.Component<
 
       result = strings3.read("en", dirIndex, strIndex, raw);
     } else {
+      const strings = romhandler.getRom()!.getStrings();
       result = strings.read(strIndex, raw);
     }
 

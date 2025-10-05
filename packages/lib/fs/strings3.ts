@@ -1,6 +1,6 @@
 import { $$log, $$hex } from "../utils/debug";
 import { makeDivisibleBy } from "../utils/number";
-import { strings, StringTable } from "./strings";
+import { StringTable } from "./strings";
 import { decompress } from "../utils/compression";
 import { copyRange } from "../utils/arrays";
 import { Game } from "../types";
@@ -85,7 +85,7 @@ class StringTableSet {
     const entryOffset = this._getDirOffsetFromView(view, dir);
     const entryView = new DataView(view.buffer, view.byteOffset + entryOffset);
     const decompressedDir = this._decompressDir(entryView);
-    return new strings.StringTable(new DataView(decompressedDir));
+    return new StringTable(new DataView(decompressedDir));
   }
 
   _decompressDir(view: DataView<ArrayBuffer>) {

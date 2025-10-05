@@ -8,7 +8,6 @@ import {
 import { Space, SpaceSubtype, GameVersion } from "../types";
 import { createEventInstance, EventMap } from "../events/events";
 import { parse as parseInst } from "mips-inst";
-import { strings } from "../fs/strings";
 import { arrayToArrayBuffer, arrayBufferToDataURL } from "../utils/arrays";
 import { fromTiles, toTiles } from "../utils/img/tiler";
 import { FORM } from "../models/FORM";
@@ -371,6 +370,7 @@ export class MP1Adapter extends AdapterBase {
       let idx = strs.boardSelect;
       if (Array.isArray(idx)) idx = idx[0] as number;
 
+      const strings = romhandler.getRom()!.getStrings();
       const str = strings.read(idx) as string;
       const lines = str.split("\n");
 
@@ -393,6 +393,7 @@ export class MP1Adapter extends AdapterBase {
 
   onWriteStrings(board: IBoard, boardInfo: IBoardInfo) {
     const strs = boardInfo.str || {};
+    const strings = romhandler.getRom()!.getStrings();
     if (strs.boardSelect) {
       let bytes = [];
       bytes.push(0x0b); // Clear?

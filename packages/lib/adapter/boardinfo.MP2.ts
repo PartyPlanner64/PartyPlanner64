@@ -1,6 +1,5 @@
 import { createBoardInfo } from "./boardinfobase";
 import { IBoard } from "../../../apps/partyplanner64/boards";
-import { strings } from "../fs/strings";
 import { arrayToArrayBuffer } from "../utils/arrays";
 import { toPack } from "../utils/img/ImgPack";
 import { CostumeType } from "../types";
@@ -71,6 +70,7 @@ const MP2_WESTERN = createBoardInfo("MP2_WESTERN", {
     sceneEndView.setUint16(0x2e0e, 0x0051); // 0x8010560C, 0x35BBEE
 
     // Then, make the scared Koopa's message at the endgame be more chill.
+    const strings = romhandler.getRom()!.getStrings();
     let bytes: number[] = [];
     bytes.push(0x0b);
     bytes = bytes.concat(strings._strToBytes("Don't listen to Toad!"));

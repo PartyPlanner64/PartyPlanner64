@@ -1,6 +1,5 @@
 import { createBoardInfo } from "./boardinfobase";
 import { IBoard } from "../../../apps/partyplanner64/boards";
-import { strings } from "../fs/strings";
 import { arrayToArrayBuffer } from "../utils/arrays";
 import { toPack } from "../utils/img/ImgPack";
 import { romhandler } from "../romhandler";
@@ -55,6 +54,7 @@ const MP1_USA_DK = createBoardInfo("MP1_USA_DK", {
 
     // Make Bowser's event text a bit more generic.
     let bytes: number[] = [];
+    const strings = romhandler.getRom()!.getStrings();
     bytes = bytes.concat(
       strings._strToBytes(
         "You're looking for Stars?\nHow about this instead...",

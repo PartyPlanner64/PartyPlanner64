@@ -9,7 +9,6 @@ import {
 } from "./img/ImgPack";
 import { fromTiles } from "./img/tiler";
 import { strings3 } from "../fs/strings3";
-import { strings } from "../fs/strings";
 import { romhandler } from "../romhandler";
 import { FORM } from "../models/FORM";
 import { MTNX } from "../models/MTNX";
@@ -270,6 +269,7 @@ export function findStrings3(searchStr = "", raw = false) {
 }
 
 export function findStrings(searchStr = "", raw = false) {
+  const strings = romhandler.getRom()!.getStrings();
   const strCount = strings.getStringCount();
   for (let s = 0; s < strCount; s++) {
     const str = strings.read(s) as string;

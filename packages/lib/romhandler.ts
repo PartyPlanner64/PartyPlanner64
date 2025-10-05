@@ -1,7 +1,7 @@
 import { Game, GameVersion } from "./types";
 import { Scenes } from "./fs/scenes";
 import { MainFS } from "./fs/mainfs";
-import { strings } from "./fs/strings";
+import { Strings } from "./fs/strings";
 import { strings3 } from "./fs/strings3";
 import { HVQFS } from "./fs/hvqfs";
 import { audio } from "./fs/audio";
@@ -22,6 +22,7 @@ export class ROM {
   private _scenes: Scenes | null = null;
   private _mainfs: MainFS | null = null;
   private _hvqfs: HVQFS | null = null;
+  private _strings: Strings | null = null;
 
   private _gameId: Game | null = null;
   private _gameVersion: GameVersion | null = null;
@@ -128,6 +129,13 @@ export class ROM {
     return this._hvqfs;
   }
 
+  public getStrings(): Strings {
+    if (!this._strings) {
+      throw new Error("ROM was not loaded");
+    }
+    return this._strings;
+  }
+
   public async loadAsync(): Promise<boolean> {
     const gameVersion = this.getGameVersion();
 
@@ -139,7 +147,10 @@ export class ROM {
     promises.push(this._mainfs.extractAsync());
     if (gameVersion === 3) {
       promises.push(strings3.extractAsync());
-    } else promises.push(strings.extractAsync());
+    } else {
+      this._strings = new Strings(this);
+      promises.push(this._strings.extractAsync());
+    }
     this._hvqfs = new HVQFS(this);
     promises.push(this._hvqfs.extractAsync());
     promises.push(audio.extractAsync());
@@ -220,7 +231,6 @@ class RomHandler {
   public clear(): void {
     this._rom = null;
 
-    strings.clear();
     strings3.clear();
     audio.clearCache();
     animationfs.clearCache();
@@ -272,7 +282,7 @@ class RomHandler {
     let strsLen;
     if (gameVersion === 3)
       strsLen = makeDivisibleBy(strings3.getByteLength(), 16);
-    else strsLen = makeDivisibleBy(strings.getByteLength(), 16);
+    else strsLen = makeDivisibleBy(rom.getStrings().getByteLength(), 16);
     const hvqLen = makeDivisibleBy(rom.getHVQFS().getByteLength(), 16);
     const audioLen = makeDivisibleBy(audio.getByteLength(), 16);
     let animationLen = 0;
@@ -306,6 +316,7 @@ class RomHandler {
       strings3.pack(newROMBuffer, initialLen + sceneLen + mainLen);
       strings3.setROMOffset(initialLen + sceneLen + mainLen, newROMBuffer);
     } else {
+      const strings = rom.getStrings();
       strings.pack(newROMBuffer, initialLen + sceneLen + mainLen);
       strings.setROMOffset(initialLen + sceneLen + mainLen, newROMBuffer);
     }

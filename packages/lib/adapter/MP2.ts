@@ -7,7 +7,6 @@ import {
 import { animationfs } from "../fs/animationfs";
 import { CostumeType, Space } from "../types";
 import { createEventInstance, EventMap } from "../events/events";
-import { strings } from "../fs/strings";
 import {
   arrayToArrayBuffer,
   arrayBufferToDataURL,
@@ -128,6 +127,7 @@ export class MP2Adapter extends AdapterBase {
       // if (Array.isArray(idx))
       //   idx = idx[0];
 
+      const strings = romhandler.getRom()!.getStrings();
       const str = strings.read(idx as number) as string;
       const lines = str.split("\n");
 
@@ -150,6 +150,7 @@ export class MP2Adapter extends AdapterBase {
 
   onWriteStrings(board: IBoard, boardInfo: IBoardInfo) {
     const strs = boardInfo.str || {};
+    const strings = romhandler.getRom()!.getStrings();
 
     // Various details about the board when selecting it
     if (strs.boardSelect) {

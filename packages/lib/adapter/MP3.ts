@@ -16,7 +16,6 @@ import {
 } from "../types";
 import { $$log } from "../utils/debug";
 import { createEventInstance, EventMap } from "../events/events";
-import { strings } from "../fs/strings";
 import { arrayToArrayBuffer } from "../utils/arrays";
 import { strings3 } from "../fs/strings3";
 import { toArrayBuffer } from "../utils/image";
@@ -530,6 +529,7 @@ export class MP3Adapter extends AdapterBase {
 
   onWriteStrings(board: IBoard, boardInfo: IBoardInfo) {
     const strs = boardInfo.str || {};
+    const strings = romhandler.getRom()!.getStrings();
     const boardSelect = strs.boardSelect as number[][];
     if (boardSelect && boardSelect.length) {
       let bytes = [];
@@ -645,6 +645,7 @@ export class MP3Adapter extends AdapterBase {
   }
 
   _createBoardGreetingBase(boardName: string) {
+    const strings = romhandler.getRom()!.getStrings();
     let bytes = strings._strToBytes("Welcome to the legendary ");
     bytes.push(0x05); // Start GREEN
     bytes.push(0x0f); // ?
