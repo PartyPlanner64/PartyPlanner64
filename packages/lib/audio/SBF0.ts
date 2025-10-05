@@ -1,6 +1,6 @@
 import { ALSoundSimple } from "./ALSoundSimple";
 import { $$hex, $$log } from "../utils/debug";
-import { isDebug } from "../../../apps/partyplanner64/debug";
+import { isDebug } from "../debug";
 
 /**
  * SBF0 - Custom Sound Effects Format

@@ -1,4 +1,4 @@
-import { isDebug } from "../../../apps/partyplanner64/debug";
+import { isDebug } from "../debug";
 
 export function $$log(...args: any[]) {
   if (isDebug()) console.log.apply(console, arguments as any);

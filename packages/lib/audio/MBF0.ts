@@ -32,7 +32,7 @@
 // }
 
 import { B1 } from "./B1";
-import { isDebug } from "../../../apps/partyplanner64/debug";
+import { isDebug } from "../debug";
 import { copyRange } from "../utils/arrays";
 import { makeDivisibleBy } from "../utils/number";
 import { assert } from "../utils/debug";

@@ -33,7 +33,7 @@ import { useForceUpdate } from "../utils/react";
 import { useCallback } from "react";
 import { useAppSelector } from "../hooks";
 import { selectEventLibrary } from "../boardState";
-import { isDebug } from "../debug";
+import { isDebug } from "../../../packages/lib/debug";
 import {
   getBoardEvent,
   IBoard,

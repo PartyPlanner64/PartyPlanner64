@@ -5,7 +5,7 @@ import { makeDivisibleBy } from "../utils/number";
 import { Game } from "../types";
 import { ROM } from "../romhandler";
 import { getRegSetUpperAndLower, getRegSetAddress } from "../utils/MIPS";
-import { isDebug } from "../../../apps/partyplanner64/debug";
+import { isDebug } from "../debug";
 
 interface IOffsetInfo {
   upper: number;

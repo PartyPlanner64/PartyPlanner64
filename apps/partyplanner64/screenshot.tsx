@@ -3,7 +3,7 @@ import { getCurrentBoard } from "./boards";
 import { createContext } from "../../packages/lib/utils/canvas";
 import { Button } from "./controls";
 import { external } from "./renderer";
-import { setDebug, isDebug } from "./debug";
+import { setDebug, isDebug } from "../../packages/lib/debug";
 
 import "./css/screenshot.scss";
 import { store } from "./store";

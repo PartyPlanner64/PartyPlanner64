@@ -14,7 +14,7 @@ import {
 import { MtnxToThreeJs } from "../../../packages/lib/models/MtnxToThreeJs";
 import { pad } from "../../../packages/lib/utils/string";
 import { saveAs } from "file-saver";
-import { isDebug } from "../debug";
+import { isDebug } from "../../../packages/lib/debug";
 
 import exportImage from "../img/model/export.png";
 

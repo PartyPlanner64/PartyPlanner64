@@ -26,7 +26,7 @@ import {
   setOverrideBg,
 } from "./appControl";
 import { $setting, get } from "./views/settings";
-import { isDebug } from "./debug";
+import { isDebug } from "../../packages/lib/debug";
 import { SectionHeading } from "./propertiesshared";
 import { useForceUpdate } from "./utils/react";
 import { createEventInstance, IEvent } from "../../packages/lib/events/events";

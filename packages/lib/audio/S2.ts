@@ -1,7 +1,7 @@
 import { B1 } from "./B1";
 import { makeDivisibleBy } from "../utils/number";
 import { copyRange } from "../utils/arrays";
-import { isDebug } from "../../../apps/partyplanner64/debug";
+import { isDebug } from "../debug";
 import { assert } from "../utils/debug";
 
 // https://github.com/derselbst/N64SoundTools/blob/master/N64SoundListTool/N64SoundLibrary/N64AIFCAudio.cpp

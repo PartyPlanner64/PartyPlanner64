@@ -8,7 +8,7 @@ import { MBF0 } from "../audio/MBF0";
 import { SBF0 } from "../audio/SBF0";
 import { T3 } from "../audio/T3";
 import { FXD0 } from "../audio/FXD0";
-import { isDebug } from "../../../apps/partyplanner64/debug";
+import { isDebug } from "../debug";
 import { makeDivisibleBy } from "../utils/number";
 
 interface IOffsetInfo {

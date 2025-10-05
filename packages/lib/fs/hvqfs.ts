@@ -8,7 +8,7 @@ import { copyRange } from "../utils/arrays";
 import { Game } from "../types";
 import { ROM } from "../romhandler";
 import { getRegSetAddress, getRegSetUpperAndLower } from "../utils/MIPS";
-import { isDebug } from "../../../apps/partyplanner64/debug";
+import { isDebug } from "../debug";
 
 interface IOffsetInfo {
   upper: number;

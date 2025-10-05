@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as Cookies from "cookies-js";
-import { setDebug, isDebug } from "../debug";
+import { setDebug, isDebug } from "../../../packages/lib/debug";
 import { ToggleButton } from "../controls";
 import { EditorThemes } from "../../../packages/lib/types";
 

@@ -28,7 +28,7 @@ import { RightClickMenu } from "./rightclick";
 import { attachToCanvas, detachFromCanvas } from "./interaction";
 import { getEvent } from "../../packages/lib/events/events";
 import { getDistinctColor } from "../../packages/lib/utils/colors";
-import { isDebug } from "./debug";
+import { isDebug } from "../../packages/lib/debug";
 import { takeScreeny } from "./screenshot";
 import { getMouseCoordsOnCanvas } from "../../packages/lib/utils/canvas";
 import { setOverrideBg } from "./appControl";

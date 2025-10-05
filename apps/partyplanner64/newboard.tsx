@@ -2,7 +2,7 @@ import * as React from "react";
 import { BoardType } from "../../packages/lib/types";
 import { Button, ToggleButton } from "./controls";
 import { showMessage } from "./appControl";
-import { isDebug } from "./debug";
+import { isDebug } from "../../packages/lib/debug";
 
 import defaultThemePreview from "./img/themes/default/preview.png";
 

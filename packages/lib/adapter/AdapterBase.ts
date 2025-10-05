@@ -58,7 +58,7 @@ import { ChainSplit1 } from "../events/builtin/MP1/U/ChainSplit1";
 import { ChainMerge } from "../events/builtin/ChainMergeEvent";
 import { StarEvent, Gate, GateClose } from "../events/builtin/events.common";
 import { ChainSplit2 } from "../events/builtin/MP2/U/ChainSplit2";
-import { isDebug } from "../../../apps/partyplanner64/debug";
+import { isDebug } from "../debug";
 import { getImageData } from "../utils/img/getImageData";
 import { createGameMidi } from "../audio/midi";
 import { getEventsInLibrary } from "../events/EventLibrary";
