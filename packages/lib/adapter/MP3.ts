@@ -1,8 +1,5 @@
 import { AdapterBase } from "./AdapterBase";
-import {
-  addEventByIndex,
-  addEventToSpaceInternal,
-} from "../../../apps/partyplanner64/boards";
+import { addEventByIndex } from "../../../apps/partyplanner64/boards";
 import {
   Space,
   BoardType,
@@ -31,7 +28,12 @@ import { getEventsInLibrary } from "../events/EventLibrary";
 import { createImage } from "../utils/canvas";
 import { romhandler } from "../romhandler";
 import { strToBytes } from "../fs/strings";
-import { IBoard, ISpace, getConnections } from "../boards";
+import {
+  IBoard,
+  ISpace,
+  getConnections,
+  addEventToSpaceInternal,
+} from "../boards";
 
 import genericgateImage from "../img/genericgate.png";
 

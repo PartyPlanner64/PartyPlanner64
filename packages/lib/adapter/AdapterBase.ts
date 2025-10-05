@@ -4,7 +4,6 @@ import {
   addEventByIndex,
   getDeadSpace,
   getDeadSpaceIndex,
-  addEventToSpaceInternal,
 } from "../../../apps/partyplanner64/boards";
 import { copyObject } from "../utils/obj";
 import {
@@ -70,6 +69,7 @@ import { makeAudioSymbolLabels } from "../events/getaudiochoice";
 
 import bootsplashImage from "../img/bootsplash.png";
 import {
+  addEventToSpaceInternal,
   BoardAudioType,
   getConnections,
   getSpacesOfSubType,

@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   addConnectionInternal,
-  addEventToSpaceInternal,
   IBoardAudioChanges,
   _makeDefaultBoard,
 } from "./boards";
@@ -36,6 +35,7 @@ import {
   IBoard,
   IEventInstance,
   includeEventInBoardInternal,
+  addEventToSpaceInternal,
   ISpace,
 } from "../../packages/lib/boards";
 

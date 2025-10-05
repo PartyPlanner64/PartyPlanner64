@@ -1,5 +1,4 @@
 import { AdapterBase } from "./AdapterBase";
-import { addEventToSpaceInternal } from "../../../apps/partyplanner64/boards";
 import { CostumeType, Space } from "../types";
 import { createEventInstance, EventMap } from "../events/events";
 import {
@@ -17,7 +16,7 @@ import { getImageData } from "../utils/img/getImageData";
 import { createBoardOverlay } from "./MP2.U.boardoverlay";
 import { romhandler } from "../romhandler";
 import { strToBytes } from "../fs/strings";
-import { IBoard, ISpace } from "../boards";
+import { IBoard, ISpace, addEventToSpaceInternal } from "../boards";
 
 import mp2boardselectblank1Image from "../img/detail/mp2boardselectblank1.png";
 

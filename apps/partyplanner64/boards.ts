@@ -70,6 +70,7 @@ import {
 } from "./boardState";
 import { getEventsInLibrary } from "../../packages/lib/events/EventLibrary";
 import {
+  addEventToSpaceInternal,
   addSpaceInternal,
   BoardAudioType,
   fixPotentiallyOldBoard,
@@ -330,29 +331,6 @@ export function addEventToSpaces(
   spaceIndices: number[],
 ) {
   store.dispatch(addEventToSpacesAction({ event, spaceIndices }));
-}
-
-export function addEventToSpaceInternal(
-  board: IBoard,
-  space: ISpace,
-  event: IEventInstance,
-  toStart: boolean,
-  eventLibrary: EventMap,
-) {
-  space.events = space.events || [];
-  if (event) {
-    if (toStart) space.events.unshift(event);
-    else space.events.push(event);
-
-    if (event.custom) {
-      const customEvent = getEvent(
-        event.id,
-        board,
-        eventLibrary,
-      ) as ICustomEvent;
-      includeEventInBoardInternal(board, customEvent);
-    }
-  }
 }
 
 export function removeEventFromSpace(eventIndex: number) {
