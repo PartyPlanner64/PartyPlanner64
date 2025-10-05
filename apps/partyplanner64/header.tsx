@@ -19,6 +19,7 @@ import {
   boardIsROM,
   setBG,
   copyCurrentBoard,
+  getROMBoards,
 } from "./boards";
 import { recordEvent } from "../../packages/lib/utils/analytics";
 import { $$log } from "../../packages/lib/utils/debug";
@@ -1012,9 +1013,14 @@ const HeaderDropdown = class HeaderDropdown extends React.Component<IHeaderDropd
 };
 
 function overwriteDropdown(closeFn: any) {
+  const romBoards = getROMBoards();
+  const currentBoard = getCurrentBoard();
   const skipValidation = get($setting.uiSkipValidation);
-  const validationResultsPromise =
-    validateCurrentBoardForOverwrite(skipValidation);
+  const validationResultsPromise = validateCurrentBoardForOverwrite(
+    romBoards,
+    currentBoard,
+    skipValidation,
+  );
   return (
     <HeaderOverwriteBoardDropdown
       resultsPromise={validationResultsPromise}

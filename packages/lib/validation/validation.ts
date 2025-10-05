@@ -1,7 +1,3 @@
-import {
-  getROMBoards,
-  getCurrentBoard,
-} from "../../../apps/partyplanner64/boards";
 import { ValidationLevel, Game, BoardType } from "../types";
 import { romhandler } from "../romhandler";
 import { getValidationRules as getValidationRulesForMP1 } from "./validation.MP1";
@@ -93,14 +89,14 @@ export interface IValidationResult {
 }
 
 export async function validateCurrentBoardForOverwrite(
+  romBoards: readonly IBoard[],
+  board: IBoard,
   skipValidation?: boolean,
 ): Promise<IValidationResult[] | null> {
   const gameID = romhandler.getROMGame()!;
   if (!gameID) return null;
 
   const results: IValidationResult[] = [];
-  const romBoards = getROMBoards();
-  const currentBoard = getCurrentBoard();
 
   // Evaluate rules common to all boards.
   const gameLevelErrors: string[] = [];
@@ -108,7 +104,7 @@ export async function validateCurrentBoardForOverwrite(
   if (!skipValidation) {
     for (const rule of _getRulesForGame(gameID)) {
       let failureResult = rule.fails({
-        board: currentBoard,
+        board,
         boardInfo: dummyBoardInfo,
       });
       if (isPromiseLike(failureResult)) {
@@ -135,7 +131,7 @@ export async function validateCurrentBoardForOverwrite(
   if (boardInfos) {
     for (let boardIndex = 0; boardIndex < romBoards.length; boardIndex++) {
       const board = romBoards[boardIndex];
-      if (_dontShowInUI(board, currentBoard.type)) continue;
+      if (_dontShowInUI(board, board.type)) continue;
 
       const boardInfo = boardInfos[boardIndex];
       const unavailable = !_overwriteAvailable(boardInfo);
@@ -146,7 +142,7 @@ export async function validateCurrentBoardForOverwrite(
         const rules = _getRulesForBoard(gameID, boardIndex);
         for (const rule of rules) {
           let failureResult = rule.fails({
-            board: currentBoard,
+            board,
             boardInfo,
           });
           if (isPromiseLike(failureResult)) {
