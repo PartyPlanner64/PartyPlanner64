@@ -1,11 +1,11 @@
-import { intersection } from "../arrays";
+import { intersection } from "../../../../packages/lib/utils/arrays";
 import {
   getSymbols as getSymbolsForGame,
   ISymbol,
-} from "../../symbols/symbols";
+} from "../../../../packages/lib/symbols/symbols";
 import { registerHelper, Pos } from "codemirror";
-import { Game } from "../../types";
-import { getActiveEditorSupportedGames } from "../../../../apps/partyplanner64/views/createevent_shared";
+import { Game } from "../../../../packages/lib/types";
+import { getActiveEditorSupportedGames } from "../../views/createevent_shared";
 import "codemirror/addon/hint/show-hint";
 import "./mp-mips-codemirror";
 

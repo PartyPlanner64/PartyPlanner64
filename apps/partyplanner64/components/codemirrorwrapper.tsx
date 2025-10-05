@@ -1,8 +1,8 @@
 import * as React from "react";
 import CodeMirror from "codemirror";
 import { normalizeLineEndings } from "../../../packages/lib/utils/string";
-import "../../../packages/lib/utils/lib/mp-mips-autocomplete";
-import "../../../packages/lib/utils/lib/mp-mips-codemirror";
+import "../utils/lib/mp-mips-autocomplete";
+import "../utils/lib/mp-mips-codemirror";
 import "codemirror/mode/clike/clike";
 
 type CodeMirrorMode = "mips-pp64" | "c";
