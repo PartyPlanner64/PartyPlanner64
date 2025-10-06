@@ -13,18 +13,21 @@
   },
   "scripts": {
     "build": "node scripts/build.mjs",
-    "package": "pkg ./dist/out.js -t node16-linux,node16-win -o ./dist/pkg/partyplanner64-cli"
+    "package": "pkg ./dist/out.js -t node16-linux,node16-win -o ./dist/pkg/partyplanner64-cli",
+    "type-check": "tsc"
   },
   "dependencies": {
-    "canvas-api-lite": "^1.0.0",
+    "canvas-api-lite": "^1.1.0",
     "command-line-args": "^5.2.1",
     "command-line-usage": "^7.0.1"
   },
   "devDependencies": {
     "@types/command-line-args": "^5.2.0",
     "@types/command-line-usage": "^5.0.2",
+    "@types/node": "^24.6.2",
     "esbuild": "^0.18.7",
     "esbuild-plugin-inline-image": "^0.0.9",
-    "pkg": "^5.8.1"
+    "pkg": "^5.8.1",
+    "typescript": "~5.9.2"
   }
 }

@@ -27,7 +27,6 @@ import {
   getSelectedSpaces,
   getValidSelectedSpaceIndices,
 } from "./appControl";
-import { getMouseCoordsOnCanvas } from "../../packages/lib/utils/canvas";
 import {
   addSelectedSpaceAction,
   eraseConnectionsAction,
@@ -47,6 +46,7 @@ import {
   IBoard,
   ISpace,
 } from "../../packages/lib/boards";
+import { getMouseCoordsOnCanvas } from "./utils/canvas";
 
 let spaceWasMouseDownedOn = false;
 let startX = -1;

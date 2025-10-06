@@ -110,6 +110,7 @@ import {
   getAudioSelectCode,
   IBoard,
 } from "../../packages/lib/boards";
+import { setWebCanvasImplementation } from "./utils/canvas";
 
 /* eslint-disable jsx-a11y/anchor-is-valid */
 
@@ -531,6 +532,8 @@ function initializeState(): void {
 
   clearUndoHistory();
 }
+
+setWebCanvasImplementation();
 
 const body = document.getElementById("body");
 const root = createRoot(body!);

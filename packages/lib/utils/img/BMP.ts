@@ -92,7 +92,7 @@ export function BMPfromRGBA(
   if (buffer instanceof DataView) {
     pixelView = buffer;
   } else if (buffer instanceof Uint8ClampedArray) {
-    pixelView = new DataView<ArrayBuffer>(
+    pixelView = new DataView(
       buffer.buffer,
       buffer.byteOffset,
       buffer.byteLength,

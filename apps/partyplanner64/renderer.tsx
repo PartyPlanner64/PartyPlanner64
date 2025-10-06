@@ -30,7 +30,6 @@ import { getEvent } from "../../packages/lib/events/events";
 import { getDistinctColor } from "../../packages/lib/utils/colors";
 import { isDebug } from "../../packages/lib/debug";
 import { takeScreeny } from "./screenshot";
-import { getMouseCoordsOnCanvas } from "../../packages/lib/utils/canvas";
 import { setOverrideBg } from "./appControl";
 import { useAppSelector, useCurrentBoard } from "./hooks";
 import {
@@ -51,6 +50,7 @@ import {
   IEventInstance,
   ISpace,
 } from "../../packages/lib/boards";
+import { getMouseCoordsOnCanvas } from "./utils/canvas";
 
 type Canvas = HTMLCanvasElement;
 type CanvasContext = CanvasRenderingContext2D;

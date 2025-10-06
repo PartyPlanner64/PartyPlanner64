@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ES2024",
     "lib": ["esnext"],
+    "types": ["node"],
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -12,7 +13,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "allowJs": true,
     "noFallthroughCasesInSwitch": true,
     "noErrorTruncation": true
