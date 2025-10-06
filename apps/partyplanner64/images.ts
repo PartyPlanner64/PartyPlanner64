@@ -120,70 +120,73 @@ export const ToolbarImages = {
 // that are part of rendering, and then triggers a re-render when they load.
 
 const _images: { [name: string]: HTMLImageElement } = {};
-let _imageTemp: { [name: string]: string } | null = {};
-let _imagesToLoad = 0;
 
-addImage("toadImg", toadImg);
-addImage("mstarImg", mstarImg);
-addImage("bowserImg", bowserImg);
-addImage("koopaImg", koopaImg);
-addImage("booImg", booImg);
-addImage("goombaImg", goombaImg);
-addImage("eventImg", eventImg);
-addImage("eventErrorImg", eventErrorImg);
-addImage("starImg", starImg);
-addImage("bank2Img", bank2Img);
-addImage("bank3Img", bank3Img);
-addImage("bankcoinImg", bankcoinImg);
-addImage("itemShop2Img", itemShop2Img);
-addImage("itemShop3Img", itemShop3Img);
-addImage("gateImg", gateImg);
+export function preloadImages(): void {
+  let _imageTemp: { [name: string]: string } | null = {};
+  let _imagesToLoad = 0;
 
-addImage("spaceBowser", spaceBowser);
+  addImage("toadImg", toadImg);
+  addImage("mstarImg", mstarImg);
+  addImage("bowserImg", bowserImg);
+  addImage("koopaImg", koopaImg);
+  addImage("booImg", booImg);
+  addImage("goombaImg", goombaImg);
+  addImage("eventImg", eventImg);
+  addImage("eventErrorImg", eventErrorImg);
+  addImage("starImg", starImg);
+  addImage("bank2Img", bank2Img);
+  addImage("bank3Img", bank3Img);
+  addImage("bankcoinImg", bankcoinImg);
+  addImage("itemShop2Img", itemShop2Img);
+  addImage("itemShop3Img", itemShop3Img);
+  addImage("gateImg", gateImg);
 
-addImage("spaceItem2", spaceItem2);
+  addImage("spaceBowser", spaceBowser);
 
-addImage("spaceBlue3", spaceBlue3);
-addImage("spaceRed3", spaceRed3);
-addImage("spaceHappening3", spaceHappening3);
-addImage("spaceChance3", spaceChance3);
-addImage("spaceBowser3", spaceBowser3);
-addImage("spaceItem3", spaceItem3);
-addImage("spaceBattle3", spaceBattle3);
-addImage("spaceBank3", spaceBank3);
-addImage("spaceGameGuy3", spaceGameGuy3);
+  addImage("spaceItem2", spaceItem2);
 
-addImage("spaceDuelBasic3", spaceDuelBasic3);
-addImage("spaceDuelPowerup3", spaceDuelPowerup3);
-addImage("spaceDuelReverse3", spaceDuelReverse3);
-addImage("spaceGameGuyDuel3", spaceGameGuyDuel3);
-addImage("spaceMiniGameDuel3", spaceMiniGameDuel3);
-addImage("spaceHappeningDuel3", spaceHappeningDuel3);
+  addImage("spaceBlue3", spaceBlue3);
+  addImage("spaceRed3", spaceRed3);
+  addImage("spaceHappening3", spaceHappening3);
+  addImage("spaceChance3", spaceChance3);
+  addImage("spaceBowser3", spaceBowser3);
+  addImage("spaceItem3", spaceItem3);
+  addImage("spaceBattle3", spaceBattle3);
+  addImage("spaceBank3", spaceBank3);
+  addImage("spaceGameGuy3", spaceGameGuy3);
 
-addImage("targetImg", targetImg);
+  addImage("spaceDuelBasic3", spaceDuelBasic3);
+  addImage("spaceDuelPowerup3", spaceDuelPowerup3);
+  addImage("spaceDuelReverse3", spaceDuelReverse3);
+  addImage("spaceGameGuyDuel3", spaceGameGuyDuel3);
+  addImage("spaceMiniGameDuel3", spaceMiniGameDuel3);
+  addImage("spaceHappeningDuel3", spaceHappeningDuel3);
 
-function addImage(name: string, url: string) {
-  _imageTemp![name] = url;
-  _images[name] = createImage();
-  _imagesToLoad = _imagesToLoad + 1;
-  _images[name].onload = _onImageLoaded;
-}
+  addImage("targetImg", targetImg);
 
-// Trigger a re-render when all the external image assets load.
-function _onImageLoaded() {
-  _imagesToLoad = _imagesToLoad - 1;
-  if (!_imagesToLoad) {
-    //$$log("All images loaded, rendering again.");
-    store.dispatch(setImagesLoadedAction(true));
+  function addImage(name: string, url: string) {
+    _imageTemp![name] = url;
+    _images[name] = createImage();
+    _imagesToLoad = _imagesToLoad + 1;
+    _images[name].onload = _onImageLoaded;
   }
-}
 
-for (const name in _imageTemp) {
-  if (!_imageTemp.hasOwnProperty(name)) continue;
-  const url = _imageTemp[name];
-  _images[name].src = url;
+  // Trigger a re-render when all the external image assets load.
+  function _onImageLoaded() {
+    _imagesToLoad = _imagesToLoad - 1;
+    if (!_imagesToLoad) {
+      //$$log("All images loaded, rendering again.");
+      store.dispatch(setImagesLoadedAction(true));
+    }
+  }
+
+  for (const name in _imageTemp) {
+    if (!_imageTemp.hasOwnProperty(name)) continue;
+    const url = _imageTemp[name];
+    _images[name].src = url;
+  }
+  _imageTemp = null;
 }
-_imageTemp = null;
 
 export function getImage(name: string): HTMLImageElement {
   return _images[name];

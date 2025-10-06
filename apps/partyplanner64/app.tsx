@@ -111,6 +111,7 @@ import {
   IBoard,
 } from "../../packages/lib/boards";
 import { setWebCanvasImplementation } from "./utils/canvas";
+import { preloadImages } from "./images";
 
 /* eslint-disable jsx-a11y/anchor-is-valid */
 
@@ -534,6 +535,7 @@ function initializeState(): void {
 }
 
 setWebCanvasImplementation();
+preloadImages();
 
 const body = document.getElementById("body");
 const root = createRoot(body!);
